@@ -116,6 +116,7 @@
   .change-row:last-child { border-bottom: none; }
   .change-denom { font-weight: 800; color: #4F46E5; }
   .change-count { font-weight: 700; color: #1c2440; }
+  .hist-check { width: 20px; height: 20px; accent-color: #4F46E5; flex: none; cursor: pointer; }
   .changerow.short { color: #c0392b; }
   #cashInput { width: 100%; font-size: 22px; padding: 12px; border: 2px solid #dfe5ef; border-radius: 12px; text-align: center; box-sizing: border-box; margin: 6px 0; }
   .pickchip { padding: 8px 14px; border: 2px solid #dfe5ef; background: #fff; border-radius: 20px; font-weight: 700; font-size: 14px; color: #1c2440; }
@@ -144,10 +145,9 @@
   .brandrow { display: flex; align-items: center; gap: 12px; }
   .brandlogo { width: 54px; height: 54px; border-radius: 15px; flex: none; background: #fff; box-shadow: 0 3px 10px rgba(79,70,229,.3); -webkit-user-drag: none; position: relative; z-index: 1; }
   .logoglow { position: relative; display: inline-flex; flex: none; z-index: 0; }
-  .logoglow::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,.5) 0%, rgba(79,70,229,.28) 45%, transparent 70%); filter: blur(8px); z-index: -1; animation: logoglow 4.5s ease-in-out infinite alternate; }
-  .logoglow::after { content: ""; position: absolute; inset: -5px; border-radius: 20px; border: 2px solid rgba(165,180,252,.95); box-shadow: 0 0 10px 2px rgba(129,140,248,.8), 0 0 26px 8px rgba(79,70,229,.45); z-index: 2; pointer-events: none; animation: logoflicker 2.6s linear infinite; }
-  @keyframes logoglow { from { opacity: .55; transform: scale(1); } to { opacity: .9; transform: scale(1.12); } }
-  @keyframes logoflicker { 0%, 100% { opacity: 1; transform: scale(1); } 3% { opacity: .3; } 5% { opacity: 1; transform: scale(1.04); } 8% { opacity: .45; } 11% { opacity: 1; transform: scale(1); } 42% { opacity: .9; } 44% { opacity: .25; transform: scale(.99); } 46% { opacity: 1; transform: scale(1.03); } 70% { opacity: .7; } 72% { opacity: 1; transform: scale(1); } }
+  .logoglow::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(129,140,248,.28) 40deg, transparent 90deg, transparent 180deg, rgba(79,70,229,.22) 230deg, transparent 280deg); filter: blur(10px); z-index: -1; animation: logoorbit 12s linear infinite; }
+  .logoglow::after { content: ""; position: absolute; inset: -8px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,.18) 0%, rgba(79,70,229,.10) 50%, transparent 70%); filter: blur(6px); z-index: -1; }
+  @keyframes logoorbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .jobpill { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px auto 0; padding: 9px 18px; border-radius: 999px; border: 1.5px solid #E2E4EE; background: #fff; font-size: 14px; font-weight: 700; color: #4F46E5; cursor: pointer; max-width: calc(100% - 36px); transition: transform .12s ease; user-select: none; -webkit-user-select: none; }
   .jobpill:active { transform: scale(.97); }
   .jobpill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -248,8 +248,8 @@
 .tile-placeholder { background: rgba(79,70,229,.10); border: 2px dashed rgba(79,70,229,.45); border-radius: 16px; min-height: 118px; }
 body[data-theme="dark"] header { background: #000; border-bottom: 1px solid #1C1C1E; }
 body[data-theme="dark"] .brandlogo { background: #000; }
-body[data-theme="dark"] .logoglow::before { background: radial-gradient(circle, rgba(129,140,248,.55) 0%, rgba(79,70,229,.32) 45%, transparent 70%); }
-body[data-theme="dark"] .logoglow::after { border-color: rgba(199,210,254,.95); box-shadow: 0 0 12px 3px rgba(129,140,248,.9), 0 0 32px 10px rgba(79,70,229,.55); }
+body[data-theme="dark"] .logoglow::before { background: conic-gradient(from 0deg, transparent 0deg, rgba(165,180,252,.32) 40deg, transparent 90deg, transparent 180deg, rgba(129,140,248,.26) 230deg, transparent 280deg); }
+body[data-theme="dark"] .logoglow::after { background: radial-gradient(circle, rgba(165,180,252,.22) 0%, rgba(129,140,248,.12) 50%, transparent 70%); }
 body[data-theme="dark"] nav { background: #1C1C1E; }
 body[data-theme="dark"] nav button { background: transparent; color: #A1A1AA; }
 body[data-theme="dark"] nav button.active { background: #4F46E5; color: #fff; box-shadow: 0 2px 10px rgba(79,70,229,.45); }
@@ -387,7 +387,7 @@ body[data-theme="dark"] .toast { background: #232329; }
       </div>
       <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)">
       <label for="shopName" data-i18n="prod_shop_name">Shop name</label>
-      <input type="text" id="shopName" placeholder="My Shop" data-i18n-ph="prod_shop_name_ph" oninput="shopNameInput()" onchange="shopNameChanged()">
+      <input type="text" id="shopName" placeholder="" data-i18n-ph="prod_shop_name_ph" oninput="shopNameInput()" onchange="shopNameChanged()">
       <p class="hint" style="margin:10px 0 0" data-i18n="prod_share_hint">Each phone keeps its own list. When prices change, one person taps Export list, sends the file in the group chat, and everyone else taps Import list.</p>
     </div>
     <div class="card">
@@ -415,7 +415,7 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div class="btn-row" style="margin-top:8px">
         <button class="btn btn-ghost" onclick="openHistory()" data-i18n="prod_view_history">View purchase history</button>
       </div>
-      <p class="hint" style="margin:10px 0 0">Tax applies to subtotal + fees. When "Apply tax to Card" is off, card totals stay pre-tax and your PMS adds the tax.</p>
+      <p class="hint" style="margin:10px 0 0">Tax applies to subtotal + fees. When "Apply tax to Card" is off, card totals stay pre-tax.</p>
     </div>
     <div class="card">
       <label for="prodFilter">Search products</label>
@@ -476,7 +476,7 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
         <button class="btn btn-ghost" id="recoveryEditBtn" style="width:auto;padding:8px 18px;margin:0" onclick="toggleRecoveryEdit()" data-i18n="rec_edit">Edit</button>
       </div>
-      <p class="hint" style="margin:0 0 10px" data-i18n="rec_guide_hint">What the front desk can offer per situation — set by the AGM. Anything beyond these limits: call the AGM.</p>
+      <p class="hint" style="margin:0 0 10px" data-i18n="rec_guide_hint">What can be offered per situation — set by the person in charge.</p>
       <nav style="margin:0 0 10px;position:static">
         <button id="recTabSit" class="active" onclick="setRecoveryGroup('situation')" data-i18n="rec_by_sit">By situation</button>
         <button id="recTabType" onclick="setRecoveryGroup('type')" data-i18n="rec_by_type">By compensation type</button>
@@ -499,7 +499,7 @@ body[data-theme="dark"] .toast { background: #232329; }
         <button class="btn btn-ghost" onclick="document.getElementById('importRecoveryFile').click()" data-i18n="rec_import">⬇ Import guide</button>
       </div>
       <input type="file" id="importRecoveryFile" accept=".json,application/json" style="display:none" onchange="importRecovery(this)">
-      <p class="hint" style="margin:10px 0 0" data-i18n="rec_share_hint2">The AGM fills in the limits and exports the guide — the team imports it and always knows what they can offer.</p>
+      <p class="hint" style="margin:10px 0 0" data-i18n="rec_share_hint2">The person in charge fills in the limits and exports the guide — the team imports it and always knows what they can offer.</p>
     </div>
   </main>
 </div>
@@ -607,6 +607,7 @@ body[data-theme="dark"] .toast { background: #232329; }
     <div class="pname" id="sheetName"></div>
     <div id="sheetCode" style="margin-bottom:2px"></div>
     <div class="pprice" id="sheetPrice"></div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 12px"><span style="font-weight:700" data-i18n="sheet_qty">Quantity</span><div class="qty"><button onclick="sheetQtyChange(-1)">−</button><span id="sheetQty">1</span><button onclick="sheetQtyChange(1)">+</button></div></div>
     <button class="btn btn-primary" onclick="sheetAdd()" data-i18n="price_add">Add to order</button>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="sheetAdjust()" data-i18n="price_adjust">Adjust price</button>
@@ -760,16 +761,16 @@ prod_take_photo: "Take / choose photo", prod_remove_photo: "Remove photo",
 prod_barcode_req: "Barcode is required.", prod_name_req: "Product name is required.", prod_need_one: "Add a barcode, a name, or a category.",
 prod_scan_addedit: "Scan to add / edit product",
 prod_export: "⬆ Export list", prod_import: "⬇ Import list",
-prod_shop_name: "Shop name", prod_category: "Category", prod_category_ph: "e.g. Chips, Drinks", prod_all: "All", cat_no_cat: "No category", cat_set_price: "Set price for all in {v}", cat_price_prompt: "New price for {n} items in \"{v}\":", cat_price_done: "Updated {n} items in \"{v}\"", prod_shop_name_ph: "My Shop",
+prod_shop_name: "Shop name", prod_category: "Category", prod_category_ph: "e.g. Chips, Drinks", prod_all: "All", cat_no_cat: "No category", cat_set_price: "Set price for all in {v}", cat_price_prompt: "New price for {n} items in \"{v}\":", cat_price_done: "Updated {n} items in \"{v}\"", prod_shop_name_ph: "",
 prod_share_hint: "Each phone keeps its own list. When prices change, one person taps Export list, sends the file in the group chat, and everyone else taps Import list.",
 prod_save_history: "Save purchase history", prod_view_history: "View purchase history",
-hist_title: "Purchase history", hist_empty: "No purchases yet.", hist_clear: "Clear history", hist_clear_confirm: "Delete all purchase history?", hist_cash_given: "Cash given", hist_change: "Change",
+hist_title: "Purchase history", hist_empty: "No purchases yet.", hist_clear: "Clear history", hist_clear_confirm: "Delete all purchase history?", hist_cash_given: "Cash given", hist_change: "Change", hist_del_sel: "Delete selected", hist_del_sel_confirm: "Delete {n} selected purchases?",
 prod_no_export: "No products saved yet — scan some items first.",
 prod_share_title: "Product list",
 prod_no_valid: "No valid products in that file.",
 prod_photo_fail: "Could not read that photo.",
 // price sheet
-price_add: "Add to order", price_adjust: "Adjust price", price_new: "New price ($)",
+price_add: "Add to order", sheet_qty: "Quantity", price_adjust: "Adjust price", price_new: "New price ($)",
 price_order_only: "Save for this order only", price_future: "Save for future orders",
 // summary
 sum_title: "Order summary", sum_new: "New order",
@@ -958,16 +959,16 @@ prod_take_photo: "Tomar / elegir foto", prod_remove_photo: "Quitar foto",
 prod_barcode_req: "El código es obligatorio.", prod_name_req: "El nombre es obligatorio.", prod_need_one: "Agrega un código, un nombre o una categoría.",
 prod_scan_addedit: "Escanear para agregar / editar",
 prod_export: "⬆ Exportar lista", prod_import: "⬇ Importar lista",
-prod_shop_name: "Nombre de la tienda", prod_category: "Categor\u00eda", prod_category_ph: "p. ej. Papas, Bebidas", prod_all: "Todos", cat_no_cat: "Sin categor\u00eda", cat_set_price: "Poner precio a todos en {v}", cat_price_prompt: "Nuevo precio para {n} art\u00edculos en \"{v}\":", cat_price_done: "{n} art\u00edculos actualizados en \"{v}\"", prod_shop_name_ph: "Mi tienda",
+prod_shop_name: "Nombre de la tienda", prod_category: "Categor\u00eda", prod_category_ph: "p. ej. Papas, Bebidas", prod_all: "Todos", cat_no_cat: "Sin categor\u00eda", cat_set_price: "Poner precio a todos en {v}", cat_price_prompt: "Nuevo precio para {n} art\u00edculos en \"{v}\":", cat_price_done: "{n} art\u00edculos actualizados en \"{v}\"", prod_shop_name_ph: "",
 prod_share_hint: "Cada teléfono guarda su propia lista. Cuando cambien los precios, una persona toca Exportar lista, envía el archivo al chat del grupo y los demás tocan Importar lista.",
 prod_save_history: "Guardar historial de compras", prod_view_history: "Ver historial de compras",
-hist_title: "Historial de compras", hist_empty: "Sin compras aún.", hist_clear: "Borrar historial", hist_clear_confirm: "¿Eliminar todo el historial de compras?", hist_cash_given: "Efectivo recibido", hist_change: "Cambio",
+hist_title: "Historial de compras", hist_empty: "Sin compras aún.", hist_clear: "Borrar historial", hist_clear_confirm: "¿Eliminar todo el historial de compras?", hist_cash_given: "Efectivo recibido", hist_change: "Cambio", hist_del_sel: "Eliminar seleccionados", hist_del_sel_confirm: "¿Eliminar {n} compras seleccionadas?",
 prod_no_export: "Aún no hay productos — escanea algunos primero.",
 prod_share_title: "Lista de productos",
 prod_no_valid: "No hay productos válidos en ese archivo.",
 prod_photo_fail: "No se pudo leer esa foto.",
 // price sheet
-price_add: "Agregar a la orden", price_adjust: "Ajustar precio", price_new: "Nuevo precio ($)",
+price_add: "Agregar a la orden", sheet_qty: "Cantidad", price_adjust: "Ajustar precio", price_new: "Nuevo precio ($)",
 price_order_only: "Solo para esta orden", price_future: "Para futuras órdenes",
 // summary
 sum_title: "Resumen de la orden", sum_new: "Nueva orden",
@@ -1105,6 +1106,7 @@ var order = [];            // [{code,name,price,qty}]
 var scanMode = null, scanner = null, scanning = false;
 var modalCode = null, modalIsNew = true, modalAfterSave = null;
 var sheetCode = null, sheetOverride = null, priceCtx = null, modalImg = null;
+var sheetQty = 1;
 
 function defaultShopSettings() {
   return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, saveHistory: false, fees: [], cashPicks: [1, 5, 10, 20, 50, 100] };
@@ -1158,7 +1160,7 @@ function migrateProfile(p) {
     if (p.shopSettings.saveHistory === undefined) p.shopSettings.saveHistory = false;
   }
   if (!Array.isArray(p.shopHistory)) p.shopHistory = [];
-  if (p.recovery.footerNote === undefined) p.recovery.footerNote = "Anything beyond these limits: check with the AGM.";
+  if (p.recovery.footerNote === undefined) p.recovery.footerNote = t("default_footer");
   if (!p.contacts) p.contacts = defaultContacts();
   if (!Array.isArray(p.contacts.templates)) p.contacts.templates = [];
   stripHotelPresets(p);
@@ -1894,14 +1896,15 @@ function handleCode(code, mode) {
 }
 
 /* ---------- checkout ---------- */
-function addToOrder(code, priceOverride) {
+function addToOrder(code, priceOverride, qty) {
   var p = state.products[code];
   if (!p) return;
   var price = (priceOverride != null && !isNaN(priceOverride)) ? priceOverride : p.price;
+  qty = qty || 1;
   var line = null;
   for (var i = 0; i < order.length; i++) if (order[i].code === code && order[i].price === price) line = order[i];
-  if (line) line.qty++;
-  else order.push({ code: code, name: p.name, price: price, qty: 1, img: p.img || null });
+  if (line) line.qty += qty;
+  else order.push({ code: code, name: p.name, price: price, qty: qty, img: p.img || null });
   document.getElementById("search").value = "";
   document.getElementById("searchResults").innerHTML = "";
   renderOrder();
@@ -2195,11 +2198,12 @@ function doImport(pi, mode) {
 function showSheet(code) {
   var p = state.products[code];
   if (!p) return;
-  sheetCode = code; sheetOverride = null;
+  sheetCode = code; sheetOverride = null; sheetQty = 1;
   var img = document.getElementById("sheetImg");
   if (p.img) img.src = p.img; else img.removeAttribute("src");
   document.getElementById("sheetName").textContent = p.name;
   document.getElementById("sheetCode").innerHTML = p.manual ? '' : '<kbd class="code">' + esc(code) + '</kbd>';
+  document.getElementById("sheetQty").textContent = "1";
   updateSheetPrice();
   document.getElementById("sheet").classList.add("open");
 }
@@ -2208,12 +2212,16 @@ function updateSheetPrice() {
   if (!p) return;
   document.getElementById("sheetPrice").textContent = fmtP(sheetOverride != null ? sheetOverride : p.price);
 }
+function sheetQtyChange(d) {
+  sheetQty = Math.max(1, sheetQty + d);
+  document.getElementById("sheetQty").textContent = sheetQty;
+}
 function sheetAdd() {
   var p = state.products[sheetCode];
   if ((!p || p.price == null) && sheetOverride == null) { toast(t("need_price_first")); sheetAdjust(); return; }
-  addToOrder(sheetCode, sheetOverride); closeSheet();
+  addToOrder(sheetCode, sheetOverride, sheetQty); closeSheet();
 }
-function closeSheet() { document.getElementById("sheet").classList.remove("open"); sheetCode = null; sheetOverride = null; }
+function closeSheet() { document.getElementById("sheet").classList.remove("open"); sheetCode = null; sheetOverride = null; sheetQty = 1; }
 function sheetAdjust() { openPriceModal({ kind: "sheet", code: sheetCode }); }
 function lineAdjust(i) { openPriceModal({ kind: "line", code: order[i].code, lineIdx: i }); }
 
@@ -2362,7 +2370,8 @@ function renderHistory() {
   if (!box) return;
   var list = state.shopHistory || [];
   if (!list.length) { box.innerHTML = '<div class="empty">' + t("hist_empty") + '</div>'; return; }
-  box.innerHTML = list.map(function(h){
+  box.innerHTML = list.map(function(h, hi){
+    var key = histKey(h, hi);
     var items = (h.items || []).map(function(it){
       return '<div class="sumline2"><span>' + esc(it.name) + ' × ' + it.qty + '</span><span>' + fmt(it.price * it.qty) + '</span></div>';
     }).join("");
@@ -2372,15 +2381,40 @@ function renderHistory() {
       extra = '<div class="sumline2"><span>' + t("hist_cash_given") + '</span><span>' + fmt(h.cashGiven) + '</span></div>' +
         '<div class="sumline2"><span>' + t("hist_change") + '</span><span>' + fmt(h.change) + '</span></div>';
     }
-    return '<div class="card" style="margin-bottom:10px"><div class="sumline2"><span style="font-weight:800">' + esc(meta) + '</span><span style="font-weight:800">' + fmt(h.total) + '</span></div>' + items + extra + '</div>';
+    return '<div class="card" style="margin-bottom:10px"><div class="sumline2"><span style="display:flex;align-items:center;gap:8px"><input type="checkbox" class="hist-check" ' + (selectedHistory[key] ? 'checked' : '') + ' onchange="toggleHistorySelect(\'' + key + '\',this.checked)"><span style="font-weight:800">' + esc(meta) + '</span></span><span style="font-weight:800">' + fmt(h.total) + '</span></div>' + items + extra + '</div>';
   }).join("");
+  updateHistoryDelBtn();
+}
+var selectedHistory = {};
+function histKey(h, i) { return h.id || ("idx" + i); }
+function toggleHistorySelect(key, on) {
+  if (on) selectedHistory[key] = true; else delete selectedHistory[key];
+  updateHistoryDelBtn();
+}
+function updateHistoryDelBtn() {
+  var btn = document.getElementById("histDelSelBtn");
+  if (!btn) return;
+  var n = Object.keys(selectedHistory).length;
+  btn.disabled = !n;
+  btn.textContent = t("hist_del_sel") + (n ? " (" + n + ")" : "");
+}
+function deleteSelectedHistory() {
+  var n = Object.keys(selectedHistory).length;
+  if (!n) return;
+  appConfirm(tf("hist_del_sel_confirm", { n: n })).then(function(ok){
+    if (!ok) return;
+    state.shopHistory = (state.shopHistory || []).filter(function(h, i){ return !selectedHistory[histKey(h, i)]; });
+    selectedHistory = {};
+    saveState(); renderHistory();
+  });
 }
 function openHistory() { renderHistory(); document.getElementById("historyModal").classList.add("open"); }
-function closeHistory() { document.getElementById("historyModal").classList.remove("open"); }
+function closeHistory() { selectedHistory = {}; document.getElementById("historyModal").classList.remove("open"); }
 function clearHistory() {
   appConfirm(t("hist_clear_confirm")).then(function(ok){
     if (!ok) return;
     state.shopHistory = [];
+    selectedHistory = {};
     saveState(); renderHistory();
   });
 }
@@ -3194,6 +3228,7 @@ if ("serviceWorker" in navigator) {
     <div id="historyList" style="max-height:60vh;overflow-y:auto"></div>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-ghost" onclick="closeHistory()" data-i18n="close">Close</button>
+      <button class="btn btn-ghost" id="histDelSelBtn" onclick="deleteSelectedHistory()" disabled>Delete selected</button>
       <button class="btn btn-danger" onclick="clearHistory()" data-i18n="hist_clear">Clear history</button>
     </div>
   </div>
