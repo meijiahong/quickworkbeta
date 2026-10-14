@@ -108,10 +108,14 @@
   .feerow input[type=text] { flex: 1; min-width: 0; padding: 8px 10px; border: 2px solid #dfe5ef; border-radius: 10px; font-size: 14px; }
   .feerow input[type=number] { width: 76px; padding: 8px 6px; border: 2px solid #dfe5ef; border-radius: 10px; font-size: 14px; }
   .feerow select { padding: 8px 6px; border: 2px solid #dfe5ef; border-radius: 10px; font-size: 14px; background: #fff; }
-  .paybtn { flex: 1; padding: 12px; border: 2px solid #dfe5ef; background: #fff; border-radius: 12px; font-size: 16px; font-weight: 700; color: #1c2440; }
+  .paybtn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 2px solid #dfe5ef; background: #fff; border-radius: 12px; font-size: 16px; font-weight: 700; color: #1c2440; }
   .paybtn.active { border-color: #4F46E5; background: #4F46E5; color: #fff; }
   .sumline2 { display: flex; justify-content: space-between; padding: 6px 4px; font-size: 15px; }
   .changerow { font-size: 18px; font-weight: 800; margin: 10px 0 4px; }
+  .change-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 2px; border-bottom: 1px solid #eef1f6; font-size: 15px; }
+  .change-row:last-child { border-bottom: none; }
+  .change-denom { font-weight: 800; color: #4F46E5; }
+  .change-count { font-weight: 700; color: #1c2440; }
   .changerow.short { color: #c0392b; }
   #cashInput { width: 100%; font-size: 22px; padding: 12px; border: 2px solid #dfe5ef; border-radius: 12px; text-align: center; box-sizing: border-box; margin: 6px 0; }
   .pickchip { padding: 8px 14px; border: 2px solid #dfe5ef; background: #fff; border-radius: 20px; font-weight: 700; font-size: 14px; color: #1c2440; }
@@ -123,20 +127,27 @@
   .tpl-lib-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #eef1f6; }
   .tpl-lib-row .name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: #1c2440; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tpl-lib-row .iconbtn { padding: 6px 12px; font-size: 13px; }
-  .comprow select { flex: 1.5; min-width: 0; padding: 8px 6px; border: 2px solid #dfe5ef; border-radius: 10px; font-size: 14px; background: #fff; }
+  .comprow select { flex: 1.5; min-width: 0; padding: 10px 36px 10px 12px; border: 1.5px solid #C7CDE3; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: inherit; color: #4F46E5; background-color: #EEF0FF; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 14px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .comprow select:focus { outline: none; border-color: #4F46E5; box-shadow: 0 0 0 3px rgba(79,70,229,.18); }
+  .comprow select option { color: #1c2440; background: #fff; }
+  .feerow select { padding: 10px 36px 10px 12px; border: 1.5px solid #C7CDE3; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: inherit; color: #4F46E5; background-color: #EEF0FF; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 14px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .feerow select:focus { outline: none; border-color: #4F46E5; box-shadow: 0 0 0 3px rgba(79,70,229,.18); }
   .comprow input { width: 62px; padding: 8px 6px; border: 2px solid #dfe5ef; border-radius: 10px; font-size: 14px; }
   .rec-card { border: 1px solid #e3e8f1; border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #fbfcfe; }
   .rec-card .rtitle { font-weight: 800; font-size: 15px; }
   .rec-card .rmeta { font-size: 12px; color: #7a8499; margin: 2px 0 6px; }
   .rec-card .rcomp { font-size: 14px; margin-top: 6px; font-weight: 700; color: #4F46E5; }
+  .rec-card .rtype { color: #4F46E5; }
   .badge { display: inline-block; background: #EEF0FF; color: #4F46E5; border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
   .homehead { display: flex; align-items:center; justify-content: space-between; padding: 22px 18px 4px; max-width: 640px; margin: 0 auto; user-select: none; -webkit-user-select: none; }
   .homehead h1 { margin: 0; font-size: 28px; color: #4F46E5; }
   .brandrow { display: flex; align-items: center; gap: 12px; }
   .brandlogo { width: 54px; height: 54px; border-radius: 15px; flex: none; background: #fff; box-shadow: 0 3px 10px rgba(79,70,229,.3); -webkit-user-drag: none; position: relative; z-index: 1; }
   .logoglow { position: relative; display: inline-flex; flex: none; z-index: 0; }
-  .logoglow::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,.45) 0%, rgba(79,70,229,.22) 45%, transparent 70%); filter: blur(8px); z-index: -1; animation: logoglow 4.5s ease-in-out infinite alternate; }
-  @keyframes logoglow { from { opacity: .5; transform: scale(1); } to { opacity: .85; transform: scale(1.12); } }
+  .logoglow::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,.5) 0%, rgba(79,70,229,.28) 45%, transparent 70%); filter: blur(8px); z-index: -1; animation: logoglow 4.5s ease-in-out infinite alternate; }
+  .logoglow::after { content: ""; position: absolute; inset: -5px; border-radius: 20px; border: 2px solid rgba(165,180,252,.95); box-shadow: 0 0 10px 2px rgba(129,140,248,.8), 0 0 26px 8px rgba(79,70,229,.45); z-index: 2; pointer-events: none; animation: logoflicker 2.6s linear infinite; }
+  @keyframes logoglow { from { opacity: .55; transform: scale(1); } to { opacity: .9; transform: scale(1.12); } }
+  @keyframes logoflicker { 0%, 100% { opacity: 1; transform: scale(1); } 3% { opacity: .3; } 5% { opacity: 1; transform: scale(1.04); } 8% { opacity: .45; } 11% { opacity: 1; transform: scale(1); } 42% { opacity: .9; } 44% { opacity: .25; transform: scale(.99); } 46% { opacity: 1; transform: scale(1.03); } 70% { opacity: .7; } 72% { opacity: 1; transform: scale(1); } }
   .jobpill { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px auto 0; padding: 9px 18px; border-radius: 999px; border: 1.5px solid #E2E4EE; background: #fff; font-size: 14px; font-weight: 700; color: #4F46E5; cursor: pointer; max-width: calc(100% - 36px); transition: transform .12s ease; user-select: none; -webkit-user-select: none; }
   .jobpill:active { transform: scale(.97); }
   .jobpill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -209,10 +220,10 @@
   .sumline .name { font-weight: 600; font-size: 15px; }
   .sumline .sub { font-size: 12px; color: #7a8499; }
 
-#templateUseModal, #templateEditModal, #infoModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
-#templateUseModal.open, #templateEditModal.open, #infoModal.open { display: flex; }
-#templateUseBox, #templateEditBox, #infoModalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
-#templateUseBox h2, #templateEditBox h2, #infoModalBox h2 { margin: 0 0 8px; font-size: 19px; }
+#templateUseModal, #templateEditModal, #templateLibModal, #infoModal, #historyModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
+#templateUseModal.open, #templateEditModal.open, #templateLibModal.open, #infoModal.open, #historyModal.open { display: flex; }
+#templateUseBox, #templateEditBox, #templateLibBox, #infoModalBox, #historyBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+#templateUseBox h2, #templateEditBox h2, #templateLibBox h2, #infoModalBox h2, #historyBox h2 { margin: 0 0 8px; font-size: 19px; }
 #templateEditBox textarea, #infoModalBox textarea { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; font-family: inherit; }
 /* ---------- v18: indigo polish, modern buttons, smooth reorder ---------- */
 .btn { border-radius: 14px; transition: transform .12s ease, box-shadow .15s ease, background .15s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -237,7 +248,8 @@
 .tile-placeholder { background: rgba(79,70,229,.10); border: 2px dashed rgba(79,70,229,.45); border-radius: 16px; min-height: 118px; }
 body[data-theme="dark"] header { background: #000; border-bottom: 1px solid #1C1C1E; }
 body[data-theme="dark"] .brandlogo { background: #000; }
-body[data-theme="dark"] .logoglow::before { background: radial-gradient(circle, rgba(129,140,248,.5) 0%, rgba(79,70,229,.28) 45%, transparent 70%); }
+body[data-theme="dark"] .logoglow::before { background: radial-gradient(circle, rgba(129,140,248,.55) 0%, rgba(79,70,229,.32) 45%, transparent 70%); }
+body[data-theme="dark"] .logoglow::after { border-color: rgba(199,210,254,.95); box-shadow: 0 0 12px 3px rgba(129,140,248,.9), 0 0 32px 10px rgba(79,70,229,.55); }
 body[data-theme="dark"] nav { background: #1C1C1E; }
 body[data-theme="dark"] nav button { background: transparent; color: #A1A1AA; }
 body[data-theme="dark"] nav button.active { background: #4F46E5; color: #fff; box-shadow: 0 2px 10px rgba(79,70,229,.45); }
@@ -274,7 +286,7 @@ body[data-theme="dark"] .homehead h1, body[data-theme="dark"] .modhead h1 { colo
 body[data-theme="dark"] .backbtn { background: #1C1C1E; border-color: #2E2E33; color: #A5B4FC; }
 body[data-theme="dark"] #modalBox, body[data-theme="dark"] #confirmBox, body[data-theme="dark"] #promptBox,
 body[data-theme="dark"] #contactModalBox, body[data-theme="dark"] #importTargetBox, body[data-theme="dark"] #sheetBox,
-body[data-theme="dark"] #priceModalBox, body[data-theme="dark"] #templateUseBox, body[data-theme="dark"] #templateEditBox { background: #1C1C1E; }
+body[data-theme="dark"] #priceModalBox, body[data-theme="dark"] #templateUseBox, body[data-theme="dark"] #templateEditBox, body[data-theme="dark"] #templateLibBox, body[data-theme="dark"] #historyBox { background: #1C1C1E; }
 body[data-theme="dark"] #confirmBox p, body[data-theme="dark"] #promptBox p, body[data-theme="dark"] #modalBox h2,
 body[data-theme="dark"] #contactModalBox h2, body[data-theme="dark"] #importTargetBox h2, body[data-theme="dark"] #sheetBox .pname,
 body[data-theme="dark"] #templateUseBox h2, body[data-theme="dark"] #templateEditBox h2 { color: #FFFFFF; }
@@ -288,6 +300,7 @@ body[data-theme="dark"] .paybtn.active { background: #4F46E5; border-color: #4F4
 body[data-theme="dark"] .rec-card { background: #1C1C1E; border-color: #2E2E33; }
 body[data-theme="dark"] .rec-card .rtitle { color: #FFFFFF; }
 body[data-theme="dark"] .rec-card .rcomp { color: #A5B4FC; }
+body[data-theme="dark"] .rec-card .rtype { color: #A5B4FC; }
 body[data-theme="dark"] .badge { background: #262640; color: #A5B4FC; }
 body[data-theme="dark"] .profilecard { background: #1C1C1E; border-color: #2E2E33; }
 body[data-theme="dark"] .profilecard.active { background: #23233A; border-color: #818CF8; }
@@ -298,12 +311,17 @@ body[data-theme="dark"] .totals .grand { border-top-color: #333338; }
 body[data-theme="dark"] .sumline { border-bottom-color: #26262B; }
 body[data-theme="dark"] .changerow.short { color: #ff8a80; }
 body[data-theme="dark"] kbd.code { background: #232329; }
-body[data-theme="dark"] .thumb, body[data-theme="dark"] #imgPreview { background: #232329; }
+body[data-theme="dark"] .change-row { border-bottom-color: #26262B; }
+body[data-theme="dark"] .change-denom { color: #A5B4FC; }
+body[data-theme="dark"] .change-count { color: #E4E4EA; }
 body[data-theme="dark"] #summaryOverlay { background: #000000; }
 body[data-theme="dark"] .feerow input[type=text], body[data-theme="dark"] .feerow input[type=number], body[data-theme="dark"] .feerow select,
 body[data-theme="dark"] .comprow select, body[data-theme="dark"] .comprow input, body[data-theme="dark"] .setrow input[type=number],
 body[data-theme="dark"] .setrow input[type=text] { background: #101014; border-color: #333338; color: #F5F5F7; }
 body[data-theme="dark"] select option { background: #1C1C1E; }
+body[data-theme="dark"] .comprow select, body[data-theme="dark"] .feerow select { background-color: #23233A; border-color: #3A3A40; color: #C7D2FE; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23818CF8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+body[data-theme="dark"] .comprow select:focus, body[data-theme="dark"] .feerow select:focus { border-color: #818CF8; box-shadow: 0 0 0 3px rgba(129,140,248,.25); }
+body[data-theme="dark"] .comprow select option, body[data-theme="dark"] .feerow select option { color: #E4E4EA; background: #1C1C1E; }
 body[data-theme="dark"] .toast { background: #232329; }
 </style>
 </head>
@@ -373,7 +391,7 @@ body[data-theme="dark"] .toast { background: #232329; }
       <p class="hint" style="margin:10px 0 0" data-i18n="prod_share_hint">Each phone keeps its own list. When prices change, one person taps Export list, sends the file in the group chat, and everyone else taps Import list.</p>
     </div>
     <div class="card">
-      <h3 style="margin:0 0 6px;font-size:16px" data-i18n="sset_title">⚙️ Shop settings</h3>
+      <h3 style="margin:0 0 6px;font-size:16px" data-i18n="sset_title">Shop settings</h3>
       <label class="switch-row"><span><span data-i18n="sset_tax">Enable tax</span></span><span class="switch"><input type="checkbox" id="setTaxOn" onchange="saveShopSettings()"><span class="track"></span><span class="knob"></span></span></label>
       <div class="setrow">
         <label for="setTaxRate" data-i18n="sset_rate">Tax rate</label>
@@ -392,6 +410,10 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div id="feeList"></div>
       <div class="btn-row" style="margin-top:8px">
         <button class="btn btn-ghost" onclick="addFee()" data-i18n="sset_add_fee">+ Add fee</button>
+      </div>
+      <label class="switch-row"><span><span data-i18n="prod_save_history">Save purchase history</span></span><span class="switch"><input type="checkbox" id="setSaveHistory" onchange="toggleSaveHistory()"><span class="track"></span><span class="knob"></span></span></label>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-ghost" onclick="openHistory()" data-i18n="prod_view_history">View purchase history</button>
       </div>
       <p class="hint" style="margin:10px 0 0">Tax applies to subtotal + fees. When "Apply tax to Card" is off, card totals stay pre-tax and your PMS adds the tax.</p>
     </div>
@@ -455,6 +477,10 @@ body[data-theme="dark"] .toast { background: #232329; }
         <button class="btn btn-ghost" id="recoveryEditBtn" style="width:auto;padding:8px 18px;margin:0" onclick="toggleRecoveryEdit()" data-i18n="rec_edit">Edit</button>
       </div>
       <p class="hint" style="margin:0 0 10px" data-i18n="rec_guide_hint">What the front desk can offer per situation — set by the AGM. Anything beyond these limits: call the AGM.</p>
+      <nav style="margin:0 0 10px;position:static">
+        <button id="recTabSit" class="active" onclick="setRecoveryGroup('situation')" data-i18n="rec_by_sit">By situation</button>
+        <button id="recTabType" onclick="setRecoveryGroup('type')" data-i18n="rec_by_type">By compensation type</button>
+      </nav>
       <div id="situationList"></div>
       <div class="btn-row" id="addSituationRow" style="display:none;margin-top:8px">
         <button class="btn btn-ghost" onclick="addSituation()" data-i18n="rec_add_sit">+ Add situation</button>
@@ -537,7 +563,7 @@ body[data-theme="dark"] .toast { background: #232329; }
   <div style="max-width:480px;margin:0 auto;width:100%">
     <button class="btn btn-ghost" onclick="stopScan()" data-i18n="cancel">Cancel</button>
     <button class="btn btn-dark" onclick="manualCode()" data-i18n="scan_manual">Type barcode manually</button>
-    <button class="btn btn-dark" onclick="document.getElementById('scanFileInput').click()" data-i18n="scan_photo">🖼 Scan from a photo instead</button>
+    <button class="btn btn-dark" onclick="document.getElementById('scanFileInput').click()"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M21 15l-4.5-4.5L6 21"/></svg></span><span data-i18n="scan_photo">Scan from a photo instead</span></button>
     <input type="file" id="scanFileInput" accept="image/*" style="display:none" onchange="scanFromFile(this)">
     <p class="hint" style="color:#9fb0cc;text-align:center;margin:4px 0 0" data-i18n="scan_hint2">Camera not starting? Snap the barcode with your camera app, then use “Scan from a photo”.</p>
   </div>
@@ -640,7 +666,7 @@ tile_shop_d: "Scan barcodes, price & checkout",
 tile_contacts_d: "Call or text the team",
 tile_recovery_d: "What you can offer", tile_info_d: "Job notes & info", info_add: "+ Add info", info_empty: "No info yet. Tap + Add info to save notes about this job.", info_new: "New info", info_edit: "Edit info", info_title_lb: "Title", info_body_lb: "Details", info_title_ph: "e.g. WiFi password", info_body_ph: "Write the details here\u2026", info_untitled: "Untitled", info_need_something: "Add a title or some details first.", info_del: "Delete this info?", info_export: "\u2b06 Export info", info_import: "\u2b07 Import info", info_no_export: "Nothing to export yet.", info_hint: "Save anything the team should know about this job \u2014 notes, codes, procedures. It stays on this phone until you export it.", info_imported_1: "1 info item imported.", info_imported_n: "{n} info items imported.",
 hold_reorder: "Hold a tile to rearrange",
-all_hidden: "All apps are hidden — tap ⚙️ to turn them back on.",
+all_hidden: "All apps are hidden — tap the gear to turn them back on.",
 // profiles
 choose_job: "Choose a job to continue.",
 tap_job_switch: "Tap a job to switch to it. Use ✎ to rename, ✕ to remove.",
@@ -694,7 +720,7 @@ scan_busy: "Scanner is busy — close it and reopen.",
 scan_tapfocus: "◉ Tap to focus",
 scan_pinch: "Pinch to zoom",
 scan_manual: "Type barcode manually",
-scan_photo: "🖼 Scan from a photo instead",
+scan_photo: "Scan from a photo instead",
 scan_hint2: "Camera not starting? Snap the barcode with your camera app, then use “Scan from a photo”.",
 prompt_barcode: "Enter barcode (full number or just the last few digits):",
 scan_nomatch_digits: "No product matches those digits.", scan_add_new: "No product matches \"{v}\". Add it as a new product?", prod_add_manual: "+ Add product manually",
@@ -736,6 +762,8 @@ prod_scan_addedit: "Scan to add / edit product",
 prod_export: "⬆ Export list", prod_import: "⬇ Import list",
 prod_shop_name: "Shop name", prod_category: "Category", prod_category_ph: "e.g. Chips, Drinks", prod_all: "All", cat_no_cat: "No category", cat_set_price: "Set price for all in {v}", cat_price_prompt: "New price for {n} items in \"{v}\":", cat_price_done: "Updated {n} items in \"{v}\"", prod_shop_name_ph: "My Shop",
 prod_share_hint: "Each phone keeps its own list. When prices change, one person taps Export list, sends the file in the group chat, and everyone else taps Import list.",
+prod_save_history: "Save purchase history", prod_view_history: "View purchase history",
+hist_title: "Purchase history", hist_empty: "No purchases yet.", hist_clear: "Clear history", hist_clear_confirm: "Delete all purchase history?", hist_cash_given: "Cash given", hist_change: "Change",
 prod_no_export: "No products saved yet — scan some items first.",
 prod_share_title: "Product list",
 prod_no_valid: "No valid products in that file.",
@@ -746,12 +774,12 @@ price_order_only: "Save for this order only", price_future: "Save for future ord
 // summary
 sum_title: "Order summary", sum_new: "New order",
 sum_subtotal: "Subtotal", sum_tax: "Tax ({r}%)", sum_total: "Total",
-sum_cash: "💵 Cash", sum_card: "💳 Card",
+sum_cash: "Cash", sum_card: "Card",
 sum_cash_given: "Cash given",
 sum_owed: "Still owed: {v}", sum_change: "Change due: {v}", sum_give: "Give: {v}",
 sum_no_items: "No items in this order yet.",
 // shop settings
-sset_title: "⚙️ Shop settings",
+sset_title: "Shop settings",
 sset_tax: "Enable tax", sset_rate: "Tax rate", sset_apply: "Apply tax to:",
 sset_cash: "Cash", sset_card: "Card",
 sset_breakdown: "Cash: recommend bills & coins for change",
@@ -761,7 +789,7 @@ sset_fees: "Other fees", sset_add_fee: "+ Add fee", sset_no_fees: "No fees yet."
 con_search_ph: "Search name or department…",
 con_people: "People", con_add: "+ Add",
 con_departments: "Departments",
-con_call: "📞 Call", con_text: "💬 Text",
+con_call: "Call", con_text: "Text",
 con_no_contacts: "No contacts yet. Tap + Add to add your team.",
 con_share_hint: "Share your team list — one person exports, everyone else imports.",
 con_export: "⬆ Export", con_import: "⬇ Import",
@@ -782,6 +810,7 @@ con_imported_1: "Imported 1 contact.", con_imported_n: "Imported {n} contacts.",
 con_add_group_hint: "Add your first group above to organize contacts.",
 // templates
 tpl_title: "Message templates",
+tpl_library: "Template library",
 tpl_hint: "Write it once — fill in the blanks and send it.",
 tpl_new: "+ New template",
 tpl_use: "Use",
@@ -796,7 +825,7 @@ tpl_no: "No templates yet. Tap + New template.", tpl_examples: "Template library
 tpl_untitled: "Untitled",
 tpl_text_req: "Message text is required.",
 // recovery
-rec_edit: "Edit", rec_done: "Done",
+rec_edit: "Edit", rec_done: "Done", rec_by_sit: "By situation", rec_by_type: "By compensation type",
 rec_add_sit: "+ Add situation",
 rec_comp_types: "Compensation types",
 rec_add: "+ Add",
@@ -835,7 +864,7 @@ tile_shop_d: "Escanea códigos, precios y cobros",
 tile_contacts_d: "Llama o envía mensajes al equipo",
 tile_recovery_d: "Lo que puedes ofrecer", tile_info_d: "Notas e info del trabajo", info_add: "+ A\u00f1adir info", info_empty: "Sin info a\u00fan. Toca + A\u00f1adir info para guardar notas de este trabajo.", info_new: "Nueva info", info_edit: "Editar info", info_title_lb: "T\u00edtulo", info_body_lb: "Detalles", info_title_ph: "p. ej. Contrase\u00f1a del WiFi", info_body_ph: "Escribe los detalles aqu\u00ed\u2026", info_untitled: "Sin t\u00edtulo", info_need_something: "A\u00f1ade un t\u00edtulo o algunos detalles primero.", info_del: "\u00bfEliminar esta info?", info_export: "\u2b06 Exportar info", info_import: "\u2b07 Importar info", info_no_export: "Nada que exportar a\u00fan.", info_hint: "Guarda lo que el equipo deba saber de este trabajo \u2014 notas, c\u00f3digos, procedimientos. Queda en este tel\u00e9fono hasta que lo exportes.", info_imported_1: "1 elemento importado.", info_imported_n: "{n} elementos importados.",
 hold_reorder: "Mantén presionado para reordenar",
-all_hidden: "Todas las apps están ocultas — toca ⚙️ para reactivarlas.",
+all_hidden: "Todas las apps están ocultas — toca el engranaje para reactivarlas.",
 // profiles
 choose_job: "Elige un trabajo para continuar.",
 tap_job_switch: "Toca un trabajo para cambiar a él. Usa ✎ para renombrar, ✕ para eliminar.",
@@ -889,7 +918,7 @@ scan_busy: "El escáner está ocupado — ciérralo y vuelve a abrirlo.",
 scan_tapfocus: "◉ Toca para enfocar",
 scan_pinch: "Pellizca para acercar",
 scan_manual: "Escribir código manualmente",
-scan_photo: "🖼 Escanear desde una foto",
+scan_photo: "Escanear desde una foto",
 scan_hint2: "¿La cámara no inicia? Toma una foto del código con tu app de cámara y usa «Escanear desde una foto».",
 prompt_barcode: "Escribe el código (completo o solo los últimos dígitos):",
 scan_nomatch_digits: "Ningún producto coincide con esos dígitos.", scan_add_new: "Ningún producto coincide con \"{v}\". ¿Añadirlo como producto nuevo?", prod_add_manual: "+ Añadir producto manualmente",
@@ -931,6 +960,8 @@ prod_scan_addedit: "Escanear para agregar / editar",
 prod_export: "⬆ Exportar lista", prod_import: "⬇ Importar lista",
 prod_shop_name: "Nombre de la tienda", prod_category: "Categor\u00eda", prod_category_ph: "p. ej. Papas, Bebidas", prod_all: "Todos", cat_no_cat: "Sin categor\u00eda", cat_set_price: "Poner precio a todos en {v}", cat_price_prompt: "Nuevo precio para {n} art\u00edculos en \"{v}\":", cat_price_done: "{n} art\u00edculos actualizados en \"{v}\"", prod_shop_name_ph: "Mi tienda",
 prod_share_hint: "Cada teléfono guarda su propia lista. Cuando cambien los precios, una persona toca Exportar lista, envía el archivo al chat del grupo y los demás tocan Importar lista.",
+prod_save_history: "Guardar historial de compras", prod_view_history: "Ver historial de compras",
+hist_title: "Historial de compras", hist_empty: "Sin compras aún.", hist_clear: "Borrar historial", hist_clear_confirm: "¿Eliminar todo el historial de compras?", hist_cash_given: "Efectivo recibido", hist_change: "Cambio",
 prod_no_export: "Aún no hay productos — escanea algunos primero.",
 prod_share_title: "Lista de productos",
 prod_no_valid: "No hay productos válidos en ese archivo.",
@@ -941,12 +972,12 @@ price_order_only: "Solo para esta orden", price_future: "Para futuras órdenes",
 // summary
 sum_title: "Resumen de la orden", sum_new: "Nueva orden",
 sum_subtotal: "Subtotal", sum_tax: "Impuesto ({r}%)", sum_total: "Total",
-sum_cash: "💵 Efectivo", sum_card: "💳 Tarjeta",
+sum_cash: "Efectivo", sum_card: "Tarjeta",
 sum_cash_given: "Efectivo recibido",
 sum_owed: "Aún debe: {v}", sum_change: "Cambio: {v}", sum_give: "Entrega: {v}",
 sum_no_items: "Aún no hay artículos en esta orden.",
 // shop settings
-sset_title: "⚙️ Ajustes de la tienda",
+sset_title: "Ajustes de la tienda",
 sset_tax: "Activar impuesto", sset_rate: "Tasa de impuesto", sset_apply: "Aplicar impuesto a:",
 sset_cash: "Efectivo", sset_card: "Tarjeta",
 sset_breakdown: "Efectivo: sugerir billetes y monedas para el cambio",
@@ -956,7 +987,7 @@ sset_fees: "Otros cargos", sset_add_fee: "+ Agregar cargo", sset_no_fees: "Sin c
 con_search_ph: "Buscar nombre o departamento…",
 con_people: "Personas", con_add: "+ Agregar",
 con_departments: "Departamentos",
-con_call: "📞 Llamar", con_text: "💬 Mensaje",
+con_call: "Llamar", con_text: "Mensaje",
 con_no_contacts: "Sin contactos aún. Toca + Agregar.",
 con_share_hint: "Comparte tu lista — una persona exporta y los demás importan.",
 con_export: "⬆ Exportar", con_import: "⬇ Importar",
@@ -977,6 +1008,7 @@ con_imported_1: "Se importó 1 contacto.", con_imported_n: "Se importaron {n} co
 con_add_group_hint: "Agrega tu primer grupo arriba para organizar contactos.",
 // templates
 tpl_title: "Plantillas de mensajes",
+tpl_library: "Biblioteca de plantillas",
 tpl_hint: "Escríbelo una vez — completa los espacios y envíalo.",
 tpl_new: "+ Nueva plantilla",
 tpl_use: "Usar",
@@ -991,7 +1023,7 @@ tpl_no: "Sin plantillas aún. Toca + Nueva plantilla.", tpl_examples: "Bibliotec
 tpl_untitled: "Sin título",
 tpl_text_req: "El texto es obligatorio.",
 // recovery
-rec_edit: "Editar", rec_done: "Listo",
+rec_edit: "Editar", rec_done: "Listo", rec_by_sit: "Por situación", rec_by_type: "Por compensación",
 rec_add_sit: "+ Agregar situación",
 rec_comp_types: "Tipos de compensación",
 rec_add: "+ Agregar",
@@ -1075,7 +1107,7 @@ var modalCode = null, modalIsNew = true, modalAfterSave = null;
 var sheetCode = null, sheetOverride = null, priceCtx = null, modalImg = null;
 
 function defaultShopSettings() {
-  return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, fees: [], cashPicks: [1, 5, 10, 20, 50, 100] };
+  return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, saveHistory: false, fees: [], cashPicks: [1, 5, 10, 20, 50, 100] };
 }
 function defaultContacts() {
   return { departments: [], people: [] };
@@ -1111,7 +1143,7 @@ function loadLegacyState() {
   return null;
 }
 function blankProfile(name) {
-  return { name: name, products: {}, shopName: "", shopSettings: defaultShopSettings(),
+  return { name: name, products: {}, shopName: "", shopSettings: defaultShopSettings(), shopHistory: [],
     recovery: { compTypes: [], situations: [], footerNote: t("default_footer") },
     contacts: { departments: [], people: [], templates: [], lastDept: "" },
     info: { items: [] },
@@ -1123,7 +1155,9 @@ function migrateProfile(p) {
   else {
     if (!Array.isArray(p.shopSettings.fees)) p.shopSettings.fees = [];
     if (!Array.isArray(p.shopSettings.cashPicks)) p.shopSettings.cashPicks = [1, 5, 10, 20, 50, 100];
+    if (p.shopSettings.saveHistory === undefined) p.shopSettings.saveHistory = false;
   }
+  if (!Array.isArray(p.shopHistory)) p.shopHistory = [];
   if (p.recovery.footerNote === undefined) p.recovery.footerNote = "Anything beyond these limits: check with the AGM.";
   if (!p.contacts) p.contacts = defaultContacts();
   if (!Array.isArray(p.contacts.templates)) p.contacts.templates = [];
@@ -1434,9 +1468,11 @@ function qwCloseTopOverlay() {
   if (qwIsOpen("confirmOverlay")) { confirmChoice(false); return true; }
   if (qwIsOpen("priceModal")) { closePriceModal(); return true; }
   if (qwIsOpen("templateEditModal")) { closeTemplateEdit(); return true; }
+  if (qwIsOpen("templateLibModal")) { closeTemplateLibrary(); return true; }
   if (qwIsOpen("templateUseModal")) { closeTemplateUse(); return true; }
   if (qwIsOpen("contactModal")) { closeContactModal(); return true; }
   if (qwIsOpen("infoModal")) { closeInfoModal(); return true; }
+  if (qwIsOpen("historyModal")) { closeHistory(); return true; }
   if (qwIsOpen("sheet")) { closeSheet(); return true; }
   if (qwIsOpen("modal")) { closeModal(); return true; }
   if (qwIsOpen("scanOverlay")) { stopScan(); return true; }
@@ -2052,7 +2088,7 @@ function exportData() {
   if (!count) { toast(t("prod_no_export")); return; }
   var payload = { app: "suite-shop-scanner", version: 2, exportedAt: new Date().toISOString(), products: state.products, shopSettings: state.shopSettings };
   var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-  var fname = "quickwork-products-" + profileSlug() + ".json";
+  var fname = "quickwork-products-" + shopSlug() + ".json";
   shareOrDownload(blob, fname, t("prod_share_title"));
 }
 function downloadExport(blob, fname) {
@@ -2069,7 +2105,9 @@ function downloadExport(blob, fname) {
   }
 }
 var pendingImport = null;
-function profileSlug() { return ((state.name || "job").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")) || "job"; }
+function slugify(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
+function shopSlug() { return slugify(state.shopName) || "my-shop"; }
+function profileSlug() { return slugify(state.name) || shopSlug(); }
 function importData(input) {
   var f = input.files && input.files[0];
   input.value = "";
@@ -2255,8 +2293,8 @@ function renderSummary() {
   }
   html += '<div class="row grand"><span>' + t("sum_total") + '</span><span>' + fmt(tot.total) + '</span></div></div>';
   html += '<div class="btn-row" style="margin-top:12px">' +
-    '<button class="paybtn' + (payMethod === "cash" ? " active" : "") + '" onclick="setPayMethod(\'cash\')">' + t("sum_cash") + '</button>' +
-    '<button class="paybtn' + (payMethod === "card" ? " active" : "") + '" onclick="setPayMethod(\'card\')">' + t("sum_card") + '</button></div>';
+    '<button class="paybtn' + (payMethod === "cash" ? " active" : "") + '" onclick="setPayMethod(\'cash\')"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;display:block"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>' + t("sum_cash") + '</button>' +
+    '<button class="paybtn' + (payMethod === "card" ? " active" : "") + '" onclick="setPayMethod(\'card\')"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;display:block"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>' + t("sum_card") + '</button></div>';
   html += '<div id="cashSection">' + (payMethod === "cash" ? cashSectionHTML() : "") + '</div>';
   document.getElementById("summaryBody").innerHTML = html;
 }
@@ -2267,18 +2305,18 @@ function cashSectionHTML() {
   }).join("");
   return '<label for="cashInput" style="margin-top:12px">' + t("sum_cash_given") + '</label>' +
     (btns ? '<div class="setrow" style="margin:6px 0 2px">' + btns + '</div>' : '') +
-    '<input type="number" id="cashInput" inputmode="decimal" min="0" step="0.01" placeholder="0.00" oninput="updateChange(this.value)">' +
+    '<input type="text" id="cashInput" inputmode="decimal" placeholder="0.00" autocomplete="off" oninput="updateChange(this.value)">' +
     '<div id="changeBox"></div>';
 }
 function setPayMethod(m) { payMethod = m; renderSummary(); }
 var DENOMS = [[2000,"$20"],[1000,"$10"],[500,"$5"],[100,"$1"],[25,"25¢"],[10,"10¢"],[5,"5¢"],[1,"1¢"]];
 function changeBreakdown(cents) {
-  var parts = [];
+  var rows = [];
   DENOMS.forEach(function(d){
     var n = Math.floor(cents / d[0]);
-    if (n > 0) { parts.push(d[1] + " × " + n); cents -= n * d[0]; }
+    if (n > 0) { rows.push('<div class="change-row"><span class="change-denom">' + d[1] + '</span><span class="change-count">× ' + n + '</span></div>'); cents -= n * d[0]; }
   });
-  return parts.join(", ");
+  return rows.join("");
 }
 function updateChange(val) {
   var t = calcTotals();
@@ -2298,7 +2336,54 @@ function updateChange(val) {
   }
 }
 function closeSummary() { document.getElementById("summaryOverlay").classList.remove("open"); }
-function newOrderAfterSummary() { closeSummary(); order = []; renderOrder(); showTab("checkout"); }
+function newOrderAfterSummary() {
+  if ((state.shopSettings || {}).saveHistory && order.length) {
+    var t = calcTotals();
+    var given = null, change = null;
+    if (payMethod === "cash") {
+      var ci = document.getElementById("cashInput");
+      var g = ci ? parseFloat(ci.value) : NaN;
+      if (!isNaN(g)) { given = Math.round(g * 100) / 100; change = Math.round((g - t.total) * 100) / 100; }
+    }
+    state.shopHistory = state.shopHistory || [];
+    state.shopHistory.unshift({
+      id: uid("h"), at: Date.now(),
+      items: order.map(function(l){ return { name: l.name, price: l.price, qty: l.qty }; }),
+      sub: t.sub, feeLines: t.feeLines || [], tax: t.tax, total: t.total,
+      payMethod: payMethod, cashGiven: given, change: change
+    });
+    if (state.shopHistory.length > 200) state.shopHistory.length = 200;
+    saveState();
+  }
+  closeSummary(); order = []; renderOrder(); showTab("checkout");
+}
+function renderHistory() {
+  var box = document.getElementById("historyList");
+  if (!box) return;
+  var list = state.shopHistory || [];
+  if (!list.length) { box.innerHTML = '<div class="empty">' + t("hist_empty") + '</div>'; return; }
+  box.innerHTML = list.map(function(h){
+    var items = (h.items || []).map(function(it){
+      return '<div class="sumline2"><span>' + esc(it.name) + ' × ' + it.qty + '</span><span>' + fmt(it.price * it.qty) + '</span></div>';
+    }).join("");
+    var meta = new Date(h.at).toLocaleString() + " · " + (h.payMethod === "cash" ? t("sum_cash") : t("sum_card"));
+    var extra = "";
+    if (h.payMethod === "cash" && h.cashGiven != null) {
+      extra = '<div class="sumline2"><span>' + t("hist_cash_given") + '</span><span>' + fmt(h.cashGiven) + '</span></div>' +
+        '<div class="sumline2"><span>' + t("hist_change") + '</span><span>' + fmt(h.change) + '</span></div>';
+    }
+    return '<div class="card" style="margin-bottom:10px"><div class="sumline2"><span style="font-weight:800">' + esc(meta) + '</span><span style="font-weight:800">' + fmt(h.total) + '</span></div>' + items + extra + '</div>';
+  }).join("");
+}
+function openHistory() { renderHistory(); document.getElementById("historyModal").classList.add("open"); }
+function closeHistory() { document.getElementById("historyModal").classList.remove("open"); }
+function clearHistory() {
+  appConfirm(t("hist_clear_confirm")).then(function(ok){
+    if (!ok) return;
+    state.shopHistory = [];
+    saveState(); renderHistory();
+  });
+}
 
 /* ---------- product photos ---------- */
 function processImage(file, cb) {
@@ -2381,8 +2466,14 @@ function loadShopSettingsUI() {
   document.getElementById("setTaxCash").checked = !!s.taxCash;
   document.getElementById("setTaxCard").checked = !!s.taxCard;
   document.getElementById("setDenoms").checked = s.changeDenoms !== false;
+  document.getElementById("setSaveHistory").checked = !!s.saveHistory;
   renderFees();
   renderCashPickSettings();
+}
+function toggleSaveHistory() {
+  var cb = document.getElementById("setSaveHistory");
+  state.shopSettings.saveHistory = !!(cb && cb.checked);
+  saveState();
 }
 function renderFees() {
   var box = document.getElementById("feeList");
@@ -2438,7 +2529,10 @@ function setCashGiven(a) {
 }
 /* ---------- service recovery guide ---------- */
 var recoveryEditing = false;
-function toggleRecoveryEdit() { recoveryEditing = !recoveryEditing; renderRecovery(); }
+var editingSituation = -1;
+function toggleRecoveryEdit() { recoveryEditing = !recoveryEditing; if (!recoveryEditing) editingSituation = -1; renderRecovery(); }
+function editSituation(si) { editingSituation = si; renderRecovery(); }
+function doneEditSituation() { editingSituation = -1; renderRecovery(); }
 function renderRecovery() {
   var btn = document.getElementById("recoveryEditBtn");
   if (btn) btn.textContent = recoveryEditing ? t("rec_done") : t("rec_edit");
@@ -2470,10 +2564,13 @@ function renderSituations() {
   if (!box) return;
   var list = state.recovery.situations;
   if (!list.length) { box.innerHTML = '<div class="empty">' + t("rec_no_sit") + '</div>' + footerNoteHTML(); return; }
+  if (recoveryGroupBy === "type") { box.innerHTML = renderSituationsByType() + footerNoteHTML(); return; }
   box.innerHTML = list.map(function(s, si){
     var body;
-    if (recoveryEditing) {
+    var isEditing = (editingSituation === si);
+    if (isEditing) {
       body = '<div class="feerow"><input type="text" value="' + esc(s.name) + '" onchange="renameSituation(' + si + ',this.value)" placeholder="' + t("rec_sit_name") + '">' +
+        '<button class="btn btn-ghost" style="width:auto;padding:8px 14px" onclick="doneEditSituation()">' + t("rec_done") + '</button>' +
         '<button class="iconbtn" onclick="delSituation(' + si + ')">✕</button></div>' +
         s.comps.map(function(c, ci){
           var custom = state.recovery.compTypes.indexOf(c.type) === -1;
@@ -2491,16 +2588,48 @@ function renderSituations() {
         }).join("") +
         '<button class="btn btn-ghost" style="margin-top:6px" onclick="addComp(' + si + ')">' + t("rec_add_comp") + '</button>';
     } else {
-      body = '<div class="rtitle" style="margin-bottom:4px">' + esc(s.name) + '</div>' +
+      body = '<div style="display:flex;align-items:flex-start;gap:8px"><div style="flex:1;min-width:0">' +
+        '<div class="rtitle" style="margin-bottom:4px">' + esc(s.name) + '</div>' +
         (s.comps.length
           ? s.comps.map(function(c){
               var r = fmtRange(c.min, c.max);
               return '<div class="rcomp">★ ' + esc(c.type) + (r ? ': ' + esc(r) : '') + '</div>';
             }).join("")
-          : '');
+          : '') +
+        '</div><button class="iconbtn" onclick="editSituation(' + si + ')" title="' + t("rec_edit") + '">✎</button></div>';
     }
     return '<div class="rec-card">' + body + '</div>';
   }).join("") + footerNoteHTML();
+}
+var recoveryGroupBy = "situation";
+function setRecoveryGroup(mode) {
+  recoveryGroupBy = mode;
+  editingSituation = -1;
+  document.getElementById("recTabSit").classList.toggle("active", mode === "situation");
+  document.getElementById("recTabType").classList.toggle("active", mode === "type");
+  renderSituations();
+}
+function renderSituationsByType() {
+  var list = state.recovery.situations;
+  var used = [];
+  state.recovery.compTypes.forEach(function(t){ if (used.indexOf(t) === -1) used.push(t); });
+  list.forEach(function(s){ s.comps.forEach(function(c){ if (used.indexOf(c.type) === -1) used.push(c.type); }); });
+  var groups = used.map(function(type){
+    var rows = [];
+    list.forEach(function(s){
+      s.comps.forEach(function(c){
+        if (c.type === type) rows.push({ sit: s.name, range: fmtRange(c.min, c.max) });
+      });
+    });
+    return { type: type, rows: rows };
+  }).filter(function(g){ return g.rows.length; });
+  if (!groups.length) return '<div class="empty">' + t("rec_no_sit") + '</div>';
+  return groups.map(function(g){
+    return '<div class="rec-card"><div class="rtitle rtype" style="margin-bottom:4px">' + esc(g.type) + '</div>' +
+      g.rows.map(function(r){
+        return '<div class="rcomp" style="font-weight:600;color:inherit">• ' + esc(r.sit) + (r.range ? ': ' + esc(r.range) : '') + '</div>';
+      }).join("") + '</div>';
+  }).join("");
 }
 function renderCompTypeList() {
   var box = document.getElementById("compTypeList");
@@ -2529,6 +2658,7 @@ function addSituation() {
     val = val.trim();
     if (!val) return;
     state.recovery.situations.push({ id: uid("s"), name: val, comps: [] });
+    editingSituation = state.recovery.situations.length - 1;
     saveState(); renderSituations();
   });
 }
@@ -2536,6 +2666,7 @@ function delSituation(si) {
   appConfirm(t("rec_del_sit")).then(function(ok){
     if (!ok) return;
     state.recovery.situations.splice(si, 1);
+    editingSituation = -1;
     saveState(); renderSituations();
   });
 }
@@ -2651,11 +2782,7 @@ function renderTemplates() {
     return !list.some(function(tp){ return tp.name === e.name; });
   });
   if (ex.length) {
-    html += '<div class="hint" style="margin:12px 0 6px;font-weight:700">' + t("tpl_examples") + '</div>';
-    html += ex.map(function(e){
-      return '<div class="tpl-lib-row"><span class="name">' + esc(e.name) + '</span>' +
-        '<button class="iconbtn" onclick="addExampleTemplate(this)" data-exname="' + esc(e.name) + '">' + t("tpl_add") + '</button></div>';
-    }).join("");
+    html += '<div style="margin-top:12px"><button class="btn btn-ghost" onclick="openTemplateLibrary()"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>' + t("tpl_library") + ' (' + ex.length + ')</button></div>';
   }
   box.innerHTML = html;
 }
@@ -2666,7 +2793,23 @@ function addExampleTemplate(btn) {
   if (!found) return;
   state.contacts.templates = state.contacts.templates || [];
   state.contacts.templates.push({ id: uid("t"), name: found.name, text: found.text });
-  saveState(); renderTemplates();
+  saveState(); renderTemplates(); renderTemplateLibrary();
+}
+function openTemplateLibrary() {
+  renderTemplateLibrary();
+  document.getElementById("templateLibModal").classList.add("open");
+}
+function closeTemplateLibrary() { document.getElementById("templateLibModal").classList.remove("open"); }
+function renderTemplateLibrary() {
+  var box = document.getElementById("templateLibList"); if (!box) return;
+  var list = state.contacts.templates || [];
+  var ex = exampleTemplates().filter(function(e){
+    return !list.some(function(tp){ return tp.name === e.name; });
+  });
+  box.innerHTML = ex.map(function(e){
+    return '<div class="tpl-lib-row"><span class="name">' + esc(e.name) + '</span>' +
+      '<button class="iconbtn" onclick="addExampleTemplate(this)" data-exname="' + esc(e.name) + '">' + t("tpl_add") + '</button></div>';
+  }).join("");
 }
 var activeTplId = null;
 function openTemplateUse(id) {
@@ -2767,8 +2910,8 @@ function renderContactList() {
         '<button class="iconbtn" onclick="delContact(\'' + p.id + '\')">\u2715</button></span></div>' +
       '<div class="rmeta">' + esc(p.dept) + ' \u00B7 ' + esc(p.phone) + '</div>' +
       '<div class="btn-row" style="margin-top:8px">' +
-        '<a class="btn btn-dark" style="text-align:center;text-decoration:none" href="' + telHref(p.phone) + '">' + t("con_call") + '</a>' +
-        '<a class="btn btn-ghost" style="text-align:center;text-decoration:none" href="' + smsHref(p.phone) + '">' + t("con_text") + '</a>' +
+        '<a class="btn btn-dark" style="text-align:center;text-decoration:none" href="' + telHref(p.phone) + '"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>' + t("con_call") + '</a>' +
+        '<a class="btn btn-ghost" style="text-align:center;text-decoration:none" href="' + smsHref(p.phone) + '"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>' + t("con_text") + '</a>' +
       '</div></div>';
   }).join("");
 }
@@ -2985,6 +3128,16 @@ if ("serviceWorker" in navigator) {
     </div>
   </div>
 </div>
+<div id="templateLibModal">
+  <div id="templateLibBox">
+    <h2 data-i18n="tpl_library">Template library</h2>
+    <p class="hint" style="margin:0 0 8px" data-i18n="tpl_examples">Template library — tap Add to save one to your templates:</p>
+    <div id="templateLibList"></div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeTemplateLibrary()" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
 <div id="importTargetModal">
   <div id="importTargetBox">
     <h2 data-i18n="import_into">Import into…</h2>
@@ -3032,6 +3185,16 @@ if ("serviceWorker" in navigator) {
       <button class="btn btn-ghost" onclick="closeInfoModal()" data-i18n="cancel">Cancel</button>
       <button class="btn btn-danger" id="infoDeleteBtn" onclick="askDelInfo()" data-i18n="delete_">Delete</button>
       <button class="btn btn-primary" onclick="saveInfo()" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+<div id="historyModal">
+  <div id="historyBox">
+    <h2 data-i18n="hist_title">Purchase history</h2>
+    <div id="historyList" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeHistory()" data-i18n="close">Close</button>
+      <button class="btn btn-danger" onclick="clearHistory()" data-i18n="hist_clear">Clear history</button>
     </div>
   </div>
 </div>
