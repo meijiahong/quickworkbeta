@@ -31,6 +31,8 @@
   .btn-row { display: flex; gap: 8px; }
   .btn-row .btn { margin-bottom: 0; }
   input[type=text], input[type=number], input[type=search] { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; }
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   label { font-size: 13px; font-weight: 600; color: #5a6577; display: block; margin: 8px 0 4px; }
   .item { display: flex; align-items: center; gap: 10px; padding: 11px 4px; border-bottom: 1px solid #edf0f5; }
   .item:last-child { border-bottom: none; }
@@ -349,7 +351,7 @@ body[data-theme="dark"] .toast { background: #232329; }
 </div>
 
 <div id="view-shop" style="display:none">
-  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><div style="flex:1;min-width:0"><h1>Quick Shop</h1><p id="appTitle" class="modsub">My Shop</p></div><span class="modhead-sp"></span></div>
+  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><div style="flex:1;min-width:0"><h1>Quick Shop</h1><p id="appTitle" class="modsub" style="display:none"></p></div><span class="modhead-sp"></span></div>
 <nav>
   <button id="tabBtnCheckout" class="active" onclick="showTab('checkout')" data-i18n="nav_checkout">Checkout</button>
   <button id="tabBtnProducts" onclick="showTab('products')" data-i18n="nav_products">Products</button>
@@ -1127,7 +1129,7 @@ function loadLegacyState() {
   try {
     var s = JSON.parse(localStorage.getItem(LS_KEY) || "null");
     if (s && s.products) {
-      if (!s.shopName) s.shopName = "My Shop";
+      if (!s.shopName) s.shopName = "";
       if (!s.shopSettings) s.shopSettings = defaultShopSettings();
       if (!s.shopSettings.cashPicks) s.shopSettings.cashPicks = [1, 5, 10, 20, 50, 100];
       if (!s.recovery) s.recovery = defaultRecovery();
@@ -1152,7 +1154,7 @@ function blankProfile(name) {
     modules: { shop: true, contacts: true, recovery: true, info: true }, moduleOrder: ["shop", "contacts", "recovery", "info"] };
 }
 function migrateProfile(p) {
-  if (!p.shopName || p.shopName === "Suite Shop") p.shopName = "My Shop";
+  if (!p.shopName || p.shopName === "Suite Shop" || p.shopName === "My Shop") p.shopName = "";
   if (!p.shopSettings) p.shopSettings = defaultShopSettings();
   else {
     if (!Array.isArray(p.shopSettings.fees)) p.shopSettings.fees = [];
@@ -1401,7 +1403,7 @@ function exportInfo() {
   var items = (state.info && state.info.items) || [];
   if (!items.length) { toast(t("info_no_export")); return; }
   var payload = { app: "quickwork-info", version: 1, exportedAt: new Date().toISOString(), items: items };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), "quickwork-info-" + profileSlug() + ".json", t("info_export"));
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), profileSlug() + "-info.json", t("info_export"));
 }
 function importInfo(input) {
   var f = input.files && input.files[0]; input.value = "";
@@ -2091,7 +2093,7 @@ function exportData() {
   if (!count) { toast(t("prod_no_export")); return; }
   var payload = { app: "suite-shop-scanner", version: 2, exportedAt: new Date().toISOString(), products: state.products, shopSettings: state.shopSettings };
   var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-  var fname = "quickwork-products-" + shopSlug() + ".json";
+  var fname = profileSlug() + "-products.json";
   shareOrDownload(blob, fname, t("prod_share_title"));
 }
 function downloadExport(blob, fname) {
@@ -2452,16 +2454,20 @@ function clearPhoto() {
 
 /* ---------- shop name ---------- */
 function renderShopName() {
-  var n = state.shopName || t("my_shop");
-  document.getElementById("appTitle").textContent = n;
+  var n = state.shopName || "";
+  var at = document.getElementById("appTitle");
+  at.textContent = n;
+  at.style.display = n ? "" : "none";
   var inp = document.getElementById("shopName");
-  if (inp && document.activeElement !== inp) inp.value = (state.shopName === "My Shop") ? "" : state.shopName;
+  if (inp && document.activeElement !== inp) inp.value = state.shopName || "";
 }
 var shopNameSaveT = null, shopNameSavePending = false;
 function shopNameInput() {
   var v = document.getElementById("shopName").value.trim();
-  state.shopName = v || "My Shop";
-  document.getElementById("appTitle").textContent = state.shopName;
+  state.shopName = v;
+  var at = document.getElementById("appTitle");
+  at.textContent = state.shopName;
+  at.style.display = state.shopName ? "" : "none";
   shopNameSavePending = true;
   if (shopNameSaveT) return;
   shopNameSaveT = setTimeout(function(){ shopNameSaveT = null; flushShopNameSave(); }, 400);
@@ -2474,7 +2480,7 @@ function flushShopNameSave() {
 }
 function shopNameChanged() {
   var v = document.getElementById("shopName").value.trim();
-  state.shopName = v || "My Shop";
+  state.shopName = v;
   document.getElementById("appTitle").textContent = state.shopName;
   shopNameSavePending = true;
   flushShopNameSave();
@@ -3024,7 +3030,7 @@ function delDepartment(i) {
 function exportContacts() {
   if (!state.contacts.people.length) { toast(t("con_no_export")); return; }
   var payload = { app: "quickwork-contacts", version: 1, exportedAt: new Date().toISOString(), contacts: state.contacts };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), "quickwork-contacts-" + profileSlug() + ".json", t("con_share_title"));
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), profileSlug() + "-contacts.json", t("con_share_title"));
 }
 function importContacts(input) {
   var f = input.files && input.files[0];
@@ -3045,7 +3051,7 @@ function importContacts(input) {
 function exportRecovery() {
   if (!state.recovery.situations.length) { toast(t("rec_no_export")); return; }
   var payload = { app: "quickwork-recovery", version: 2, exportedAt: new Date().toISOString(), recovery: state.recovery };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), "quickwork-recovery-guide-" + profileSlug() + ".json", t("rec_share_title"));
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), profileSlug() + "-recovery-guide.json", t("rec_share_title"));
 }
 function importRecovery(input) {
   var f = input.files && input.files[0];
