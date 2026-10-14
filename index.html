@@ -334,10 +334,12 @@ body[data-theme="dark"] .toast { background: #232329; }
     <div><h1>QuickWork</h1><p data-i18n="choose_job">Choose a job to continue.</p></div>
   </div>
   <div id="profileList" style="max-width:640px;margin:0 auto;padding:8px 18px"></div>
-  <p class="hint" style="max-width:640px;margin:0 auto;padding:0 18px 6px" data-i18n="tap_job_switch">Tap a job to switch to it. Use ✎ to rename, ✕ to remove.</p>
+  <p class="hint" style="max-width:640px;margin:0 auto;padding:0 18px 6px" data-i18n="tap_job_switch">Tap a job to switch to it. Use ⬆ to export, ✎ to rename, ✕ to remove.</p>
   <div style="max-width:640px;margin:0 auto;padding:0 18px 24px">
     <button class="btn btn-dark" onclick="addProfile()" data-i18n="new_job">+ New job</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('importJobFile').click()" data-i18n="job_import">Import job</button>
   </div>
+  <input type="file" id="importJobFile" accept=".json,application/json" style="display:none" onchange="importJob(this)">
 </div>
 
 <div id="view-home">
@@ -462,7 +464,7 @@ body[data-theme="dark"] .toast { background: #232329; }
     </div>
     <div class="card">
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="exportContacts()" data-i18n="con_export">⬆ Export</button>
+        <button class="btn btn-ghost" onclick="exportContacts()" data-i18n="con_export">⬆ Export contact</button>
         <button class="btn btn-ghost" onclick="document.getElementById('importContactsFile').click()" data-i18n="con_import">⬇ Import</button>
       </div>
       <input type="file" id="importContactsFile" accept=".json,application/json" style="display:none" onchange="importContacts(this)">
@@ -672,8 +674,12 @@ hold_reorder: "Hold a tile to rearrange",
 all_hidden: "All apps are hidden — tap the gear to turn them back on.",
 // profiles
 choose_job: "Choose a job to continue.",
-tap_job_switch: "Tap a job to switch to it. Use ✎ to rename, ✕ to remove.",
+tap_job_switch: "Tap a job to switch to it. Use ⬆ to export, ✎ to rename, ✕ to remove.",
 new_job: "+ New job",
+job_import: "Import job",
+job_exported: "Job exported.",
+job_imported: 'Imported "{v}".',
+job_import_bad: "That file is not a QuickWork job export.",
 current_badge: "current",
 counts: "{p} products · {c} contacts",
 prompt_job_name: "Job name:",
@@ -795,7 +801,7 @@ con_departments: "Departments",
 con_call: "Call", con_text: "Text",
 con_no_contacts: "No contacts yet. Tap + Add to add your team.",
 con_share_hint: "Share your team list — one person exports, everyone else imports.",
-con_export: "⬆ Export", con_import: "⬇ Import",
+con_export: "⬆ Export contact", con_import: "⬇ Import",
 con_add_title: "Add contact", con_edit_title: "Edit contact",
 con_name: "Name", con_phone: "Phone", con_phone_ph: "e.g. 555-123-4567", con_dept: "Department",
 con_dept_ph: "e.g. Kitchen, Warehouse \u2014 or type a new one",
@@ -870,8 +876,12 @@ hold_reorder: "Mantén presionado para reordenar",
 all_hidden: "Todas las apps están ocultas — toca el engranaje para reactivarlas.",
 // profiles
 choose_job: "Elige un trabajo para continuar.",
-tap_job_switch: "Toca un trabajo para cambiar a él. Usa ✎ para renombrar, ✕ para eliminar.",
+tap_job_switch: "Toca un trabajo para cambiar a él. Usa ⬆ para exportar, ✎ para renombrar, ✕ para eliminar.",
 new_job: "+ Nuevo trabajo",
+job_import: "Importar trabajo",
+job_exported: "Trabajo exportado.",
+job_imported: '"\\u201C{v}\\u201D importado.',
+job_import_bad: "Ese archivo no es una exportación de trabajo de QuickWork.",
 current_badge: "actual",
 counts: "{p} productos · {c} contactos",
 prompt_job_name: "Nombre del trabajo:",
@@ -993,7 +1003,7 @@ con_departments: "Departamentos",
 con_call: "Llamar", con_text: "Mensaje",
 con_no_contacts: "Sin contactos aún. Toca + Agregar.",
 con_share_hint: "Comparte tu lista — una persona exporta y los demás importan.",
-con_export: "⬆ Exportar", con_import: "⬇ Importar",
+con_export: "⬆ Exportar contacto", con_import: "⬇ Importar",
 con_add_title: "Agregar contacto", con_edit_title: "Editar contacto",
 con_name: "Nombre", con_phone: "Teléfono", con_phone_ph: "ej. 555-123-4567", con_dept: "Departamento",
 con_dept_ph: "p. ej. Cocina, Almacén \u2014 o escribe uno nuevo",
@@ -1403,7 +1413,7 @@ function exportInfo() {
   var items = (state.info && state.info.items) || [];
   if (!items.length) { toast(t("info_no_export")); return; }
   var payload = { app: "quickwork-info", version: 1, exportedAt: new Date().toISOString(), items: items };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), profileSlug() + "-info.json", t("info_export"));
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickinfo-info.json", t("info_export"));
 }
 function importInfo(input) {
   var f = input.files && input.files[0]; input.value = "";
@@ -1443,6 +1453,7 @@ function qwRenderView(v) {
   try { window.scrollTo(0, 0); } catch (e) {}
   qwCurView = v;
   if (v === "home") renderHome();
+  if (v === "shop") showTab("checkout");
   if (v === "contacts") renderContacts();
   if (v === "recovery") renderRecovery();
   if (v === "info") renderInfo();
@@ -1651,6 +1662,7 @@ function renderProfiles() {
       '<button class="profilemain" onclick="switchProfile(\'' + pid + '\')">' +
         '<span class="modname">' + esc(p.name) + (active ? ' <span class="badge">' + t("current_badge") + '</span>' : '') + '</span>' +
         '<span class="moddesc">' + tf("counts", { p: np, c: nc }) + '</span></button>' +
+      '<button class="iconbtn" onclick="exportJob(\'' + pid + '\')">\u2B06</button>' +
       '<button class="iconbtn" onclick="renameProfile(\'' + pid + '\')">\u270E</button>' +
       '<button class="iconbtn" onclick="deleteProfile(\'' + pid + '\')">\u2715</button></div>';
   }).join("");
@@ -1691,6 +1703,43 @@ function deleteProfile(pid) {
     if (wasActive) switchProfile(Object.keys(DB.profiles)[0]);
     else { renderProfiles(); renderHome(); }
   });
+}
+function exportJob(pid) {
+  var p = DB.profiles[pid]; if (!p) return;
+  var payload = { app: "quickwork-job", version: 1, profile: p };
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefixFor(p.name) + "job.json", t("job_exported"));
+}
+function importJob(input) {
+  var f = input.files && input.files[0]; input.value = "";
+  if (!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try {
+      var data = JSON.parse(r.result);
+      if (!data || data.app !== "quickwork-job" || !data.profile || typeof data.profile !== "object") throw 0;
+      var name = String(data.profile.name || "").trim();
+      var p = blankProfile(name);
+      Object.keys(data.profile).forEach(function(k){ if (k !== "name" && data.profile[k] !== null) p[k] = data.profile[k]; });
+      p.name = name;
+      migrateProfile(p);
+      if (name) {
+        var taken = {};
+        Object.keys(DB.profiles).forEach(function(id){ taken[DB.profiles[id].name] = 1; });
+        var finalName = name, i = 1;
+        if (taken[finalName]) {
+          finalName = name + " (imported)";
+          while (taken[finalName]) { i++; finalName = name + " (imported " + i + ")"; }
+        }
+        p.name = finalName;
+      }
+      var pid = uid("p");
+      DB.profiles[pid] = p;
+      saveState();
+      switchProfile(pid);
+      toast(tf("job_imported", { v: p.name || t("job_word") }));
+    } catch (e) { toast(t("job_import_bad")); }
+  };
+  r.readAsText(f);
 }
 function renderSettingsProfile() {
   var el = document.getElementById("settingsProfileRow");
@@ -2093,7 +2142,8 @@ function exportData() {
   if (!count) { toast(t("prod_no_export")); return; }
   var payload = { app: "suite-shop-scanner", version: 2, exportedAt: new Date().toISOString(), products: state.products, shopSettings: state.shopSettings };
   var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-  var fname = profileSlug() + "-products.json";
+  var s = slugify(state.shopName);
+  var fname = exportPrefix() + "quickshop-" + (s ? s + "-" : "") + "products.json";
   shareOrDownload(blob, fname, t("prod_share_title"));
 }
 function downloadExport(blob, fname) {
@@ -2113,6 +2163,8 @@ var pendingImport = null;
 function slugify(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
 function shopSlug() { return slugify(state.shopName) || "my-shop"; }
 function profileSlug() { return slugify(state.name) || shopSlug(); }
+function exportPrefixFor(name) { var j = slugify(name); return "quickwork-" + (j ? j + "-" : ""); }
+function exportPrefix() { return exportPrefixFor(state.name); }
 function importData(input) {
   var f = input.files && input.files[0];
   input.value = "";
@@ -3030,7 +3082,7 @@ function delDepartment(i) {
 function exportContacts() {
   if (!state.contacts.people.length) { toast(t("con_no_export")); return; }
   var payload = { app: "quickwork-contacts", version: 1, exportedAt: new Date().toISOString(), contacts: state.contacts };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), profileSlug() + "-contacts.json", t("con_share_title"));
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickcontact-contact.json", t("con_share_title"));
 }
 function importContacts(input) {
   var f = input.files && input.files[0];
@@ -3051,7 +3103,7 @@ function importContacts(input) {
 function exportRecovery() {
   if (!state.recovery.situations.length) { toast(t("rec_no_export")); return; }
   var payload = { app: "quickwork-recovery", version: 2, exportedAt: new Date().toISOString(), recovery: state.recovery };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), profileSlug() + "-recovery-guide.json", t("rec_share_title"));
+  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickrecovery-recovery.json", t("rec_share_title"));
 }
 function importRecovery(input) {
   var f = input.files && input.files[0];
