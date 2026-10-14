@@ -1694,9 +1694,24 @@ function switchProfile(pid) {
   if (!DB.profiles[pid]) return;
   DB.activeProfileId = pid;
   state = DB.profiles[pid];
+  resetJobUI();
   saveState();
   renderHome();
   showView("home");
+}
+/* Switching jobs must leave nothing behind: order, selections, search text,
+   sheet/modal state and shop UI all reset, so the new job starts like a fresh app. */
+function resetJobUI() {
+  order = [];
+  selectMode = false; selected = {};
+  selectedHistory = {};
+  payMethod = "card";
+  modalCode = null; modalIsNew = true; modalAfterSave = null;
+  sheetCode = null; sheetOverride = null; priceCtx = null; modalImg = null;
+  sheetQty = 1; scanMode = null;
+  var s = document.getElementById("search"); if (s) s.value = "";
+  var pf = document.getElementById("prodFilter"); if (pf) pf.value = "";
+  renderOrder(); renderSearch(); renderShopName(); loadShopSettingsUI(); renderProducts(); updateBulkBar();
 }
 function addProfile() {
   appPrompt(t("prompt_job_name"), "").then(function(val){
@@ -2269,6 +2284,7 @@ function importChoice(mode) {
       DB.profiles[pid] = blankProfile(val.trim());
       DB.activeProfileId = pid;
       state = DB.profiles[pid];
+      resetJobUI();
       doImport(pi, "replace");
       saveState(); closeImportTarget();
       renderHome(); showView("home");
