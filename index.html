@@ -189,6 +189,14 @@
   #importTargetModal.open { display: flex; }
   #importTargetBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
   #importTargetBox h2 { margin: 0 0 8px; font-size: 19px; }
+  #exportPickerModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: flex-end; justify-content: center; }
+  #exportPickerModal.open { display: flex; }
+  #exportPickerBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+  #exportPickerBox h2 { margin: 0 0 8px; font-size: 19px; }
+  .exportpickrow { display: flex; align-items: center; gap: 12px; padding: 13px 4px; font-size: 15px; font-weight: 600; border-bottom: 1px solid #EEF0FF; cursor: pointer; }
+  .exportpickrow:last-child { border-bottom: none; }
+  .exportpickrow input { width: 20px; height: 20px; accent-color: #4F46E5; flex: none; }
+  #exportPickerGo:disabled { opacity: .45; }
   .hint { font-size: 13px; color: #7a8499; line-height: 1.5; }
   .hint-gear-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
   .hint-gear { display: inline-flex; background: #EEF0FF; border-radius: 8px; padding: 4px; }
@@ -263,7 +271,7 @@ body[data-theme="dark"] .tile-placeholder { background: rgba(129,140,248,.10); b
   nav { max-width: 780px; margin: 12px auto 0; }
   .modgrid { grid-template-columns: repeat(3, 1fr); max-width: 780px; }
   #summaryBody { max-width: 780px; }
-  #modalBox, #contactModalBox, #importTargetBox, #sheetBox, #priceModalBox, #templateUseBox, #templateEditBox { max-width: 560px; }
+  #modalBox, #contactModalBox, #importTargetBox, #exportPickerBox, #sheetBox, #priceModalBox, #templateUseBox, #templateEditBox { max-width: 560px; }
 }
 /* ---------- dark theme (v17) ---------- */
 body[data-theme="dark"] { background: #000000; color: #F5F5F7; }
@@ -287,13 +295,14 @@ body[data-theme="dark"] .modname { color: #FFFFFF; }
 body[data-theme="dark"] .homehead h1, body[data-theme="dark"] .modhead h1 { color: #A5B4FC; }
 body[data-theme="dark"] .backbtn { background: #1C1C1E; border-color: #2E2E33; color: #A5B4FC; }
 body[data-theme="dark"] #modalBox, body[data-theme="dark"] #confirmBox, body[data-theme="dark"] #promptBox,
-body[data-theme="dark"] #contactModalBox, body[data-theme="dark"] #importTargetBox, body[data-theme="dark"] #sheetBox,
+body[data-theme="dark"] #contactModalBox, body[data-theme="dark"] #importTargetBox, body[data-theme="dark"] #exportPickerBox, body[data-theme="dark"] #sheetBox,
 body[data-theme="dark"] #priceModalBox, body[data-theme="dark"] #templateUseBox, body[data-theme="dark"] #templateEditBox, body[data-theme="dark"] #templateLibBox, body[data-theme="dark"] #historyBox { background: #1C1C1E; }
 body[data-theme="dark"] #confirmBox p, body[data-theme="dark"] #promptBox p, body[data-theme="dark"] #modalBox h2,
-body[data-theme="dark"] #contactModalBox h2, body[data-theme="dark"] #importTargetBox h2, body[data-theme="dark"] #sheetBox .pname,
+body[data-theme="dark"] #contactModalBox h2, body[data-theme="dark"] #importTargetBox h2, body[data-theme="dark"] #exportPickerBox h2, body[data-theme="dark"] #sheetBox .pname,
 body[data-theme="dark"] #templateUseBox h2, body[data-theme="dark"] #templateEditBox h2 { color: #FFFFFF; }
 body[data-theme="dark"] #promptBox input, body[data-theme="dark"] #cashInput { background: #101014; border-color: #333338; color: #F5F5F7; }
 body[data-theme="dark"] .pickchip { background: #101014; border-color: #333338; color: #E4E4EA; }
+body[data-theme="dark"] .exportpickrow { border-bottom-color: #2A2A30; }
 body[data-theme="dark"] .pickchip.on { background: #4F46E5; border-color: #4F46E5; color: #fff; }
 body[data-theme="dark"] .catchip { background: #1C1C1E; border-color: #2E2E35; color: #A5B4FC; }
 body[data-theme="dark"] .catchip.on { background: #4F46E5; border-color: #4F46E5; color: #fff; }
@@ -465,7 +474,7 @@ body[data-theme="dark"] .toast { background: #232329; }
     <div class="card">
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="exportContacts()" data-i18n="con_export">⬆ Export contact</button>
-        <button class="btn btn-ghost" onclick="document.getElementById('importContactsFile').click()" data-i18n="con_import">⬇ Import</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('importContactsFile').click()" data-i18n="con_import">⬇ Import contact</button>
       </div>
       <input type="file" id="importContactsFile" accept=".json,application/json" style="display:none" onchange="importContacts(this)">
       <p class="hint" style="margin:10px 0 0" data-i18n="con_share_hint">Share your team list — one person exports, everyone else imports.</p>
@@ -707,6 +716,12 @@ import_desc: 'Import this {label} (current job: "{job}")…', import_failed: "Co
 import_merge: "Merge into current job",
 import_replace: "Replace current job's data",
 import_new: "Create new job…",
+export_pick: "Choose what to export",
+export_btn: "Export",
+exp_shop_name: "Shop name", exp_products: "Products", exp_shop_settings: "Shop settings", exp_shop_history: "Purchase history",
+exp_people: "People", exp_departments: "Departments", exp_templates: "Message templates",
+exp_situations: "Situations", exp_comp_types: "Compensation types", exp_footer_note: "Footer note",
+import_done: "Import complete.",
 imported_1: "Imported 1 product.", imported_n: "Imported {n} products.",
 list_replaced: "Product list replaced.",
 contacts_replaced: "Contacts replaced.",
@@ -801,7 +816,7 @@ con_departments: "Departments",
 con_call: "Call", con_text: "Text",
 con_no_contacts: "No contacts yet. Tap + Add to add your team.",
 con_share_hint: "Share your team list — one person exports, everyone else imports.",
-con_export: "⬆ Export contact", con_import: "⬇ Import",
+con_export: "⬆ Export contact", con_import: "⬇ Import contact",
 con_add_title: "Add contact", con_edit_title: "Edit contact",
 con_name: "Name", con_phone: "Phone", con_phone_ph: "e.g. 555-123-4567", con_dept: "Department",
 con_dept_ph: "e.g. Kitchen, Warehouse \u2014 or type a new one",
@@ -909,6 +924,12 @@ import_desc: 'Importar {label} (trabajo actual: "{job}")…', import_failed: "No
 import_merge: "Combinar con el trabajo actual",
 import_replace: "Reemplazar los datos del trabajo actual",
 import_new: "Crear nuevo trabajo…",
+export_pick: "Elige qué exportar",
+export_btn: "Exportar",
+exp_shop_name: "Nombre de la tienda", exp_products: "Productos", exp_shop_settings: "Ajustes de la tienda", exp_shop_history: "Historial de compras",
+exp_people: "Personas", exp_departments: "Departamentos", exp_templates: "Plantillas de mensajes",
+exp_situations: "Situaciones", exp_comp_types: "Tipos de compensación", exp_footer_note: "Nota al pie",
+import_done: "Importación completa.",
 imported_1: "Se importó 1 producto.", imported_n: "Se importaron {n} productos.",
 list_replaced: "Lista de productos reemplazada.",
 contacts_replaced: "Contactos reemplazados.",
@@ -1003,7 +1024,7 @@ con_departments: "Departamentos",
 con_call: "Llamar", con_text: "Mensaje",
 con_no_contacts: "Sin contactos aún. Toca + Agregar.",
 con_share_hint: "Comparte tu lista — una persona exporta y los demás importan.",
-con_export: "⬆ Exportar contacto", con_import: "⬇ Importar",
+con_export: "⬆ Exportar contacto", con_import: "⬇ Importar contacto",
 con_add_title: "Agregar contacto", con_edit_title: "Editar contacto",
 con_name: "Nombre", con_phone: "Teléfono", con_phone_ph: "ej. 555-123-4567", con_dept: "Departamento",
 con_dept_ph: "p. ej. Cocina, Almacén \u2014 o escribe uno nuevo",
@@ -1429,7 +1450,8 @@ function importInfo(input) {
       var added = 0;
       items.forEach(function(x){
         if (x && (x.title || x.body)) {
-          var nid = (x.id && !ids[x.id]) ? x.id : uid("i");
+          if (x.id && ids[x.id]) return;
+          var nid = x.id || uid("i");
           ids[nid] = 1;
           state.info.items.push({ id: nid, title: String(x.title || ""), body: String(x.body || "") });
           added++;
@@ -1492,6 +1514,7 @@ function qwCloseTopOverlay() {
   if (qwIsOpen("modal")) { closeModal(); return true; }
   if (qwIsOpen("scanOverlay")) { stopScan(); return true; }
   if (qwIsOpen("importTargetModal")) { closeImportTarget(); return true; }
+  if (qwIsOpen("exportPickerModal")) { closeExportPicker(); return true; }
   if (qwIsOpen("summaryOverlay")) { closeSummary(); return true; }
   return false;
 }
@@ -2138,13 +2161,22 @@ function saveModal() {
 
 /* ---------- export / import ---------- */
 function exportData() {
-  var count = Object.keys(state.products).length;
-  if (!count) { toast(t("prod_no_export")); return; }
-  var payload = { app: "suite-shop-scanner", version: 2, exportedAt: new Date().toISOString(), products: state.products, shopSettings: state.shopSettings };
-  var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-  var s = slugify(state.shopName);
-  var fname = exportPrefix() + "quickshop-" + (s ? s + "-" : "") + "products.json";
-  shareOrDownload(blob, fname, t("prod_share_title"));
+  showExportPicker([
+    { id: "shopName", key: "exp_shop_name" },
+    { id: "products", key: "exp_products" },
+    { id: "shopSettings", key: "exp_shop_settings" },
+    { id: "shopHistory", key: "exp_shop_history" }
+  ], function(sel){
+    var payload = { app: "suite-shop-scanner", version: 2, exportedAt: new Date().toISOString() };
+    if (sel.shopName) payload.shopName = state.shopName || "";
+    if (sel.products) payload.products = state.products;
+    if (sel.shopSettings) payload.shopSettings = state.shopSettings;
+    if (sel.shopHistory) payload.shopHistory = state.shopHistory || [];
+    var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    var s = slugify(state.shopName);
+    var fname = exportPrefix() + "quickshop-" + (s ? s + "-" : "") + "products.json";
+    shareOrDownload(blob, fname, t("prod_share_title"));
+  });
 }
 function downloadExport(blob, fname) {
   try {
@@ -2173,15 +2205,24 @@ function importData(input) {
   r.onload = function() {
     try {
       var data = JSON.parse(r.result);
-      var incoming = data.products || data;
-      var valid = 0;
-      for (var code in incoming) {
-        var p = incoming[code];
-        if (p && typeof p.name === "string") valid++;
+      var incoming = data.products;
+      var hasProducts = incoming && typeof incoming === "object";
+      if (!hasProducts && data && typeof data === "object" && !data.app) {
+        /* legacy bare product map */
+        var looksLikeMap = false;
+        for (var k in data) { var v = data[k]; if (v && typeof v === "object" && typeof v.name === "string") { looksLikeMap = true; break; } }
+        if (looksLikeMap) { incoming = data; hasProducts = true; }
       }
-      if (!valid) { toast(t("prod_no_valid")); return; }
-      pendingImport = { kind: "products", data: incoming,
-        shopSettings: (data.shopSettings && typeof data.shopSettings === "object") ? data.shopSettings : null, count: valid };
+      var valid = 0;
+      if (hasProducts) for (var code in incoming) { var p = incoming[code]; if (p && typeof p.name === "string") valid++; }
+      var hasShopName = typeof data.shopName === "string";
+      var hasShopSettings = data.shopSettings && typeof data.shopSettings === "object";
+      var hasShopHistory = Array.isArray(data.shopHistory);
+      if (!hasProducts && !hasShopName && !hasShopSettings && !hasShopHistory) { toast(t("prod_no_valid")); return; }
+      pendingImport = { kind: "products", data: hasProducts ? incoming : {}, hasProducts: hasProducts,
+        shopName: hasShopName ? data.shopName : null,
+        shopSettings: hasShopSettings ? data.shopSettings : null,
+        shopHistory: hasShopHistory ? data.shopHistory : null, count: valid };
       showImportTarget("label_products", true);
     } catch (e) { toast(t("could_not_read")); }
   };
@@ -2193,6 +2234,31 @@ function showImportTarget(label, allowMerge) {
   document.getElementById("importTargetModal").classList.add("open");
 }
 function closeImportTarget() { document.getElementById("importTargetModal").classList.remove("open"); pendingImport = null; }
+/* ---------- export picker ---------- */
+var exportPicker = null;
+function showExportPicker(groups, onConfirm) {
+  exportPicker = { groups: groups, onConfirm: onConfirm };
+  document.getElementById("exportPickerList").innerHTML = groups.map(function(g, i){
+    return '<label class="exportpickrow"><input type="checkbox" data-i="' + i + '" checked onchange="exportPickerToggle()"><span>' + esc(t(g.key)) + '</span></label>';
+  }).join("");
+  document.getElementById("exportPickerGo").disabled = false;
+  document.getElementById("exportPickerModal").classList.add("open");
+}
+function exportPickerToggle() {
+  var any = false;
+  document.querySelectorAll("#exportPickerList input").forEach(function(cb){ if (cb.checked) any = true; });
+  document.getElementById("exportPickerGo").disabled = !any;
+}
+function exportPickerGo() {
+  var sel = {};
+  document.querySelectorAll("#exportPickerList input").forEach(function(cb){
+    if (cb.checked) sel[exportPicker.groups[+cb.getAttribute("data-i")].id] = true;
+  });
+  var fn = exportPicker.onConfirm;
+  closeExportPicker();
+  fn(sel);
+}
+function closeExportPicker() { document.getElementById("exportPickerModal").classList.remove("open"); exportPicker = null; }
 function importChoice(mode) {
   var pi = pendingImport;
   if (!pi) { closeImportTarget(); return; }
@@ -2212,39 +2278,67 @@ function importChoice(mode) {
   }
   doImport(pi, mode);
   saveState(); closeImportTarget();
-  if (pi.kind === "products") { renderProducts(); toast(mode === "replace" ? t("list_replaced") : (pi.count === 1 ? t("imported_1") : tf("imported_n", { n: pi.count }))); }
-  if (pi.kind === "contacts") { renderContacts(); toast(mode === "replace" ? t("contacts_replaced") : (pi.added === 1 ? t("con_imported_1") : tf("con_imported_n", { n: pi.added }))); }
+  if (pi.kind === "products") { renderProducts(); toast(!pi.hasProducts ? t("import_done") : mode === "replace" ? t("list_replaced") : (pi.count === 1 ? t("imported_1") : tf("imported_n", { n: pi.count }))); }
+  if (pi.kind === "contacts") { renderContacts(); toast(!pi.hasPeople ? t("import_done") : mode === "replace" ? t("contacts_replaced") : (pi.added === 1 ? t("con_imported_1") : tf("con_imported_n", { n: pi.added }))); }
   if (pi.kind === "recovery") { renderRecovery(); toast(t("guide_updated")); }
 }
 function doImport(pi, mode) {
   if (pi.kind === "products") {
-    if (mode === "replace") state.products = {};
-    for (var code in pi.data) {
-      var p = pi.data[code];
-      if (p && typeof p.name === "string" && !isNaN(parseFloat(p.price))) {
-        var ip = (p.price === null || p.price === undefined || p.price === "") ? null : parseFloat(p.price);
-        state.products[code] = { name: p.name, price: (ip === null || isNaN(ip)) ? null : Math.round(ip * 100) / 100, category: (typeof p.category === "string" ? p.category.trim() : "") || "", manual: p.manual || undefined, updatedAt: p.updatedAt || Date.now(), img: p.img || null };
+    if (pi.hasProducts) {
+      if (mode === "replace") state.products = {};
+      for (var code in pi.data) {
+        var p = pi.data[code];
+        if (p && typeof p.name === "string") {
+          var ip = (p.price === null || p.price === undefined || p.price === "") ? null : parseFloat(p.price);
+          state.products[code] = { name: p.name, price: (ip === null || isNaN(ip)) ? null : Math.round(ip * 100) / 100, category: (typeof p.category === "string" ? p.category.trim() : "") || "", manual: p.manual || undefined, updatedAt: p.updatedAt || Date.now(), img: p.img || null };
+        }
       }
     }
-    if (mode === "replace" && pi.shopSettings) {
+    if (pi.shopSettings) {
       if (!Array.isArray(pi.shopSettings.fees)) pi.shopSettings.fees = [];
       state.shopSettings = pi.shopSettings;
       loadShopSettingsUI();
     }
+    if (pi.shopName !== null && pi.shopName !== undefined) { state.shopName = pi.shopName; renderShopName(); }
+    if (pi.shopHistory) {
+      if (mode === "replace") state.shopHistory = pi.shopHistory.slice();
+      else {
+        var seen = {};
+        (state.shopHistory || []).forEach(function(h){ if (h && h.id) seen[h.id] = 1; });
+        pi.shopHistory.forEach(function(h){ if (h && h.id && !seen[h.id]) { state.shopHistory.push(h); seen[h.id] = 1; } });
+        state.shopHistory.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+      }
+    }
   } else if (pi.kind === "contacts") {
-    if (mode === "replace") state.contacts = { departments: [], people: [] };
+    if (!state.contacts) state.contacts = { departments: [], people: [], templates: [] };
+    if (!Array.isArray(state.contacts.people)) state.contacts.people = [];
+    if (!Array.isArray(state.contacts.departments)) state.contacts.departments = [];
+    if (!Array.isArray(state.contacts.templates)) state.contacts.templates = [];
+    if (mode === "replace") {
+      if (pi.hasPeople) state.contacts.people = [];
+      if (pi.hasDepartments) state.contacts.departments = [];
+      if (pi.hasTemplates) state.contacts.templates = [];
+    }
     var added = 0;
     (pi.departments || []).forEach(function(d){
-      if (d && state.contacts.departments.indexOf(d) === -1) state.contacts.departments.push(d);
+      if (d && typeof d === "string" && state.contacts.departments.indexOf(d) === -1) state.contacts.departments.push(d);
     });
     var ids = {};
-    state.contacts.people.forEach(function(x){ ids[x.id] = true; });
-    pi.people.forEach(function(x){
+    state.contacts.people.forEach(function(x){ if (x) ids[x.id] = true; });
+    (pi.people || []).forEach(function(x){
       if (x && x.id && x.name && x.phone && !ids[x.id]) { state.contacts.people.push(x); ids[x.id] = true; added++; }
+    });
+    var tids = {};
+    state.contacts.templates.forEach(function(x){ if (x) tids[x.id] = true; });
+    (pi.templates || []).forEach(function(x){
+      if (x && x.id && x.name && typeof x.text === "string" && !tids[x.id]) { state.contacts.templates.push(x); tids[x.id] = true; added++; }
     });
     pi.added = added;
   } else if (pi.kind === "recovery") {
-    state.recovery = { compTypes: pi.compTypes || [], situations: pi.situations || [] };
+    if (!state.recovery) state.recovery = { compTypes: [], situations: [], footerNote: "" };
+    if (pi.hasSituations) state.recovery.situations = (pi.situations || []).filter(function(s){ return s && typeof s.name === "string"; }).map(function(s){ return { id: s.id || uid("s"), name: s.name, comps: Array.isArray(s.comps) ? s.comps : [] }; });
+    if (pi.hasCompTypes) state.recovery.compTypes = (pi.compTypes || []).filter(function(c){ return typeof c === "string"; });
+    if (pi.hasFooterNote) state.recovery.footerNote = pi.footerNote;
   }
 }
 
@@ -3080,9 +3174,18 @@ function delDepartment(i) {
   });
 }
 function exportContacts() {
-  if (!state.contacts.people.length) { toast(t("con_no_export")); return; }
-  var payload = { app: "quickwork-contacts", version: 1, exportedAt: new Date().toISOString(), contacts: state.contacts };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickcontact-contact.json", t("con_share_title"));
+  showExportPicker([
+    { id: "people", key: "exp_people" },
+    { id: "departments", key: "exp_departments" },
+    { id: "templates", key: "exp_templates" }
+  ], function(sel){
+    var c = {};
+    if (sel.people) c.people = state.contacts.people;
+    if (sel.departments) c.departments = state.contacts.departments;
+    if (sel.templates) c.templates = state.contacts.templates || [];
+    var payload = { app: "quickwork-contacts", version: 1, exportedAt: new Date().toISOString(), contacts: c };
+    shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickcontact-contact.json", t("con_share_title"));
+  });
 }
 function importContacts(input) {
   var f = input.files && input.files[0];
@@ -3093,17 +3196,30 @@ function importContacts(input) {
     try {
       var data = JSON.parse(r.result);
       var c = data.contacts || data;
-      if (!c || !Array.isArray(c.people) || !c.people.length) { toast(t("con_no_valid")); return; }
-      pendingImport = { kind: "contacts", people: c.people, departments: c.departments || [] };
+      if (!c || typeof c !== "object") { toast(t("con_no_valid")); return; }
+      var hasPeople = Array.isArray(c.people);
+      var hasDepartments = Array.isArray(c.departments);
+      var hasTemplates = Array.isArray(c.templates);
+      if ((!hasPeople || !c.people.length) && (!hasDepartments || !c.departments.length) && (!hasTemplates || !c.templates.length)) { toast(t("con_no_valid")); return; }
+      pendingImport = { kind: "contacts", people: hasPeople ? c.people : [], departments: hasDepartments ? c.departments : [], templates: hasTemplates ? c.templates : [], hasPeople: hasPeople, hasDepartments: hasDepartments, hasTemplates: hasTemplates };
       showImportTarget("label_contacts", true);
     } catch (e) { toast(t("could_not_read")); }
   };
   r.readAsText(f);
 }
 function exportRecovery() {
-  if (!state.recovery.situations.length) { toast(t("rec_no_export")); return; }
-  var payload = { app: "quickwork-recovery", version: 2, exportedAt: new Date().toISOString(), recovery: state.recovery };
-  shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickrecovery-recovery.json", t("rec_share_title"));
+  showExportPicker([
+    { id: "situations", key: "exp_situations" },
+    { id: "compTypes", key: "exp_comp_types" },
+    { id: "footerNote", key: "exp_footer_note" }
+  ], function(sel){
+    var rec = {};
+    if (sel.situations) rec.situations = state.recovery.situations;
+    if (sel.compTypes) rec.compTypes = state.recovery.compTypes;
+    if (sel.footerNote) rec.footerNote = state.recovery.footerNote || "";
+    var payload = { app: "quickwork-recovery", version: 2, exportedAt: new Date().toISOString(), recovery: rec };
+    shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickrecovery-recovery.json", t("rec_share_title"));
+  });
 }
 function importRecovery(input) {
   var f = input.files && input.files[0];
@@ -3114,8 +3230,12 @@ function importRecovery(input) {
     try {
       var data = JSON.parse(r.result);
       var rec = data.recovery || data;
-      if (!rec || !Array.isArray(rec.situations)) { toast(t("rec_not_file")); return; }
-      pendingImport = { kind: "recovery", situations: rec.situations, compTypes: Array.isArray(rec.compTypes) ? rec.compTypes : [] };
+      if (!rec || typeof rec !== "object") { toast(t("rec_not_file")); return; }
+      var hasSituations = Array.isArray(rec.situations);
+      var hasCompTypes = Array.isArray(rec.compTypes);
+      var hasFooterNote = typeof rec.footerNote === "string";
+      if (!hasSituations && !hasCompTypes && !hasFooterNote) { toast(t("rec_not_file")); return; }
+      pendingImport = { kind: "recovery", situations: hasSituations ? rec.situations : [], compTypes: hasCompTypes ? rec.compTypes : [], footerNote: hasFooterNote ? rec.footerNote : "", hasSituations: hasSituations, hasCompTypes: hasCompTypes, hasFooterNote: hasFooterNote };
       showImportTarget("label_guide", false);
     } catch (e) { toast(t("could_not_read")); }
   };
@@ -3155,6 +3275,9 @@ document.addEventListener("pointerup", endTileDrag);
 document.addEventListener("pointercancel", endTileDrag);
 document.getElementById("importTargetModal").addEventListener("click", function(e) {
   if (e.target === this) closeImportTarget();
+});
+document.getElementById("exportPickerModal").addEventListener("click", function(e) {
+  if (e.target === this) closeExportPicker();
 });
 if (Object.keys(DB.profiles).length > 1 || !DB.profiles[DB.activeProfileId].name) showView("profiles");
 document.getElementById("modal").addEventListener("click", function(e) {
@@ -3238,6 +3361,14 @@ if ("serviceWorker" in navigator) {
     <button class="btn btn-ghost" id="importOptReplace" onclick="importChoice('replace')" data-i18n="import_replace">Replace current job's data</button>
     <button class="btn btn-ghost" id="importOptNew" onclick="importChoice('new')" data-i18n="import_new">Create new job…</button>
     <button class="btn btn-ghost" onclick="closeImportTarget()" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+<div id="exportPickerModal">
+  <div id="exportPickerBox">
+    <h2 data-i18n="export_pick">Choose what to export</h2>
+    <div id="exportPickerList"></div>
+    <button class="btn btn-dark" id="exportPickerGo" onclick="exportPickerGo()" data-i18n="export_btn" style="margin-top:12px">Export</button>
+    <button class="btn btn-ghost" onclick="closeExportPicker()" data-i18n="cancel">Cancel</button>
   </div>
 </div>
 <div id="bulkBar">
