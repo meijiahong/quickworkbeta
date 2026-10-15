@@ -651,6 +651,13 @@ body[data-theme="dark"] .toast { background: #232329; }
   <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Hours</h1><span class="modhead-sp"></span></div>
   <main>
     <div class="card">
+      <nav style="margin:0;position:static">
+        <button id="hoursTabLogBtn" class="active" onclick="setHoursTab('log')" data-i18n="hours_tab_log">Log</button>
+        <button id="hoursTabEstBtn" onclick="setHoursTab('est')" data-i18n="hours_tab_est">Estimator</button>
+      </nav>
+    </div>
+    <div id="hoursLogTab">
+    <div class="card">
       <div id="hoursTotals"></div>
     </div>
     <div class="card">
@@ -682,14 +689,41 @@ body[data-theme="dark"] .toast { background: #232329; }
       </div>
     </div>
     <div class="card">
+      <div id="hoursList"></div>
+    </div>
+    </div>
+    <div id="hoursEstTab" style="display:none">
+    <div class="card">
+      <label for="estHours" data-i18n="hours_est_hours_lb">Hours</label>
+      <input type="number" id="estHours" inputmode="decimal" min="0" step="0.01" oninput="renderEstimator()" data-i18n-ph="hours_est_hours_ph" placeholder="Enter hours">
+      <div id="estBreakdown"></div>
+    </div>
+    <div class="card">
+      <div class="row" style="margin-bottom:8px"><b data-i18n="hours_ded_title">Deductions</b></div>
+      <div id="hoursDedList"></div>
+      <div style="margin:10px 0 6px"><span class="sub" data-i18n="hours_ded_preset_lb">Quick add</span></div>
+      <div id="hoursDedPresets" class="row" style="flex-wrap:wrap;gap:8px"></div>
+      <label for="dedName" data-i18n="hours_ded_name_lb">Name</label>
+      <input type="text" id="dedName" data-i18n-ph="hours_ded_name_ph" placeholder="e.g. Federal tax">
+      <label data-i18n="hours_ded_type_lb">Type</label>
+      <nav style="margin:0 0 10px;position:static">
+        <button id="dedTypePercentBtn" class="active" onclick="setDedFormType('percent')" data-i18n="hours_ded_percent">Percent of gross</button>
+        <button id="dedTypeFixedBtn" onclick="setDedFormType('fixed')" data-i18n="hours_ded_fixed">Fixed amount</button>
+      </nav>
+      <label for="dedValue" id="dedValueLabel">Value (%)</label>
+      <input type="number" id="dedValue" inputmode="decimal" min="0" step="0.01" placeholder="0">
+      <div class="btn-row">
+        <button class="btn btn-primary" id="dedSaveBtn" onclick="saveDeduction()">Add deduction</button>
+        <button class="btn btn-ghost" id="dedCancelBtn" style="display:none" onclick="cancelEditDeduction()" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+    </div>
+    <div class="card">
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="exportHours()" data-i18n="hours_export">⬆ Export hours</button>
         <button class="btn btn-ghost" onclick="document.getElementById('importHoursFile').click()" data-i18n="hours_import">⬇ Import hours</button>
       </div>
       <input type="file" id="importHoursFile" accept=".json,application/json" style="display:none" onchange="importHours(this)">
-    </div>
-    <div class="card">
-      <div id="hoursList"></div>
     </div>
   </main>
 </div>
@@ -1186,6 +1220,39 @@ hours_import: "⬇ Import hours",
 hours_no_export: "Nothing to export yet.",
 hours_imported_1: "1 hours entry imported.",
 hours_imported_n: "{n} hours entries imported.",
+hours_tab_log: "Log",
+hours_tab_est: "Estimator",
+hours_est_hours_lb: "Hours",
+hours_est_hours_ph: "Enter hours",
+hours_est_gross: "Gross pay",
+hours_est_total_ded: "Total deductions",
+hours_est_net: "Net pay",
+hours_est_set_wage: "Set your hourly wage in the Log tab to estimate pay.",
+hours_ded_title: "Deductions",
+hours_ded_name_lb: "Name",
+hours_ded_name_ph: "e.g. Federal tax",
+hours_ded_type_lb: "Type",
+hours_ded_percent: "Percent of gross",
+hours_ded_fixed: "Fixed amount",
+hours_ded_value_pct: "Value (%)",
+hours_ded_value_amt: "Value ($)",
+hours_ded_add: "Add deduction",
+hours_ded_save: "Save deduction",
+hours_ded_edit: "Edit",
+hours_ded_del: "Delete",
+hours_ded_del_confirm: "Delete this deduction?",
+hours_ded_empty: "No deductions yet.",
+hours_ded_preset_lb: "Quick add",
+hours_ded_need_name: "Enter a name first.",
+hours_ded_preset_federal: "Federal tax",
+hours_ded_preset_state: "State tax",
+hours_ded_preset_ss: "Social Security",
+hours_ded_preset_medicare: "Medicare",
+hours_ded_preset_health: "Health insurance",
+hours_ded_preset_dental: "Dental",
+hours_ded_preset_vision: "Vision",
+hours_ded_preset_401k: "401(k)",
+hours_ded_preset_other: "Other",
 date_today: "Today",
 date_ph: "Select date",
 stock_connect: "Connect with Quick Shop catalog",
@@ -1507,6 +1574,39 @@ hours_import: "⬇ Importar horas",
 hours_no_export: "Nada que exportar aún.",
 hours_imported_1: "1 registro de horas importado.",
 hours_imported_n: "{n} registros de horas importados.",
+hours_tab_log: "Registro",
+hours_tab_est: "Estimador",
+hours_est_hours_lb: "Horas",
+hours_est_hours_ph: "Ingresa horas",
+hours_est_gross: "Pago bruto",
+hours_est_total_ded: "Total de deducciones",
+hours_est_net: "Pago neto",
+hours_est_set_wage: "Establece tu salario por hora en la pestaña Registro para estimar el pago.",
+hours_ded_title: "Deducciones",
+hours_ded_name_lb: "Nombre",
+hours_ded_name_ph: "ej. Impuesto federal",
+hours_ded_type_lb: "Tipo",
+hours_ded_percent: "Porcentaje del bruto",
+hours_ded_fixed: "Cantidad fija",
+hours_ded_value_pct: "Valor (%)",
+hours_ded_value_amt: "Valor ($)",
+hours_ded_add: "Añadir deducción",
+hours_ded_save: "Guardar deducción",
+hours_ded_edit: "Editar",
+hours_ded_del: "Eliminar",
+hours_ded_del_confirm: "¿Eliminar esta deducción?",
+hours_ded_empty: "Sin deducciones aún.",
+hours_ded_preset_lb: "Añadir rápido",
+hours_ded_need_name: "Ingresa primero un nombre.",
+hours_ded_preset_federal: "Impuesto federal",
+hours_ded_preset_state: "Impuesto estatal",
+hours_ded_preset_ss: "Seguro Social",
+hours_ded_preset_medicare: "Medicare",
+hours_ded_preset_health: "Seguro de salud",
+hours_ded_preset_dental: "Dental",
+hours_ded_preset_vision: "Visión",
+hours_ded_preset_401k: "401(k)",
+hours_ded_preset_other: "Otro",
 date_today: "Hoy",
 date_ph: "Seleccionar fecha",
 stock_connect: "Conectar con el catálogo de Quick Shop",
@@ -1618,7 +1718,7 @@ function defaultShopSettings() {
 }
 function defaultTasks() { return { items: [] }; }
 function defaultNotes() { return { items: [] }; }
-function defaultHours() { return { wage: 0, paidMealBreak: false, entries: [] }; }
+function defaultHours() { return { wage: 0, paidMealBreak: false, entries: [], deductions: [] }; }
 function defaultStock() { return { connectCatalog: false, items: [] }; }
 function defaultHandoffs() { return { entries: [] }; }
 function defaultContacts() {
@@ -1685,6 +1785,7 @@ function migrateProfile(p) {
     if (typeof p.hours.wage !== "number") p.hours.wage = 0;
     if (typeof p.hours.paidMealBreak !== "boolean") p.hours.paidMealBreak = false;
     if ("openPunch" in p.hours) delete p.hours.openPunch;
+    normalizeDeductions(p.hours);
   }
   if (!p.stock || !Array.isArray(p.stock.items)) p.stock = defaultStock();
   else if (typeof p.stock.connectCatalog !== "boolean") p.stock.connectCatalog = false;
@@ -2250,6 +2351,7 @@ function hoursEntryPay(e) {
 }
 function renderHours() {
   var box = document.getElementById("hoursList"); if (!box) return;
+  applyHoursTab();
   if (!state.hours) state.hours = defaultHours();
   var h = state.hours;
   /* v61: migrate older entries — v60 break fields -> meal fields; v59 shifts (startAt/endAt) -> clock times */
@@ -2286,9 +2388,19 @@ function renderHours() {
   h.entries.forEach(function(e){ totalPaid += hoursEntryPaid(e); totalPay += hoursEntryPay(e); });
   totalPaid = Math.round(totalPaid * 100) / 100; totalPay = Math.round(totalPay * 100) / 100;
   var totEl = document.getElementById("hoursTotals");
-  if (totEl) totEl.innerHTML = '<div style="color:var(--dim)">' + t("hours_wage_show") + ': <b style="color:var(--fg)">' + fmt(h.wage || 0) + '</b></div>' +
-    '<div style="color:var(--dim)">' + t("hours_total_hours") + ': <b style="color:var(--fg)">' + totalPaid + '</b></div>' +
-    '<div><span data-i18n="hours_est_pay">' + t("hours_est_pay") + '</span>: <span class="pay-big">' + fmt(totalPay) + '</span></div>';
+  if (totEl) {
+    var totalsHtml = '<div style="color:var(--dim)">' + t("hours_wage_show") + ': <b style="color:var(--fg)">' + fmt(h.wage || 0) + '</b></div>' +
+      '<div style="color:var(--dim)">' + t("hours_total_hours") + ': <b style="color:var(--fg)">' + totalPaid + '</b></div>' +
+      '<div><span data-i18n="hours_est_pay">' + t("hours_est_pay") + '</span>: <span class="pay-big">' + fmt(totalPay) + '</span></div>';
+    var deds = Array.isArray(h.deductions) ? h.deductions : [];
+    if (deds.length) {
+      var dc = hoursDeductionLines(totalPay);
+      totalsHtml += '<div style="color:var(--dim)">' + t("hours_est_total_ded") + ': <b style="color:var(--fg)">-' + fmt(dc.total) + '</b></div>' +
+        '<div>' + t("hours_est_net") + ': <span class="pay-big">' + fmt(dc.net) + '</span></div>';
+    }
+    totEl.innerHTML = totalsHtml;
+  }
+  renderEstimator();
   var entries = h.entries.slice().sort(function(a, b){
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
     return (b.createdAt || 0) - (a.createdAt || 0);
@@ -2364,8 +2476,10 @@ function delHoursEntry(id) {
 }
 function exportHours() {
   var items = (state.hours && state.hours.entries) || [];
-  if (!items.length) { toast(t("hours_no_export")); return; }
-  var payload = { app: "quickwork-hours", version: 1, exportedAt: new Date().toISOString(), items: items };
+  var deds = (state.hours && state.hours.deductions) || [];
+  if (!items.length && !deds.length) { toast(t("hours_no_export")); return; }
+  var payload = { app: "quickwork-hours", version: 2, exportedAt: new Date().toISOString(), items: items,
+    wage: (state.hours && state.hours.wage) || 0, paidMealBreak: !!(state.hours && state.hours.paidMealBreak), deductions: deds };
   shareOrDownload(new Blob([JSON.stringify(payload)], { type: "application/json" }), exportPrefix() + "quickhours-hours.json", t("hours_export"));
 }
 function importHours(input) {
@@ -2378,6 +2492,7 @@ function importHours(input) {
       var items = data.items || data;
       if (!Array.isArray(items)) throw 0;
       if (!state.hours) state.hours = defaultHours();
+      if (!Array.isArray(state.hours.deductions)) state.hours.deductions = [];
       var ids = {}; state.hours.entries.forEach(function(x){ ids[x.id] = 1; });
       var added = 0;
       items.forEach(function(x){
@@ -2402,11 +2517,179 @@ function importHours(input) {
         state.hours.entries.push(entry);
         added++;
       });
+      if (typeof data.wage === "number" && data.wage >= 0) state.hours.wage = Math.round(data.wage * 100) / 100;
+      if (typeof data.paidMealBreak === "boolean") state.hours.paidMealBreak = data.paidMealBreak;
+      if (Array.isArray(data.deductions)) {
+        var dexisting = {};
+        (state.hours.deductions || []).forEach(function(d){ dexisting[d.id] = 1; });
+        data.deductions.forEach(function(d){
+          if (!d || typeof d !== "object") return;
+          var name = String(d.name || "").trim(); if (!name) return;
+          var type = (d.type === "percent" || d.type === "fixed") ? d.type : "fixed";
+          var val = parseFloat(d.value); if (isNaN(val) || val < 0) val = 0;
+          var nid = d.id || uid("hd");
+          if (dexisting[nid]) return;
+          dexisting[nid] = 1;
+          state.hours.deductions.push({ id: nid, name: name, type: type, value: Math.round(val * 100) / 100 });
+        });
+      }
       saveState(); renderHours();
       toast(added === 1 ? t("hours_imported_1") : tf("hours_imported_n", { n: added }));
     } catch (e) { toast(t("import_failed")); }
   };
   r.readAsText(f);
+}
+
+/* ================= v63: Quick Hours estimator + deductions ================= */
+var hoursTab = "log";
+var dedFormType = "percent";
+var editingDedId = null;
+var HOURS_DED_PRESETS = [
+  { key: "hours_ded_preset_federal", type: "percent", value: 0 },
+  { key: "hours_ded_preset_state", type: "percent", value: 0 },
+  { key: "hours_ded_preset_ss", type: "percent", value: 6.2 },
+  { key: "hours_ded_preset_medicare", type: "percent", value: 1.45 },
+  { key: "hours_ded_preset_health", type: "fixed", value: 0 },
+  { key: "hours_ded_preset_dental", type: "fixed", value: 0 },
+  { key: "hours_ded_preset_vision", type: "fixed", value: 0 },
+  { key: "hours_ded_preset_401k", type: "percent", value: 0 },
+  { key: "hours_ded_preset_other", type: "fixed", value: 0 }
+];
+function normalizeDeductions(h) {
+  if (!Array.isArray(h.deductions)) h.deductions = [];
+  h.deductions = h.deductions.filter(function(d){
+    if (!d || typeof d !== "object") return false;
+    d.name = String(d.name || "").trim();
+    if (!d.name) return false;
+    if (d.type !== "percent" && d.type !== "fixed") d.type = "fixed";
+    d.value = parseFloat(d.value); if (isNaN(d.value) || d.value < 0) d.value = 0;
+    d.value = Math.round(d.value * 100) / 100;
+    if (!d.id) d.id = uid("hd");
+    return true;
+  });
+}
+function applyHoursTab() {
+  var log = document.getElementById("hoursLogTab"), est = document.getElementById("hoursEstTab");
+  if (log) log.style.display = (hoursTab === "est") ? "none" : "";
+  if (est) est.style.display = (hoursTab === "est") ? "" : "none";
+  var lb = document.getElementById("hoursTabLogBtn"), eb = document.getElementById("hoursTabEstBtn");
+  if (lb) lb.classList.toggle("active", hoursTab !== "est");
+  if (eb) eb.classList.toggle("active", hoursTab === "est");
+}
+function setHoursTab(tab) { hoursTab = (tab === "est") ? "est" : "log"; renderHours(); }
+function hoursDeductionLines(gross) {
+  var h = state.hours || defaultHours();
+  var deds = Array.isArray(h.deductions) ? h.deductions : [];
+  var lines = deds.map(function(d){
+    var amt = d.type === "percent" ? gross * (parseFloat(d.value) || 0) / 100 : (parseFloat(d.value) || 0);
+    return { name: d.name, type: d.type, value: parseFloat(d.value) || 0, amount: Math.round(amt * 100) / 100 };
+  });
+  var total = Math.round(lines.reduce(function(s, l){ return s + l.amount; }, 0) * 100) / 100;
+  return { lines: lines, total: total, net: Math.max(0, Math.round((gross - total) * 100) / 100) };
+}
+function renderEstimator() {
+  var br = document.getElementById("estBreakdown"); if (!br) return;
+  if (!state.hours) state.hours = defaultHours();
+  var h = state.hours;
+  normalizeDeductions(h);
+  var hrsEl = document.getElementById("estHours");
+  var hrs = hrsEl ? parseFloat(hrsEl.value) : NaN;
+  if (isNaN(hrs) || hrs < 0) hrs = 0;
+  var wage = parseFloat(h.wage) || 0;
+  var gross = Math.round(hrs * wage * 100) / 100;
+  var dc = hoursDeductionLines(gross);
+  var html = '<div class="row"><span>' + t("hours_est_gross") + '</span><b>' + fmt(gross) + '</b></div>';
+  dc.lines.forEach(function(l){
+    var desc = l.type === "percent" ? esc(l.name) + " (" + l.value + "%)" : esc(l.name);
+    html += '<div class="row"><span>' + desc + '</span><span>-' + fmt(l.amount) + '</span></div>';
+  });
+  html += '<div class="row"><span>' + t("hours_est_total_ded") + '</span><b>-' + fmt(dc.total) + '</b></div>' +
+    '<div class="row"><span>' + t("hours_est_net") + '</span><span class="pay-big">' + fmt(dc.net) + '</span></div>';
+  if (!wage) html += '<div class="sub" style="margin-top:6px">' + t("hours_est_set_wage") + '</div>';
+  br.innerHTML = html;
+  /* deductions list + presets */
+  var list = document.getElementById("hoursDedList");
+  if (list) {
+    if (!h.deductions.length) list.innerHTML = '<div class="empty">' + t("hours_ded_empty") + '</div>';
+    else list.innerHTML = h.deductions.map(function(d){
+      var desc = d.type === "percent" ? d.value + "%" : fmt(d.value);
+      return '<div class="item"><div class="row"><span class="name">' + esc(d.name) + '</span>' +
+        '<span class="sub">' + desc + '</span></div>' +
+        '<div class="btn-row" style="margin-top:6px"><button class="btn btn-ghost" onclick="editDeduction(\'' + d.id + '\')">' + t("hours_ded_edit") + '</button>' +
+        '<button class="btn btn-ghost" onclick="delDeduction(\'' + d.id + '\')">' + t("hours_ded_del") + '</button></div></div>';
+    }).join("");
+  }
+  var pre = document.getElementById("hoursDedPresets");
+  if (pre) pre.innerHTML = HOURS_DED_PRESETS.map(function(p){
+    return '<button class="btn btn-ghost" style="padding:6px 10px;font-size:14px" onclick="addPresetDeduction(\'' + p.key + '\')">+ ' + t(p.key) + '</button>';
+  }).join("");
+  renderDedForm();
+}
+function renderDedForm() {
+  var pb = document.getElementById("dedTypePercentBtn"), fb = document.getElementById("dedTypeFixedBtn");
+  if (pb) pb.classList.toggle("active", dedFormType === "percent");
+  if (fb) fb.classList.toggle("active", dedFormType === "fixed");
+  var vl = document.getElementById("dedValueLabel");
+  if (vl) vl.textContent = t(dedFormType === "percent" ? "hours_ded_value_pct" : "hours_ded_value_amt");
+  var sb = document.getElementById("dedSaveBtn");
+  if (sb) sb.textContent = t(editingDedId ? "hours_ded_save" : "hours_ded_add");
+  var cb = document.getElementById("dedCancelBtn");
+  if (cb) cb.style.display = editingDedId ? "" : "none";
+}
+function setDedFormType(ty) { dedFormType = (ty === "fixed") ? "fixed" : "percent"; renderDedForm(); }
+function addPresetDeduction(key) {
+  var p = null;
+  for (var i = 0; i < HOURS_DED_PRESETS.length; i++) { if (HOURS_DED_PRESETS[i].key === key) { p = HOURS_DED_PRESETS[i]; break; } }
+  if (!p) return;
+  if (!state.hours) state.hours = defaultHours();
+  if (!Array.isArray(state.hours.deductions)) state.hours.deductions = [];
+  state.hours.deductions.push({ id: uid("hd"), name: t(key), type: p.type, value: p.value });
+  saveState(); renderHours();
+}
+function saveDeduction() {
+  var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
+  var name = nameEl ? nameEl.value.trim() : "";
+  if (!name) { toast(t("hours_ded_need_name")); return; }
+  var val = valEl ? parseFloat(valEl.value) : NaN;
+  if (isNaN(val) || val < 0) val = 0;
+  val = Math.round(val * 100) / 100;
+  if (!state.hours) state.hours = defaultHours();
+  if (!Array.isArray(state.hours.deductions)) state.hours.deductions = [];
+  if (editingDedId) {
+    var d = state.hours.deductions.find(function(x){ return x.id === editingDedId; });
+    if (d) { d.name = name; d.type = dedFormType; d.value = val; }
+  } else {
+    state.hours.deductions.push({ id: uid("hd"), name: name, type: dedFormType, value: val });
+  }
+  saveState();
+  cancelEditDeduction();
+  renderHours();
+}
+function editDeduction(id) {
+  var d = ((state.hours && state.hours.deductions) || []).find(function(x){ return x.id === id; });
+  if (!d) return;
+  editingDedId = id;
+  dedFormType = d.type === "fixed" ? "fixed" : "percent";
+  var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
+  if (nameEl) nameEl.value = d.name;
+  if (valEl) valEl.value = d.value;
+  renderDedForm();
+}
+function cancelEditDeduction() {
+  editingDedId = null; dedFormType = "percent";
+  var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
+  if (nameEl) nameEl.value = "";
+  if (valEl) valEl.value = "";
+  renderDedForm();
+}
+function delDeduction(id) {
+  appConfirm(t("hours_ded_del_confirm")).then(function(ok){
+    if (!ok) return;
+    if (!state.hours) return;
+    state.hours.deductions = (state.hours.deductions || []).filter(function(x){ return x.id !== id; });
+    if (editingDedId === id) cancelEditDeduction();
+    saveState(); renderHours();
+  });
 }
 
 /* ================= v60: Quick Stock ================= */
@@ -2910,10 +3193,12 @@ function resetJobUI() {
   taskFilter = "all"; editingNoteId = null; expandedNoteId = null;
   editingStockId = null; stockPickerOpen = false;
   discountApplied = false;
+  /* v63 hours: reset tab to Log, clear estimator + deduction-form drafts; stored entries/deductions/wage stay */
+  hoursTab = "log"; editingDedId = null; dedFormType = "percent";
   toggleTaskForm(false); toggleNoteForm(false); toggleHandoffForm(false); toggleStockForm(false); toggleHoursForm(false);
   closeDatePicker();
   ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursDate", "hoursClockIn", "hoursClockOut",
-   "hoursMealStart", "hoursMealEnd", "hoursLabel",
+   "hoursMealStart", "hoursMealEnd", "hoursLabel", "estHours", "dedName", "dedValue",
    "stockName", "stockQty", "stockThreshold", "stockCatalogSearch", "handoffTitle", "handoffMsg"].forEach(function(id){
     var el = document.getElementById(id); if (el) el.value = "";
   });
