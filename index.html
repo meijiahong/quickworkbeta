@@ -302,11 +302,23 @@
 .task-done .name { text-decoration: line-through; opacity: .55; }
 .item.stock-low { background: #FFF1F0; border-color: #F5C6C2; }
 .item.stock-low .name { color: #b3261e; }
+/* ---------- v73: clean stock rows + catalog picker ---------- */
+.stock-item { flex-direction: column; align-items: stretch; gap: 0; }
+.stock-top { display: flex; align-items: center; gap: 8px; }
+.stock-top .name { flex: 1; min-width: 0; }
+.stock-top .btn { flex: none; }
+.stock-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
+.stock-stepper { display: flex; align-items: center; gap: 8px; }
+.stock-stepper .btn { padding: 6px 12px; }
+.stock-threshold { font-size: 13px; color: #7a8499; white-space: nowrap; }
+.stock-pick-row .name { flex: 1; min-width: 0; }
+.stock-pick-qty { width: 64px; flex: none; text-align: center; padding: 8px 6px; margin: 0; }
 .handoff-resolved { opacity: .55; }
 .handoff-resolved .name { text-decoration: line-through; }
 .pay-big { font-size: 22px; font-weight: 800; color: #4F46E5; }
 body[data-theme="dark"] .item.stock-low { background: #3a1d1d; border-color: #5a2a2a; }
 body[data-theme="dark"] .item.stock-low .name { color: #ff9d94; }
+body[data-theme="dark"] .stock-threshold { color: #9aa3b5; }
 body[data-theme="dark"] .pay-big { color: #A5B4FC; }
 /* ---------- v18: indigo polish, modern buttons, smooth reorder ---------- */
 .btn { border-radius: 14px; transition: transform .12s ease, box-shadow .15s ease, background .15s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -1335,6 +1347,10 @@ stock_imported_1: "1 stock item imported.",
 stock_imported_n: "{n} stock items imported.",
 stock_catalog_empty: "No products in the catalog yet.",
 stock_linked: "Linked",
+stock_low_at: "Low-stock at {n}",
+stock_add_selected: "Add selected",
+stock_added: "Added",
+stock_none_selected: "Select at least one product first.",
 stock_save: "Save",
 stock_cancel_edit: "Cancel edit",
 handoff_add: "+ Add handoff",
@@ -1699,6 +1715,10 @@ stock_imported_1: "1 artículo importado.",
 stock_imported_n: "{n} artículos importados.",
 stock_catalog_empty: "Aún no hay productos en el catálogo.",
 stock_linked: "Vinculado",
+stock_low_at: "Stock bajo en {n}",
+stock_add_selected: "Añadir seleccionados",
+stock_added: "Añadido",
+stock_none_selected: "Selecciona al menos un producto primero.",
 stock_save: "Guardar",
 stock_cancel_edit: "Cancelar edición",
 handoff_add: "+ Añadir entrega",
@@ -2897,14 +2917,16 @@ function renderStock() {
     var low = it.qty <= it.threshold;
     var linked = it.productId ? ' <span class="pill">' + t("stock_linked") + '</span>' : "";
     var lowBadge = low ? ' <span class="pill" style="background:#FDE8E8;color:#b3261e">' + t("stock_low") + '</span>' : "";
-    return '<div class="item' + (low ? " stock-low" : "") + '"><div class="row"><span class="name">' + esc(stockDisplayName(it)) + '</span>' + linked + lowBadge +
-      '<button class="btn btn-ghost" style="padding:6px 8px;margin-left:auto" onclick="editStock(\'' + it.id + '\')">' + t("edit") + '</button>' +
+    return '<div class="item stock-item' + (low ? " stock-low" : "") + '"><div class="stock-top"><span class="name">' + esc(stockDisplayName(it)) + '</span>' + linked + lowBadge +
+      '<button class="btn btn-ghost" style="padding:6px 8px" onclick="editStock(\'' + it.id + '\')">' + t("edit") + '</button>' +
       '<button class="btn btn-ghost" style="padding:6px 8px" onclick="delStock(\'' + it.id + '\')">✕</button></div>' +
-      '<div class="row" style="gap:8px;margin-top:8px;align-items:center"><button class="btn btn-ghost" style="padding:6px 12px" onclick="stockQtyChange(\'' + it.id + '\',-1)">−</button>' +
-      '<span><b>' + it.qty + '</b> / ' + t("stock_threshold_lb") + ' ' + it.threshold + '</span>' +
-      '<button class="btn btn-ghost" style="padding:6px 12px" onclick="stockQtyChange(\'' + it.id + '\',1)">+</button></div></div>';
+      '<div class="stock-bottom"><div class="stock-stepper"><button class="btn btn-ghost" onclick="stockQtyChange(\'' + it.id + '\',-1)">−</button>' +
+      '<span><b>' + it.qty + '</b></span>' +
+      '<button class="btn btn-ghost" onclick="stockQtyChange(\'' + it.id + '\',1)">+</button></div>' +
+      '<span class="stock-threshold">' + tf("stock_low_at", { n: it.threshold }) + '</span></div></div>';
   }).join("");
 }
+var stockPickerSel = {};
 function renderStockPicker() {
   var listEl = document.getElementById("stockCatalogList"); if (!listEl) return;
   var q = (document.getElementById("stockCatalogSearch").value || "").toLowerCase();
@@ -2916,12 +2938,41 @@ function renderStockPicker() {
   if (!filtered.length) { listEl.innerHTML = '<div class="empty">' + t("stock_catalog_empty") + '</div>'; return; }
   var linkedIds = {};
   (state.stock.items || []).forEach(function(it){ if (it.productId) linkedIds[it.productId] = true; });
+  var hasSel = Object.keys(stockPickerSel).length > 0;
   listEl.innerHTML = filtered.map(function(c){
     var p = state.products[c];
     var already = linkedIds[c];
-    return '<div class="item"><div class="row"><span class="name">' + esc(p.name || c) + '</span>' +
-      '<button class="btn btn-primary" style="padding:6px 12px;margin-left:auto" onclick="addStockFromCatalog(\'' + c + '\')" ' + (already ? "disabled" : "") + '>' + (already ? t("stock_linked") : t("stock_add")) + '</button></div></div>';
-  }).join("");
+    var checked = stockPickerSel[c] != null;
+    var qty = checked ? stockPickerSel[c] : 1;
+    var qtyInput = already ? "" : '<input type="number" class="stock-pick-qty" min="1" step="1" inputmode="numeric" value="' + qty + '" oninput="setStockPickQty(\'' + c + '\', this.value)">';
+    var addedHint = already ? ' <span class="pill">' + t("stock_added") + '</span>' : "";
+    return '<div class="item stock-pick-row"><input type="checkbox" class="app-check"' + (already ? " disabled" : "") + (checked ? " checked" : "") + ' onchange="toggleStockPick(\'' + c + '\', this.checked)"><span class="name">' + esc(p.name || c) + '</span>' + addedHint + qtyInput + '</div>';
+  }).join("") +
+  '<button class="btn btn-primary" style="margin-top:10px" onclick="addStockSelected()"' + (hasSel ? "" : " disabled") + '>' + t("stock_add_selected") + '</button>';
+}
+function toggleStockPick(code, on) {
+  if (on) { if (stockPickerSel[code] == null) stockPickerSel[code] = 1; }
+  else delete stockPickerSel[code];
+  renderStockPicker();
+}
+function setStockPickQty(code, v) {
+  var q = parseInt(v, 10);
+  if (isNaN(q) || q < 1) q = 1;
+  stockPickerSel[code] = q;
+}
+function addStockSelected() {
+  var codes = Object.keys(stockPickerSel);
+  if (!codes.length) { toast(t("stock_none_selected")); return; }
+  if (!state.stock) state.stock = defaultStock();
+  codes.forEach(function(code){
+    var p = state.products[code]; if (!p) return;
+    if (state.stock.items.some(function(it){ return it.productId === code; })) return;
+    var q = parseInt(stockPickerSel[code], 10); if (isNaN(q) || q < 1) q = 1;
+    state.stock.items.push({ id: uid("st"), name: p.name || code, qty: q, threshold: 0, productId: code });
+  });
+  stockPickerSel = {};
+  stockPickerOpen = false;
+  saveState(); renderStock();
 }
 function toggleStockForm(open) {
   var form = document.getElementById("stockForm"); if (!form) return;
@@ -2989,24 +3040,12 @@ function delStock(id) {
 function toggleStockConnect() {
   var on = !!document.getElementById("stockConnect").checked;
   if (!state.stock) state.stock = defaultStock();
-  if (!on) {
-    /* freezing linked entries: keep last-synced name, drop the link */
-    state.stock.items.forEach(function(it){
-      if (it.productId) { it.name = stockDisplayName(it); it.productId = null; }
-    });
-    stockPickerOpen = false;
-  }
+  if (!on) stockPickerOpen = false;
+  /* v73: linked entries keep their productId when disconnected, so purchases keep decrementing them */
   state.stock.connectCatalog = on;
   saveState(); renderStock();
 }
 function toggleStockPicker() { stockPickerOpen = !stockPickerOpen; renderStock(); }
-function addStockFromCatalog(code) {
-  var p = state.products[code]; if (!p) return;
-  if (!state.stock) state.stock = defaultStock();
-  if (state.stock.items.some(function(it){ return it.productId === code; })) return;
-  state.stock.items.push({ id: uid("st"), name: p.name || code, qty: 0, threshold: 0, productId: code });
-  saveState(); renderStock();
-}
 function exportStock() {
   var items = (state.stock && state.stock.items) || [];
   if (!items.length) { toast(t("stock_no_export")); return; }
@@ -3390,7 +3429,7 @@ function resetJobUI() {
   var pf = document.getElementById("prodFilter"); if (pf) pf.value = "";
   /* v60 new apps: clear in-progress UI state only; stored per-job data stays untouched */
   taskFilter = "all"; editingNoteId = null; expandedNoteId = null;
-  editingStockId = null; stockPickerOpen = false;
+  editingStockId = null; stockPickerOpen = false; stockPickerSel = {};
   discountApplied = false;
   /* v63 hours: reset tab to Log, clear estimator + deduction-form drafts; stored entries/deductions/wage stay */
   hoursTab = "log"; editingDedId = null; dedFormType = "percent";
@@ -4434,7 +4473,24 @@ function updateChange(val) {
   }
 }
 function closeSummary() { document.getElementById("summaryOverlay").classList.remove("open"); unlockOverlay("summary"); }
+function decrementStockForOrder(lines) {
+  if (!state.stock || !Array.isArray(state.stock.items)) return;
+  var totals = {};
+  (lines || []).forEach(function(l){
+    if (!l || !l.code) return;
+    var q = parseInt(l.qty, 10);
+    if (isNaN(q) || q <= 0) return;
+    totals[l.code] = (totals[l.code] || 0) + q;
+  });
+  var changed = false;
+  Object.keys(totals).forEach(function(code){
+    var it = state.stock.items.find(function(x){ return x.productId === code; });
+    if (it) { it.qty = Math.max(0, (it.qty || 0) - totals[code]); changed = true; }
+  });
+  if (changed) saveState();
+}
 function newOrderAfterSummary() {
+  decrementStockForOrder(order);
   if ((state.shopSettings || {}).saveHistory && order.length) {
     var t = calcTotals();
     var given = null, change = null;
