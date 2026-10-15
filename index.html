@@ -98,6 +98,30 @@
   #modal.open { display: flex; }
   #modalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; }
   #modalBox h2 { margin: 0 0 12px; font-size: 19px; }
+  /* category field: text input + custom in-app dropdown (replaces native datalist) */
+  .catfield { position: relative; }
+  .catfield input[type=text] { padding-right: 40px; }
+  .catchev { position: absolute; right: 8px; top: 0; width: 32px; height: 48px; border: 0; background: transparent; color: #4F46E5; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .catchev svg { transition: transform .15s ease; }
+  .catfield.open .catchev svg { transform: rotate(180deg); }
+  .catdrop { display: none; position: absolute; left: 0; right: 0; top: calc(100% - 6px); z-index: 5; background: #fff; border: 1.5px solid #c9d2e3; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.15); max-height: 180px; overflow-y: auto; padding: 4px 0; }
+  .catfield.open .catdrop { display: block; }
+  .catdrop-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 13px; border: 0; background: transparent; font-size: 16px; font-family: inherit; color: #1c2333; cursor: pointer; text-align: left; }
+  .catdrop-opt:hover, .catdrop-opt:active { background: #EEF0FF; }
+  .catdrop-opt .tick { color: #4F46E5; font-weight: 700; flex: none; }
+  body[data-theme="dark"] .catchev { color: #818CF8; }
+  body[data-theme="dark"] .catdrop { background: #1C1C1E; border-color: #333338; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+  body[data-theme="dark"] .catdrop-opt { color: #F5F5F7; }
+  body[data-theme="dark"] .catdrop-opt:hover, body[data-theme="dark"] .catdrop-opt:active { background: #26262b; }
+  body[data-theme="dark"] .catdrop-opt .tick { color: #818CF8; }
+  /* categories: fallback-price hint + management rows */
+  .catprice-hint { font-size: 11px; color: var(--dim); font-weight: 600; margin-top: 2px; }
+  .catrow { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #edf0f5; }
+  .catrow:last-child { border-bottom: none; }
+  .catpick-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 13px; border: 0; border-bottom: 1px solid #edf0f5; background: transparent; font-size: 16px; font-family: inherit; color: #1c2333; cursor: pointer; text-align: left; }
+  .catpick-opt:last-child { border-bottom: none; }
+  body[data-theme="dark"] .catrow { border-bottom-color: #2E2E35; }
+  body[data-theme="dark"] .catpick-opt { color: #F5F5F7; border-bottom-color: #2E2E35; }
   #confirmOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: center; justify-content: center; padding: 20px; }
   #confirmOverlay.open { display: flex; }
   #confirmBox { background: #fff; width: 100%; max-width: 380px; border-radius: 18px; padding: 22px 20px; text-align: center; }
@@ -109,7 +133,7 @@
   #promptBox input { width: 100%; font-size: 22px; padding: 12px; border: 2px solid #dfe5ef; border-radius: 12px; margin: 0 0 16px; text-align: center; box-sizing: border-box; }
   .selbox { width: 22px; height: 22px; flex: none; accent-color: #4F46E5; }
   .item.sel { cursor: pointer; }
-  #bulkBar { display: none; position: fixed; left: 0; right: 0; bottom: 0; background: #4F46E5; color: #fff; z-index: 55; padding: 12px 14px; align-items: center; gap: 8px; box-shadow: 0 -2px 12px rgba(0,0,0,.2); }
+  #bulkBar { display: none; position: fixed; left: 0; right: 0; bottom: 0; background: #4F46E5; color: #fff; z-index: 55; padding: 12px 14px; align-items: center; gap: 8px; flex-wrap: wrap; box-shadow: 0 -2px 12px rgba(0,0,0,.2); }
   #bulkBar.open { display: flex; }
   #bulkCount { font-weight: 700; font-size: 14px; margin-right: auto; white-space: nowrap; }
   .bulkbtn { background: rgba(255,255,255,.14); color: #fff; border: 0; border-radius: 10px; padding: 10px 12px; font-size: 14px; font-weight: 700; }
@@ -201,7 +225,17 @@
   #contactModalBox h2 { margin: 0 0 8px; font-size: 19px; }
   #reader video { touch-action: none; }
   .modsub { margin: 2px 0 0; font-size: 12px; color: #7a8499; }
-  .modtile { touch-action: none; }
+  .modtile { touch-action: pan-y; }
+  /* v67: icon-grid home layout (launcher-style: icon + name only) */
+  .icongrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 8px; padding: 18px; max-width: 640px; margin: 0 auto; }
+  .iconcell { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; font-family: inherit; padding: 2px; touch-action: pan-y; }
+  .iconcell:active { transform: scale(.94); }
+  .iconback { width: 60px; height: 60px; border-radius: 17px; background: #fff; border: 1px solid #e3e8f1; box-shadow: 0 2px 8px rgba(79,70,229,.08); display: flex; align-items: center; justify-content: center; }
+  .iconback .modicon { margin: 0; }
+  .iconback .modicon svg { width: 34px; height: 34px; }
+  .iconcell .modname { font-size: 12px; font-weight: 700; line-height: 1.25; text-align: center; }
+  body[data-theme="dark"] .iconback { background: #1C1C1E; border-color: #2E2E33; }
+  @media (min-width: 640px) { .icongrid { grid-template-columns: repeat(6, 1fr); } }
   .profilecard { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e3e8f1; border-radius: 16px; padding: 8px 8px 8px 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(79,70,229,.08); }
   .profilecard.active { border-color: #4F46E5; background: #EEF0FF; }
   .profileradio { width: 24px; height: 24px; flex: none; border-radius: 50%; border: 2px solid #C7CDE3; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 800; }
@@ -254,10 +288,10 @@
   .sumline .name { font-weight: 600; font-size: 15px; }
   .sumline .sub { font-size: 12px; color: #7a8499; }
 
-#templateUseModal, #templateEditModal, #templateLibModal, #infoModal, #historyModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
-#templateUseModal.open, #templateEditModal.open, #templateLibModal.open, #infoModal.open, #historyModal.open { display: flex; }
-#templateUseBox, #templateEditBox, #templateLibBox, #infoModalBox, #historyBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
-#templateUseBox h2, #templateEditBox h2, #templateLibBox h2, #infoModalBox h2, #historyBox h2 { margin: 0 0 8px; font-size: 19px; }
+#templateUseModal, #templateEditModal, #templateLibModal, #infoModal, #historyModal, #catManageModal, #catPickModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
+#templateUseModal.open, #templateEditModal.open, #templateLibModal.open, #infoModal.open, #historyModal.open, #catManageModal.open, #catPickModal.open { display: flex; }
+#templateUseBox, #templateEditBox, #templateLibBox, #infoModalBox, #historyBox, #catManageBox, #catPickBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+#templateUseBox h2, #templateEditBox h2, #templateLibBox h2, #infoModalBox h2, #historyBox h2, #catManageBox h2, #catPickBox h2 { margin: 0 0 8px; font-size: 19px; }
 #templateEditBox textarea, #infoModalBox textarea { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; font-family: inherit; }
 /* ---------- v60: new apps ---------- */
 .task-done .name { text-decoration: line-through; opacity: .55; }
@@ -337,7 +371,7 @@ body[data-theme="dark"] .homehead h1, body[data-theme="dark"] .modhead h1 { colo
 body[data-theme="dark"] .backbtn { background: #1C1C1E; border-color: #2E2E33; color: #A5B4FC; }
 body[data-theme="dark"] #modalBox, body[data-theme="dark"] #confirmBox, body[data-theme="dark"] #promptBox,
 body[data-theme="dark"] #contactModalBox, body[data-theme="dark"] #importTargetBox, body[data-theme="dark"] #exportPickerBox, body[data-theme="dark"] #sheetBox,
-body[data-theme="dark"] #priceModalBox, body[data-theme="dark"] #templateUseBox, body[data-theme="dark"] #templateEditBox, body[data-theme="dark"] #templateLibBox, body[data-theme="dark"] #historyBox { background: #1C1C1E; }
+body[data-theme="dark"] #priceModalBox, body[data-theme="dark"] #templateUseBox, body[data-theme="dark"] #templateEditBox, body[data-theme="dark"] #templateLibBox, body[data-theme="dark"] #historyBox, body[data-theme="dark"] #catManageBox, body[data-theme="dark"] #catPickBox { background: #1C1C1E; }
 body[data-theme="dark"] #confirmBox p, body[data-theme="dark"] #promptBox p, body[data-theme="dark"] #modalBox h2,
 body[data-theme="dark"] #contactModalBox h2, body[data-theme="dark"] #importTargetBox h2, body[data-theme="dark"] #exportPickerBox h2, body[data-theme="dark"] #sheetBox .pname,
 body[data-theme="dark"] #templateUseBox h2, body[data-theme="dark"] #templateEditBox h2 { color: #FFFFFF; }
@@ -438,6 +472,7 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="exportData()" data-i18n="prod_export">⬆ Export list</button>
         <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()" data-i18n="prod_import">⬇ Import list</button>
+        <button class="btn btn-ghost" onclick="openCatManage()" data-i18n="cat_manage">Manage categories</button>
       </div>
       <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)">
       <label for="shopName" data-i18n="prod_shop_name">Shop name</label>
@@ -822,6 +857,8 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div class="setrow" id="fontSizeRow"></div>
       <label data-i18n="set_language">Language</label>
       <div class="setrow" id="langRow"></div>
+      <label data-i18n="set_home_layout">Home layout</label>
+      <div class="setrow" id="homeLayoutRow"></div>
       <p class="hint" style="margin:8px 0 0" data-i18n="set_font_hint">Text size applies across the whole app.</p>
     </div>
     <div class="card">
@@ -880,8 +917,11 @@ body[data-theme="dark"] .toast { background: #232329; }
     <label for="fPrice" data-i18n="prod_price">Price ($)</label>
     <input type="number" id="fPrice" inputmode="decimal" step="0.01" min="0" placeholder="0.00">
     <label for="fCategory" data-i18n="prod_category">Category</label>
-    <input type="text" id="fCategory" list="catList" data-i18n-ph="prod_category_ph" placeholder="e.g. Chips, Drinks">
-    <datalist id="catList"></datalist>
+    <div class="catfield" id="catField">
+      <input type="text" id="fCategory" data-i18n-ph="prod_category_ph" placeholder="e.g. Chips, Drinks" autocomplete="off" onfocus="catDropOpen()" oninput="catDropFilter()" onkeydown="if(event.key==='Escape'){catDropClose();this.blur();}">
+      <button type="button" class="catchev" onclick="catDropToggle(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="catdrop" id="catDrop"></div>
+    </div>
     <label data-i18n="prod_photo">Product photo</label>
     <div class="photoBtnRow">
       <img id="imgPreview" alt="">
@@ -988,10 +1028,11 @@ set_profiles: "Job profiles",
 set_current: "Current job: {v}",
 set_switch: "Switch / manage jobs",
 set_display: "Display",
-set_theme: "Theme", theme_light: "Light", theme_dark: "Dark",
+set_theme: "Theme", theme_light: "Light", theme_dark: "Dark", theme_system: "System",
 set_textsize: "Text size",
 set_font_hint: "Text size applies across the whole app.",
 set_language: "Language",
+set_home_layout: "Home layout", home_layout_panels: "Panels", home_layout_icons: "Icons",
 set_apps: "Apps on home screen",
 set_apps_hint: "Hide the apps you don't use. Turn them back on anytime.",
 font_small: "Small", font_medium: "Normal", font_large: "Large", font_xl: "Extra large",
@@ -1003,7 +1044,7 @@ import_replace: "Replace current job's data",
 import_new: "Create new job…",
 export_pick: "Choose what to export",
 export_btn: "Export",
-exp_shop_name: "Shop name", exp_products: "Products", exp_shop_settings: "Shop settings", exp_shop_history: "Purchase history",
+exp_shop_name: "Shop name", exp_products: "Products", exp_shop_categories: "Categories", exp_shop_settings: "Shop settings", exp_shop_history: "Purchase history",
 exp_people: "People", exp_departments: "Departments", exp_templates: "Message templates",
 exp_situations: "Situations", exp_comp_types: "Compensation types", exp_footer_note: "Footer note",
 import_done: "Import complete.",
@@ -1069,7 +1110,15 @@ prod_take_photo: "Take / choose photo", prod_remove_photo: "Remove photo",
 prod_barcode_req: "Barcode is required.", prod_name_req: "Product name is required.", prod_need_one: "Add a barcode, a name, or a category.",
 prod_scan_addedit: "Scan to add / edit product",
 prod_export: "⬆ Export list", prod_import: "⬇ Import list",
-prod_shop_name: "Shop name", prod_category: "Category", prod_category_ph: "e.g. Chips, Drinks", prod_all: "All", cat_no_cat: "No category", cat_set_price: "Set price for all in {v}", cat_price_prompt: "New price for {n} items in \"{v}\":", cat_price_done: "Updated {n} items in \"{v}\"", prod_shop_name_ph: "",
+prod_shop_name: "Shop name", prod_category: "Category", prod_category_ph: "e.g. Chips, Drinks", prod_all: "All", cat_no_cat: "No category", cat_set_price: "Set price for all in {v}",
+// categories as entities (v66)
+cat_manage: "Manage categories", cat_title: "Categories", cat_new: "+ New category", cat_empty: "No categories yet.",
+cat_name: "Name", cat_price: "Category price", cat_no_price: "No price", cat_price_hint: "Category price", cat_count: "{n} products",
+cat_delete_confirm: 'Delete category "{v}"? Products in it will become uncategorized.', cat_deleted: 'Category "{v}" deleted.', cat_saved: 'Category "{v}" saved.',
+cat_dup: 'A category named "{v}" already exists.', cat_need_name: "Enter a category name.",
+cat_set_category: "Set category", cat_clear_sel: "Clear", cat_bulk_done: "Updated {n} products.",
+cat_pick_title: "Choose category", cat_pick_new: "+ New category…", cat_new_name: "New category name:",
+cat_set_cat_price: "Set category price for {v}", cat_price_prompt: "New price for {n} items in \"{v}\":", cat_price_done: "Updated {n} items in \"{v}\"", prod_shop_name_ph: "",
 prod_share_hint: "Each phone keeps its own list. When prices change, one person taps Export list, sends the file in the group chat, and everyone else taps Import list.",
 prod_save_history: "Save purchase history", prod_view_history: "View purchase history",
 hist_title: "Purchase history", hist_empty: "No purchases yet.", hist_clear: "Clear history", hist_clear_confirm: "Delete all purchase history?", hist_cash_given: "Cash given", hist_change: "Change", hist_del_sel: "Delete selected", hist_del_sel_confirm: "Delete {n} selected purchases?",
@@ -1343,10 +1392,11 @@ set_profiles: "Perfiles de trabajo",
 set_current: "Trabajo actual: {v}",
 set_switch: "Cambiar / gestionar trabajos",
 set_display: "Pantalla",
-set_theme: "Tema", theme_light: "Claro", theme_dark: "Oscuro",
+set_theme: "Tema", theme_light: "Claro", theme_dark: "Oscuro", theme_system: "Sistema",
 set_textsize: "Tamaño del texto",
 set_font_hint: "El tamaño se aplica a toda la app.",
 set_language: "Idioma",
+set_home_layout: "Diseño del inicio", home_layout_panels: "Paneles", home_layout_icons: "Iconos",
 set_apps: "Apps en el inicio",
 set_apps_hint: "Oculta las apps que no uses. Reactívalas cuando quieras.",
 font_small: "Pequeño", font_medium: "Normal", font_large: "Grande", font_xl: "Extra grande",
@@ -1358,7 +1408,7 @@ import_replace: "Reemplazar los datos del trabajo actual",
 import_new: "Crear nuevo trabajo…",
 export_pick: "Elige qué exportar",
 export_btn: "Exportar",
-exp_shop_name: "Nombre de la tienda", exp_products: "Productos", exp_shop_settings: "Ajustes de la tienda", exp_shop_history: "Historial de compras",
+exp_shop_name: "Nombre de la tienda", exp_products: "Productos", exp_shop_categories: "Categorías", exp_shop_settings: "Ajustes de la tienda", exp_shop_history: "Historial de compras",
 exp_people: "Personas", exp_departments: "Departamentos", exp_templates: "Plantillas de mensajes",
 exp_situations: "Situaciones", exp_comp_types: "Tipos de compensación", exp_footer_note: "Nota al pie",
 import_done: "Importación completa.",
@@ -1424,7 +1474,15 @@ prod_take_photo: "Tomar / elegir foto", prod_remove_photo: "Quitar foto",
 prod_barcode_req: "El código es obligatorio.", prod_name_req: "El nombre es obligatorio.", prod_need_one: "Agrega un código, un nombre o una categoría.",
 prod_scan_addedit: "Escanear para agregar / editar",
 prod_export: "⬆ Exportar lista", prod_import: "⬇ Importar lista",
-prod_shop_name: "Nombre de la tienda", prod_category: "Categor\u00eda", prod_category_ph: "p. ej. Papas, Bebidas", prod_all: "Todos", cat_no_cat: "Sin categor\u00eda", cat_set_price: "Poner precio a todos en {v}", cat_price_prompt: "Nuevo precio para {n} art\u00edculos en \"{v}\":", cat_price_done: "{n} art\u00edculos actualizados en \"{v}\"", prod_shop_name_ph: "",
+prod_shop_name: "Nombre de la tienda", prod_category: "Categor\u00eda", prod_category_ph: "p. ej. Papas, Bebidas", prod_all: "Todos", cat_no_cat: "Sin categor\u00eda", cat_set_price: "Poner precio a todos en {v}",
+// categories as entities (v66)
+cat_manage: "Administrar categorías", cat_title: "Categorías", cat_new: "+ Nueva categoría", cat_empty: "Aún no hay categorías.",
+cat_name: "Nombre", cat_price: "Precio de categoría", cat_no_price: "Sin precio", cat_price_hint: "Precio de categoría", cat_count: "{n} productos",
+cat_delete_confirm: '¿Eliminar la categoría "{v}"? Los productos quedarán sin categoría.', cat_deleted: 'Categoría "{v}" eliminada.', cat_saved: 'Categoría "{v}" guardada.',
+cat_dup: 'Ya existe una categoría llamada "{v}".', cat_need_name: "Escribe un nombre de categoría.",
+cat_set_category: "Asignar categoría", cat_clear_sel: "Limpiar", cat_bulk_done: "Se actualizaron {n} productos.",
+cat_pick_title: "Elegir categoría", cat_pick_new: "+ Nueva categoría…", cat_new_name: "Nombre de la categoría nueva:",
+cat_set_cat_price: "Poner precio de categoría para {v}", cat_price_prompt: "Nuevo precio para {n} art\u00edculos en \"{v}\":", cat_price_done: "{n} art\u00edculos actualizados en \"{v}\"", prod_shop_name_ph: "",
 prod_share_hint: "Cada teléfono guarda su propia lista. Cuando cambien los precios, una persona toca Exportar lista, envía el archivo al chat del grupo y los demás tocan Importar lista.",
 prod_save_history: "Guardar historial de compras", prod_view_history: "Ver historial de compras",
 hist_title: "Historial de compras", hist_empty: "Sin compras aún.", hist_clear: "Borrar historial", hist_clear_confirm: "¿Eliminar todo el historial de compras?", hist_cash_given: "Efectivo recibido", hist_change: "Cambio", hist_del_sel: "Eliminar seleccionados", hist_del_sel_confirm: "¿Eliminar {n} compras seleccionadas?",
@@ -1686,18 +1744,60 @@ function setLang(l) {
   DB.appSettings.lang = (l === "es") ? "es" : "en";
   saveState(); applyI18n(); renderAll();
 }
-function curTheme() { return (DB && DB.appSettings && DB.appSettings.theme) || "light"; }
-function applyTheme() { document.body.setAttribute("data-theme", curTheme()); }
+/* Theme preference: "light" | "dark" | "system". Stored Light/Dark is never
+   migrated; users with no stored theme get System (follows the device). */
+function themePref() {
+  var t = (DB && DB.appSettings && DB.appSettings.theme);
+  if (t === "light" || t === "dark" || t === "system") return t;
+  return "system";
+}
+function devicePrefersDark() {
+  try {
+    if (typeof window !== "undefined" && window.matchMedia) return !!window.matchMedia("(prefers-color-scheme: dark)").matches;
+  } catch (e) {}
+  return false;
+}
+/* Resolved theme actually applied: explicit pref wins, System follows the device. */
+function curTheme() {
+  var p = themePref();
+  if (p === "light" || p === "dark") return p;
+  return devicePrefersDark() ? "dark" : "light";
+}
+/* System bars (Android nav/status) follow the resolved theme via theme-color. */
+function updateThemeColorMeta() {
+  var color = (curTheme() === "dark") ? "#000000" : "#ffffff";
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute("name", "theme-color");
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content", color);
+}
+function applyTheme() {
+  document.body.setAttribute("data-theme", curTheme());
+  updateThemeColorMeta();
+}
 function setTheme(th) {
   if (!DB.appSettings) DB.appSettings = {};
-  DB.appSettings.theme = (th === "dark") ? "dark" : "light";
+  DB.appSettings.theme = (th === "light" || th === "dark" || th === "system") ? th : "system";
   saveState(); applyTheme(); renderThemeRow();
 }
+function onSystemThemeChange() { if (themePref() === "system") applyTheme(); }
+function watchSystemTheme() {
+  try {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", onSystemThemeChange);
+    else if (mq.addListener) mq.addListener(onSystemThemeChange);
+  } catch (e) {}
+}
 function renderThemeRow() {
-  var cur = curTheme();
+  var cur = themePref();
   document.getElementById("themeRow").innerHTML =
     '<button class="pickchip' + (cur === "light" ? " on" : "") + '" onclick="setTheme(\'light\')">' + t("theme_light") + "</button>" +
-    '<button class="pickchip' + (cur === "dark" ? " on" : "") + '" onclick="setTheme(\'dark\')">' + t("theme_dark") + "</button>";
+    '<button class="pickchip' + (cur === "dark" ? " on" : "") + '" onclick="setTheme(\'dark\')">' + t("theme_dark") + "</button>" +
+    '<button class="pickchip' + (cur === "system" ? " on" : "") + '" onclick="setTheme(\'system\')">' + t("theme_system") + "</button>";
 }
 function renderLangRow() {
   var cur = curLang();
@@ -1705,11 +1805,24 @@ function renderLangRow() {
     '<button class="pickchip' + (cur === "en" ? " on" : "") + '" onclick="setLang(\'en\')">English</button>' +
     '<button class="pickchip' + (cur === "es" ? " on" : "") + '" onclick="setLang(\'es\')">Español</button>';
 }
+/* ---------- home layout (v67): panels vs icons, global display pref like theme/lang ---------- */
+function curHomeLayout() { return (DB && DB.appSettings && DB.appSettings.homeLayout === "icons") ? "icons" : "panels"; }
+function setHomeLayout(l) {
+  if (!DB.appSettings) DB.appSettings = {};
+  DB.appSettings.homeLayout = (l === "icons") ? "icons" : "panels";
+  saveState(); renderHomeLayoutRow(); renderHome();
+}
+function renderHomeLayoutRow() {
+  var cur = curHomeLayout();
+  document.getElementById("homeLayoutRow").innerHTML =
+    '<button class="pickchip' + (cur === "panels" ? " on" : "") + '" onclick="setHomeLayout(\'panels\')">' + t("home_layout_panels") + '</button>' +
+    '<button class="pickchip' + (cur === "icons" ? " on" : "") + '" onclick="setHomeLayout(\'icons\')">' + t("home_layout_icons") + '</button>';
+}
 function renderAll() {
   renderHome(); renderOrder(); renderShopName(); loadShopSettingsUI();
   renderContacts(); renderRecovery(); renderModuleToggles();
   renderTasks(); renderNotes(); renderHours(); renderStock(); renderHandoff();
-  renderSettingsProfile(); renderFontSizeRow(); renderThemeRow(); renderLangRow();
+  renderSettingsProfile(); renderFontSizeRow(); renderThemeRow(); renderLangRow(); renderHomeLayoutRow();
   if (document.getElementById("view-profiles").style.display !== "none") renderProfiles();
 }
 
@@ -1763,7 +1876,7 @@ function loadLegacyState() {
   return null;
 }
 function blankProfile(name) {
-  return { name: name, products: {}, shopName: "", shopSettings: defaultShopSettings(), shopHistory: [],
+  return { name: name, products: {}, shopName: "", shopSettings: defaultShopSettings(), shopHistory: [], shopCategories: [],
     recovery: { compTypes: [], situations: [], footerNote: t("default_footer") },
     contacts: { departments: [], people: [], templates: [], lastDept: "" },
     info: { items: [] },
@@ -1781,6 +1894,8 @@ function migrateProfile(p) {
     if (p.shopSettings.discountPct === undefined) p.shopSettings.discountPct = 0;
   }
   if (!Array.isArray(p.shopHistory)) p.shopHistory = [];
+  /* v66 categories: entities with their own price (never products) */
+  syncShopCategories(p);
   if (p.recovery.footerNote === undefined) p.recovery.footerNote = t("default_footer");
   if (!p.contacts) p.contacts = defaultContacts();
   if (!Array.isArray(p.contacts.templates)) p.contacts.templates = [];
@@ -1898,7 +2013,7 @@ function selectAll() {
 function updateBulkBar() {
   var n = Object.keys(selected).length;
   document.getElementById("bulkCount").textContent = tf("shop_selected", { n: n });
-  document.getElementById("bulkBar").classList.toggle("open", selectMode);
+  document.getElementById("bulkBar").classList.toggle("open", selectMode && n > 0);
   document.getElementById("selectToggleBtn").textContent = selectMode ? "Done" : "Select";
 }
 function bulkSetPrice() {
@@ -3035,6 +3150,8 @@ function qwCloseTopOverlay() {
   if (qwIsOpen("contactModal")) { closeContactModal(); return true; }
   if (qwIsOpen("infoModal")) { closeInfoModal(); return true; }
   if (qwIsOpen("historyModal")) { closeHistory(); return true; }
+  if (qwIsOpen("catPickModal")) { closeCatPick(); return true; }
+  if (qwIsOpen("catManageModal")) { closeCatManage(); return true; }
   if (qwIsOpen("sheet")) { closeSheet(); return true; }
   if (qwIsOpen("modal")) { closeModal(); return true; }
   if (qwIsOpen("scanOverlay")) { stopScan(); return true; }
@@ -3076,6 +3193,17 @@ function renderHome() {
   var list = ids.filter(function(id){ return vis[id] !== false; }).map(function(id){
     return MODULES.filter(function(m){ return m.id === id; })[0];
   });
+  var grid = document.getElementById("moduleGrid");
+  if (curHomeLayout() === "icons") {
+    grid.className = "icongrid";
+    grid.innerHTML = list.length ? list.map(function(m){
+      return '<button class="iconcell" data-mod="' + m.id + '" onclick="showView(\'' + m.id + '\')">' +
+        '<span class="iconback"><span class="modicon">' + m.icon + '</span></span>' +
+        '<span class="modname">' + m.name + '</span></button>';
+    }).join("") : '<p class="hint" style="grid-column:1/-1;text-align:center">All apps are hidden — tap \u2699\uFE0F to turn them back on.</p>';
+    return;
+  }
+  grid.className = "modgrid";
   var html = list.map(function(m){
     return '<button class="modtile" data-mod="' + m.id + '" onclick="showView(\'' + m.id + '\')">' +
       '<span class="modicon">' + m.icon + '</span>' +
@@ -3083,7 +3211,6 @@ function renderHome() {
       '<span class="moddesc">' + t(m.descKey) + '</span></button>';
   }).join("");
   if (!list.length) html = '<p class="hint" style="grid-column:1/-1;text-align:center">All apps are hidden — tap \u2699\uFE0F to turn them back on.</p>';
-  var grid = document.getElementById("moduleGrid");
   grid.innerHTML = html;
   Array.prototype.forEach.call(grid.querySelectorAll(".modtile"), function(tile){
     tile.addEventListener("pointerdown", function(e){ onTileDown(e, tile); });
@@ -3230,6 +3357,8 @@ function resetJobUI() {
   order = [];
   selectMode = false; selected = {};
   selectedHistory = {};
+  prodCatFilter = "";
+  closeCatManage(); closeCatPick();
   payMethod = "card";
   modalCode = null; modalIsNew = true; modalAfterSave = null;
   sheetCode = null; sheetOverride = null; priceCtx = null; modalImg = null;
@@ -3532,7 +3661,8 @@ function handleCode(code, mode) {
 function addToOrder(code, priceOverride, qty) {
   var p = state.products[code];
   if (!p) return;
-  var price = (priceOverride != null && !isNaN(priceOverride)) ? priceOverride : p.price;
+  var price = (priceOverride != null && !isNaN(priceOverride)) ? priceOverride : effectivePrice(p);
+  if (price == null || isNaN(price)) return;
   qty = qty || 1;
   var line = null;
   for (var i = 0; i < order.length; i++) if (order[i].code === code && order[i].price === price) line = order[i];
@@ -3567,7 +3697,7 @@ function renderSearch() {
     return '<div class="item" onclick="showSheet(\'' + esc(h.code).replace(/'/g, "\\'") + '\')">' +
       '<div class="info"><div class="name">' + esc(h.p.name) + '</div>' +
       '<div class="sub">' + (h.p.manual ? '' : '<kbd class="code">' + esc(h.code) + '</kbd>') + (h.p.category ? '<span class="catbadge">' + esc(h.p.category) + '</span>' : '') + '</div></div>' +
-      '<div class="line-total">' + fmtP(h.p.price) + '</div></div>';
+      '<div class="line-total">' + fmtP(effectivePrice(h.p)) + '</div></div>';
   }).join("");
 }
 function renderOrder() {
@@ -3590,17 +3720,64 @@ function renderOrder() {
   document.getElementById("grandTotal").textContent = fmt(total);
 }
 
+/* ---------- categories as entities (v66: real entities, never products) ---------- */
+function shopCategories() { if (!Array.isArray(state.shopCategories)) state.shopCategories = []; return state.shopCategories; }
+function findCategoryIn(p, name) {
+  var k = catKey(name);
+  if (!k) return null;
+  var list = Array.isArray(p.shopCategories) ? p.shopCategories : [];
+  for (var i = 0; i < list.length; i++) if (list[i] && catKey(list[i].name) === k) return list[i];
+  return null;
+}
+function findCategory(name) { return findCategoryIn(state, name); }
+function normalizeCatPrice(v) {
+  if (v === null || v === undefined || v === "") return null;
+  var n = parseFloat(v);
+  return (isNaN(n) || n < 0) ? null : Math.round(n * 100) / 100;
+}
+/* Create entity rows for every distinct product category that lacks one; dedupe entities by name. */
+function syncShopCategories(p) {
+  if (!p) return;
+  if (!Array.isArray(p.shopCategories)) p.shopCategories = [];
+  var seen = {}, ded = [];
+  p.shopCategories.forEach(function(c){
+    if (!c || typeof c.name !== "string") return;
+    var nm = c.name.trim(); if (!nm) return;
+    var k = catKey(nm); if (seen[k]) return; seen[k] = 1;
+    ded.push({ id: c.id || uid("cat"), name: nm, price: normalizeCatPrice(c.price) });
+  });
+  p.shopCategories = ded;
+  Object.keys(p.products || {}).forEach(function(code){
+    var cn = (((p.products[code] || {}).category) || "").trim();
+    if (cn && !findCategoryIn(p, cn)) p.shopCategories.push({ id: uid("cat"), name: cn, price: null });
+  });
+}
+function ensureCategory(name) {
+  var n = (name || "").trim();
+  if (!n) return null;
+  var c = findCategory(n);
+  if (!c) { c = { id: uid("cat"), name: n, price: null }; shopCategories().push(c); saveState(); }
+  return c;
+}
+/* Effective price: the product's own price wins; otherwise the category price; otherwise null. Never writes into the product. */
+function effectivePrice(p) {
+  if (!p) return null;
+  if (p.price != null && !isNaN(p.price)) return p.price;
+  var c = p.category ? findCategory(p.category) : null;
+  if (c && c.price != null) return c.price;
+  return null;
+}
+function priceFromCategory(p) {
+  if (!p || p.price != null) return false;
+  var c = p.category ? findCategory(p.category) : null;
+  return !!(c && c.price != null);
+}
+
 /* ---------- products ---------- */
 var prodCatFilter = "";
 function catKey(c) { return (c || "").trim().toLowerCase(); }
 function allCategories() {
-  var seen = {}, out = [];
-  Object.keys(state.products).forEach(function(c){
-    var cat = (state.products[c].category || "").trim();
-    var key = catKey(cat);
-    if (cat && !seen[key]) { seen[key] = 1; out.push(cat); }
-  });
-  return out.sort(function(a, b){ return a.localeCompare(b); });
+  return shopCategories().map(function(c){ return c.name; }).sort(function(a, b){ return a.localeCompare(b); });
 }
 function renderCatChips() {
   var cats = allCategories();
@@ -3622,7 +3799,7 @@ function renderCatChips() {
   if (bar) {
     if (prodCatFilter && prodCatFilter !== "__none") {
       bar.style.display = "";
-      bar.innerHTML = '<button class="btn btn-ghost" onclick="askCategoryPrice()">' + tf("cat_set_price", { v: prodCatFilter }) + '</button>';
+      bar.innerHTML = '<button class="btn btn-ghost" onclick="openCatManage(this)" data-cat="' + esc(prodCatFilter) + '">' + tf("cat_set_cat_price", { v: prodCatFilter }) + '</button>';
     } else { bar.style.display = "none"; bar.innerHTML = ""; }
   }
 }
@@ -3630,20 +3807,6 @@ function setCatFilter(v) {
   if (typeof v !== "string") v = v.getAttribute("data-cat") || "";
   prodCatFilter = v;
   renderCatChips(); renderProducts();
-}
-function askCategoryPrice() {
-  var cat = prodCatFilter;
-  var codes = Object.keys(state.products).filter(function(c){ return catKey(state.products[c].category) === catKey(cat); });
-  if (!codes.length) return;
-  appPrompt(tf("cat_price_prompt", { n: codes.length, v: cat }), "").then(function(val){
-    if (val === null) return;
-    val = String(val).trim();
-    if (val === "" || isNaN(parseFloat(val)) || parseFloat(val) < 0) { toast(t("shop_valid_price")); return; }
-    var price = Math.round(parseFloat(val) * 100) / 100;
-    codes.forEach(function(c){ state.products[c].price = price; state.products[c].updatedAt = Date.now(); });
-    saveState(); renderProducts();
-    toast(tf("cat_price_done", { n: codes.length, v: cat }));
-  });
 }
 function renderProducts() {
   renderCatChips();
@@ -3665,12 +3828,13 @@ function renderProducts() {
   list.innerHTML = shown.map(function(c) {
     var p = state.products[c];
     var js = "'" + c.replace(/'/g, "\\'") + "'";
+    var eff = effectivePrice(p), fromCat = priceFromCategory(p);
     return '<div class="item' + (selectMode ? ' sel' : '') + '"' + (selectMode ? ' onclick="toggleSelect(' + js + ')"' : '') + '>' +
-      (selectMode ? '<input type="checkbox" class="selbox"' + (selected[c] ? ' checked' : '') + ' onclick="event.stopPropagation();toggleSelect(' + js + ')">' : '') +
+      (selectMode ? '<input type="checkbox" class="app-check"' + (selected[c] ? ' checked' : '') + ' onclick="event.stopPropagation();toggleSelect(' + js + ')">' : '') +
       (p.img ? '<img class="thumb" src="' + p.img + '" alt="">' : '<div class="thumb"></div>') +
       '<div class="info"><div class="name">' + esc(p.name) + '</div>' +
       '<div class="sub">' + (p.manual ? '' : '<kbd class="code">' + esc(c) + '</kbd>') + (p.category ? '<span class="catbadge">' + esc(p.category) + '</span>' : '') + '</div></div>' +
-      '<div class="line-total">' + fmtP(p.price) + '</div>' +
+      '<div class="line-total">' + fmtP(eff) + (fromCat ? '<div class="catprice-hint">' + t("cat_price_hint") + '</div>' : '') + '</div>' +
       (selectMode ? '' : '<button class="iconbtn" onclick="openModal(' + js + ',false,null)">Edit</button>' +
       '<button class="iconbtn" onclick="deleteProduct(' + js + ')">✕</button>') + '</div>';
   }).join("");
@@ -3681,6 +3845,147 @@ function deleteProduct(code) {
   appConfirm('Delete "' + p.name + '"?').then(function(ok){
     if (ok) { delete state.products[code]; saveState(); renderProducts(); toast(tf("shop_deleted", { n: 1 })); }
   });
+}
+
+/* ---------- category management (v66) ---------- */
+var catEditId = null;
+function catRowCount(name) {
+  var n = 0;
+  Object.keys(state.products).forEach(function(c){ if (catKey(state.products[c].category) === catKey(name)) n++; });
+  return n;
+}
+function renderCatManage() {
+  var list = document.getElementById("catManageList");
+  if (!list) return;
+  var cats = shopCategories().slice().sort(function(a, b){ return a.name.localeCompare(b.name); });
+  if (!cats.length) { list.innerHTML = '<div class="empty">' + t("cat_empty") + '</div>'; return; }
+  list.innerHTML = cats.map(function(c){
+    return '<div class="catrow" data-cat-id="' + esc(c.id) + '"><div class="info" style="flex:1;min-width:0"><div class="name">' + esc(c.name) + '</div>' +
+      '<div class="sub">' + (c.price != null ? fmt(c.price) : t("cat_no_price")) + ' · ' + tf("cat_count", { n: catRowCount(c.name) }) + '</div></div>' +
+      '<button class="btn btn-ghost" style="width:auto;padding:8px 14px;margin:0" onclick="catEditForm(\'' + esc(c.id).replace(/'/g, "\\'") + '\')">' + t("edit") + '</button>' +
+      '<button class="iconbtn" onclick="catDelete(\'' + esc(c.id).replace(/'/g, "\\'") + '\')">✕</button></div>';
+  }).join("");
+}
+function openCatManage(ref) {
+  renderCatManage();
+  document.getElementById("catManageModal").classList.add("open");
+  var name = null;
+  if (typeof ref === "string") name = ref;
+  else if (ref && ref.getAttribute) name = ref.getAttribute("data-cat") || null;
+  if (name) catEditForm(name); else catCloseForm();
+}
+function closeCatManage() {
+  document.getElementById("catManageModal").classList.remove("open");
+  catCloseForm();
+}
+function catEditForm(ref) {
+  var form = document.getElementById("catEditForm");
+  var nameEl = document.getElementById("catFormName");
+  var priceEl = document.getElementById("catFormPrice");
+  var ent = null;
+  if (ref) {
+    ent = shopCategories().filter(function(c){ return c.id === ref; })[0] || findCategory(ref);
+  }
+  if (ent) {
+    catEditId = ent.id;
+    nameEl.value = ent.name;
+    priceEl.value = (ent.price != null) ? ent.price : "";
+  } else {
+    catEditId = null;
+    nameEl.value = (typeof ref === "string") ? ref : "";
+    priceEl.value = "";
+  }
+  form.style.display = "";
+  setTimeout(function(){ nameEl.focus(); }, 100);
+}
+function catNewForm() { catEditForm(null); }
+function catCloseForm() {
+  catEditId = null;
+  var form = document.getElementById("catEditForm");
+  if (form) form.style.display = "none";
+  var n = document.getElementById("catFormName"); if (n) n.value = "";
+  var pr = document.getElementById("catFormPrice"); if (pr) pr.value = "";
+}
+function catSaveForm() {
+  var name = document.getElementById("catFormName").value.trim();
+  var priceRaw = document.getElementById("catFormPrice").value.trim();
+  if (!name) { toast(t("cat_need_name")); return; }
+  var price = priceRaw === "" ? null : normalizeCatPrice(priceRaw);
+  if (priceRaw !== "" && price === null) { toast(t("shop_valid_price")); return; }
+  if (catEditId) {
+    var ent = shopCategories().filter(function(c){ return c.id === catEditId; })[0];
+    if (!ent) { catCloseForm(); return; }
+    var oldName = ent.name;
+    var dup = findCategory(name);
+    if (dup && dup.id !== ent.id) { toast(tf("cat_dup", { v: name })); return; }
+    if (catKey(name) !== catKey(oldName)) {
+      Object.keys(state.products).forEach(function(code){
+        if (catKey(state.products[code].category) === catKey(oldName)) state.products[code].category = name;
+      });
+    }
+    ent.name = name;
+    ent.price = price;
+  } else {
+    if (findCategory(name)) { toast(tf("cat_dup", { v: name })); return; }
+    shopCategories().push({ id: uid("cat"), name: name, price: price });
+  }
+  saveState();
+  renderCatManage(); catCloseForm(); renderProducts();
+  toast(tf("cat_saved", { v: name }));
+}
+function catDelete(id) {
+  var ent = shopCategories().filter(function(c){ return c.id === id; })[0];
+  if (!ent) return;
+  appConfirm(tf("cat_delete_confirm", { v: ent.name })).then(function(ok){
+    if (!ok) return;
+    state.shopCategories = shopCategories().filter(function(c){ return c.id !== id; });
+    Object.keys(state.products).forEach(function(code){
+      if (catKey(state.products[code].category) === catKey(ent.name)) state.products[code].category = "";
+    });
+    if (catEditId === id) catCloseForm();
+    saveState(); renderCatManage(); renderProducts();
+    toast(tf("cat_deleted", { v: ent.name }));
+  });
+}
+
+/* ---------- bulk set category (v66) ---------- */
+function clearSelection() { selected = {}; renderProducts(); updateBulkBar(); }
+function bulkSetCategory() {
+  var n = Object.keys(selected).length;
+  if (!n) { toast(t("shop_select_first")); return; }
+  renderCatPick();
+  document.getElementById("catPickModal").classList.add("open");
+}
+function closeCatPick() { document.getElementById("catPickModal").classList.remove("open"); }
+function renderCatPick() {
+  var list = document.getElementById("catPickList");
+  if (!list) return;
+  var cats = shopCategories().slice().sort(function(a, b){ return a.name.localeCompare(b.name); });
+  list.innerHTML = cats.map(function(c){
+    return '<button type="button" class="catpick-opt" onclick="catPickApply(\'' + esc(c.id).replace(/'/g, "\\'") + '\')"><span>' + esc(c.name) + '</span><span class="sub">' + (c.price != null ? fmt(c.price) : t("cat_no_price")) + '</span></button>';
+  }).join("");
+}
+function catPickNew() {
+  appPrompt(t("cat_new_name"), "").then(function(val){
+    if (val === null) return;
+    var name = String(val).trim();
+    if (!name) return;
+    var c = ensureCategory(name);
+    if (c) catPickApply(c.id);
+  });
+}
+function catPickApply(id) {
+  var ent = shopCategories().filter(function(c){ return c.id === id; })[0];
+  if (!ent) return;
+  var codes = Object.keys(selected);
+  if (!codes.length) { closeCatPick(); return; }
+  var n = codes.length;
+  codes.forEach(function(code){
+    if (state.products[code]) { state.products[code].category = ent.name; state.products[code].updatedAt = Date.now(); }
+  });
+  saveState(); selected = {};
+  closeCatPick(); renderProducts(); updateBulkBar();
+  toast(tf("cat_bulk_done", { n: n }));
 }
 
 /* ---------- modal ---------- */
@@ -3694,14 +3999,35 @@ function openModal(code, isNew, afterSave) {
   document.getElementById("fName").value = p ? p.name : "";
   document.getElementById("fPrice").value = (p && p.price != null) ? p.price : "";
   document.getElementById("fCategory").value = (p && p.category) ? p.category : "";
-  document.getElementById("catList").innerHTML = allCategories().map(function(c){ return '<option value="' + esc(c) + '">'; }).join("");
+  catDropClose();
   modalImg = (p && p.img) ? p.img : null;
   var prev = document.getElementById("imgPreview");
   if (modalImg) prev.src = modalImg; else prev.removeAttribute("src");
   document.getElementById("modal").classList.add("open");
   setTimeout(function(){ document.getElementById(isNew && !p ? "fName" : "fPrice").focus(); }, 300);
 }
-function closeModal() { document.getElementById("modal").classList.remove("open"); modalAfterSave = null; }
+function closeModal() { catDropClose(); document.getElementById("modal").classList.remove("open"); modalAfterSave = null; }
+
+/* ---------- category dropdown (custom in-app list, replaces native datalist) ---------- */
+var catDropList = [];
+function catDropRender() {
+  var input = document.getElementById("fCategory");
+  var drop = document.getElementById("catDrop");
+  if (!input || !drop) return;
+  var q = (input.value || "").trim().toLowerCase();
+  var cur = (input.value || "").trim().toLowerCase();
+  catDropList = allCategories().filter(function(c){ return !q || c.toLowerCase().indexOf(q) !== -1; });
+  drop.innerHTML = catDropList.map(function(c, i){
+    var tick = (c.toLowerCase() === cur) ? '<span class="tick">✓</span>' : '<span class="tick"></span>';
+    return '<button type="button" class="catdrop-opt" onclick="catDropPick(' + i + ')"><span>' + esc(c) + '</span>' + tick + '</button>';
+  }).join("");
+}
+function catDropOpen() { catDropRender(); var w = document.getElementById("catField"); if (w && catDropList.length) w.classList.add("open"); }
+function catDropClose() { var w = document.getElementById("catField"); if (w) w.classList.remove("open"); }
+function catDropFilter() { catDropRender(); var w = document.getElementById("catField"); if (!w) return; if (catDropList.length) w.classList.add("open"); else w.classList.remove("open"); }
+function catDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("catField"); if (w && w.classList.contains("open")) { catDropClose(); return; } var inp = document.getElementById("fCategory"); if (inp) inp.focus(); catDropOpen(); }
+function catDropPick(i) { var c = catDropList[i]; if (c == null) return; var inp = document.getElementById("fCategory"); if (inp) inp.value = c; catDropClose(); }
+document.addEventListener("click", function(e){ var t = e.target; if (t && t.closest && t.closest("#catField")) return; catDropClose(); });
 function saveModal() {
   var code = document.getElementById("fCode").value.trim();
   var name = document.getElementById("fName").value.trim();
@@ -3714,6 +4040,7 @@ function saveModal() {
   var manual = !code;
   if (manual) code = uid("m");
   state.products[code] = { name: name, price: price === null ? null : Math.round(price * 100) / 100, category: cat || "", manual: manual || undefined, updatedAt: Date.now(), img: modalImg || null };
+  if (cat) ensureCategory(cat);
   saveState(); closeModal(); renderProducts();
   if (modalAfterSave) { var f = modalAfterSave; modalAfterSave = null; f(); }
 }
@@ -3723,12 +4050,14 @@ function exportData() {
   showExportPicker([
     { id: "shopName", key: "exp_shop_name" },
     { id: "products", key: "exp_products" },
+    { id: "shopCategories", key: "exp_shop_categories" },
     { id: "shopSettings", key: "exp_shop_settings" },
     { id: "shopHistory", key: "exp_shop_history" }
   ], function(sel){
     var payload = { app: "suite-shop-scanner", version: 2, exportedAt: new Date().toISOString() };
     if (sel.shopName) payload.shopName = state.shopName || "";
     if (sel.products) payload.products = state.products;
+    if (sel.shopCategories) payload.shopCategories = state.shopCategories || [];
     if (sel.shopSettings) payload.shopSettings = state.shopSettings;
     if (sel.shopHistory) payload.shopHistory = state.shopHistory || [];
     var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
@@ -3777,11 +4106,13 @@ function importData(input) {
       var hasShopName = typeof data.shopName === "string";
       var hasShopSettings = data.shopSettings && typeof data.shopSettings === "object";
       var hasShopHistory = Array.isArray(data.shopHistory);
-      if (!hasProducts && !hasShopName && !hasShopSettings && !hasShopHistory) { toast(t("prod_no_valid")); return; }
+      var hasShopCategories = Array.isArray(data.shopCategories);
+      if (!hasProducts && !hasShopName && !hasShopSettings && !hasShopHistory && !hasShopCategories) { toast(t("prod_no_valid")); return; }
       pendingImport = { kind: "products", data: hasProducts ? incoming : {}, hasProducts: hasProducts,
         shopName: hasShopName ? data.shopName : null,
         shopSettings: hasShopSettings ? data.shopSettings : null,
-        shopHistory: hasShopHistory ? data.shopHistory : null, count: valid };
+        shopHistory: hasShopHistory ? data.shopHistory : null,
+        shopCategories: hasShopCategories ? data.shopCategories : null, count: valid };
       showImportTarget("label_products", true);
     } catch (e) { toast(t("could_not_read")); }
   };
@@ -3854,6 +4185,19 @@ function doImport(pi, mode) {
         }
       }
     }
+    /* v66 categories: merge by name — an existing price wins if set, an imported price only fills a null price. Replace mode starts fresh. Then auto-create entities for any product category still missing one. */
+    if (mode === "replace") state.shopCategories = [];
+    if (pi.shopCategories) {
+      pi.shopCategories.forEach(function(c){
+        if (!c || typeof c.name !== "string") return;
+        var nm = c.name.trim(); if (!nm) return;
+        var ex = findCategory(nm);
+        var pr = normalizeCatPrice(c.price);
+        if (ex) { if (ex.price == null && pr != null) ex.price = pr; }
+        else state.shopCategories.push({ id: uid("cat"), name: nm, price: pr });
+      });
+    }
+    syncShopCategories(state);
     if (pi.shopSettings) {
       if (!Array.isArray(pi.shopSettings.fees)) pi.shopSettings.fees = [];
       state.shopSettings = pi.shopSettings;
@@ -3918,7 +4262,7 @@ function showSheet(code) {
 function updateSheetPrice() {
   var p = state.products[sheetCode];
   if (!p) return;
-  document.getElementById("sheetPrice").textContent = fmtP(sheetOverride != null ? sheetOverride : p.price);
+  document.getElementById("sheetPrice").textContent = fmtP(sheetOverride != null ? sheetOverride : effectivePrice(p));
 }
 function sheetQtyChange(d) {
   sheetQty = Math.max(1, sheetQty + d);
@@ -3926,7 +4270,7 @@ function sheetQtyChange(d) {
 }
 function sheetAdd() {
   var p = state.products[sheetCode];
-  if ((!p || p.price == null) && sheetOverride == null) { toast(t("need_price_first")); sheetAdjust(); return; }
+  if ((!p || effectivePrice(p) == null) && sheetOverride == null) { toast(t("need_price_first")); sheetAdjust(); return; }
   addToOrder(sheetCode, sheetOverride, sheetQty); closeSheet();
 }
 function closeSheet() { document.getElementById("sheet").classList.remove("open"); sheetCode = null; sheetOverride = null; sheetQty = 1; }
@@ -3937,8 +4281,8 @@ function lineAdjust(i) { openPriceModal({ kind: "line", code: order[i].code, lin
 function openPriceModal(ctx) {
   priceCtx = ctx;
   var p = state.products[ctx.code];
-  var cur = ctx.kind === "line" ? order[ctx.lineIdx].price : (sheetOverride != null ? sheetOverride : (p ? p.price : 0));
-  document.getElementById("priceModalName").textContent = (p ? p.name : "") + " · catalog " + fmt(p ? p.price : 0);
+  var cur = ctx.kind === "line" ? order[ctx.lineIdx].price : (sheetOverride != null ? sheetOverride : effectivePrice(p));
+  document.getElementById("priceModalName").textContent = (p ? p.name : "") + " · catalog " + fmt(effectivePrice(p) || 0);
   document.getElementById("fNewPrice").value = cur;
   document.getElementById("priceModal").classList.add("open");
   setTimeout(function(){ document.getElementById("fNewPrice").focus(); }, 300);
@@ -4847,6 +5191,7 @@ renderShopName();
 loadShopSettingsUI();
 applyFontSize();
 applyTheme();
+watchSystemTheme();
 renderThemeRow(); renderLangRow();
 applyI18n();
 document.getElementById("homeGearBtn").innerHTML = ICON_GEAR_BARE;
@@ -4959,6 +5304,8 @@ if ("serviceWorker" in navigator) {
   <span id="bulkCount" data-i18n="shop_selected">0 selected</span>
   <button class="bulkbtn" onclick="selectAll()" data-i18n="all">All</button>
   <button class="bulkbtn" onclick="bulkSetPrice()" data-i18n="shop_set_price">Set price</button>
+  <button class="bulkbtn" onclick="bulkSetCategory()" data-i18n="cat_set_category">Set category</button>
+  <button class="bulkbtn" onclick="clearSelection()" data-i18n="cat_clear_sel">Clear</button>
   <button class="bulkbtn danger" onclick="bulkDelete()" data-i18n="delete_">Delete</button>
   <button class="bulkbtn" onclick="toggleSelectMode()">✕</button>
 </div>
@@ -5003,6 +5350,40 @@ if ("serviceWorker" in navigator) {
       <button class="btn btn-ghost" onclick="closeHistory()" data-i18n="close">Close</button>
       <button class="btn btn-ghost" id="histDelSelBtn" onclick="deleteSelectedHistory()" disabled>Delete selected</button>
       <button class="btn btn-danger" onclick="clearHistory()" data-i18n="hist_clear">Clear history</button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MANAGEMENT -->
+<div id="catManageModal">
+  <div id="catManageBox">
+    <h2 data-i18n="cat_title">Categories</h2>
+    <div id="catManageList" style="max-height:50vh;overflow-y:auto"></div>
+    <div id="catEditForm" style="display:none;margin-top:14px">
+      <label for="catFormName" data-i18n="cat_name">Name</label>
+      <input type="text" id="catFormName" autocomplete="off">
+      <label for="catFormPrice" data-i18n="cat_price">Category price</label>
+      <input type="number" id="catFormPrice" inputmode="decimal" step="0.01" min="0" placeholder="0.00">
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-primary" onclick="catSaveForm()" data-i18n="save">Save</button>
+        <button class="btn btn-ghost" onclick="catCloseForm()" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="catNewForm()" data-i18n="cat_new">+ New category</button>
+      <button class="btn btn-ghost" onclick="closeCatManage()" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- BULK CATEGORY PICKER -->
+<div id="catPickModal">
+  <div id="catPickBox">
+    <h2 data-i18n="cat_pick_title">Choose category</h2>
+    <div id="catPickList" style="max-height:50vh;overflow-y:auto"></div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="catPickNew()" data-i18n="cat_pick_new">+ New category…</button>
+      <button class="btn btn-ghost" onclick="closeCatPick()" data-i18n="cancel">Cancel</button>
     </div>
   </div>
 </div>
