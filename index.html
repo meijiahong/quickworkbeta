@@ -30,17 +30,30 @@
   .btn-danger { background: #fde8e8; color: #b3261e; }
   .btn-row { display: flex; gap: 8px; }
   .btn-row .btn { margin-bottom: 0; }
-  input[type=text], input[type=number], input[type=search], input[type=date], input[type=time] { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; }
-  input[type=date], input[type=time] { font-family: inherit; }
+  input[type=text], input[type=number], input[type=search], input[type=time] { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; }
+  input[type=time] { font-family: inherit; }
   input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   /* v60: cohesive controls for the new apps */
   textarea { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; font-family: inherit; resize: vertical; }
   .field-lg { min-height: 140px; }
-  input[type=date], input[type=time] { color-scheme: light; }
-  input[type=date]::-webkit-calendar-picker-indicator, input[type=time]::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
+  input[type=time] { color-scheme: light; }
+  input[type=time]::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
   .app-check { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; flex: none; margin: 0; border: 2px solid #c9d2e3; border-radius: 7px; background: #fff; cursor: pointer; }
   .app-check:checked { background-color: #4F46E5; border-color: #4F46E5; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; background-size: 14px; }
+  /* v61: custom date picker (shared by Tasks + Hours) */
+  #datePickerOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.45); z-index: 60; align-items: center; justify-content: center; padding: 16px; }
+  #datePickerOverlay.open { display: flex; }
+  #datePickerBox { background: #fff; border-radius: 12px; padding: 14px; width: 100%; max-width: 340px; box-shadow: 0 8px 28px rgba(0,0,0,.25); }
+  .dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .dp-head span { font-weight: 700; font-size: 16px; }
+  .dp-head .iconbtn { margin: 0; width: 38px; padding: 8px 0; font-size: 18px; }
+  .dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+  .dp-wd { font-size: 12px; font-weight: 700; color: #7a8499; padding: 6px 0; }
+  .dp-day { border: none; background: transparent; padding: 9px 0; border-radius: 8px; font-size: 15px; cursor: pointer; color: inherit; font-family: inherit; }
+  .dp-day.dim { color: #b6bfcf; }
+  .dp-day.today { outline: 1.5px solid #4F46E5; }
+  .dp-day.sel { background: #4F46E5; color: #fff; font-weight: 700; }
   label { font-size: 13px; font-weight: 600; color: #5a6577; display: block; margin: 8px 0 4px; }
   .item { display: flex; align-items: center; gap: 10px; padding: 11px 4px; border-bottom: 1px solid #edf0f5; }
   .item:last-child { border-bottom: none; }
@@ -294,12 +307,16 @@ body[data-theme="dark"] .tile-placeholder { background: rgba(129,140,248,.10); b
 /* ---------- dark theme (v17) ---------- */
 body[data-theme="dark"] { background: #000000; color: #F5F5F7; }
 body[data-theme="dark"] .card { background: #1C1C1E; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
-body[data-theme="dark"] input[type=text], body[data-theme="dark"] input[type=number], body[data-theme="dark"] input[type=search], body[data-theme="dark"] input[type=date], body[data-theme="dark"] input[type=time],
+body[data-theme="dark"] input[type=text], body[data-theme="dark"] input[type=number], body[data-theme="dark"] input[type=search], body[data-theme="dark"] input[type=time],
 body[data-theme="dark"] select, body[data-theme="dark"] textarea { background: #101014; border-color: #333338; color: #F5F5F7; }
 body[data-theme="dark"] input::placeholder, body[data-theme="dark"] textarea::placeholder { color: #8E8E93; }
-  body[data-theme="dark"] input[type=date], body[data-theme="dark"] input[type=time] { color-scheme: dark; }
+  body[data-theme="dark"] input[type=time] { color-scheme: dark; }
   body[data-theme="dark"] .app-check { background: #101014; border-color: #55555c; }
   body[data-theme="dark"] .app-check:checked { background-color: #818CF8; border-color: #818CF8; }
+  body[data-theme="dark"] #datePickerBox { background: #1C1C1E; }
+  body[data-theme="dark"] .dp-day.dim { color: #55555c; }
+  body[data-theme="dark"] .dp-day.today { outline-color: #818CF8; }
+  body[data-theme="dark"] .dp-day.sel { background: #818CF8; color: #000; }
 body[data-theme="dark"] label { color: #A1A1AA; }
 body[data-theme="dark"] .tpl-lib-row { border-bottom-color: #26262B; }
 body[data-theme="dark"] .tpl-lib-row .name { color: #E4E4EA; }
@@ -573,7 +590,7 @@ body[data-theme="dark"] .toast { background: #232329; }
         <label for="taskNote" data-i18n="task_note_lb">Note</label>
         <input type="text" id="taskNote" data-i18n-ph="task_note_ph" placeholder="Add a note…">
         <label for="taskDue" data-i18n="task_due_lb">Due date</label>
-        <input type="date" id="taskDue">
+        <input type="text" id="taskDue" readonly onclick="openDatePicker('taskDue')" data-i18n-ph="date_ph" placeholder="Select date" style="cursor:pointer">
         <div class="btn-row">
           <button class="btn btn-primary" onclick="addTask()" data-i18n="task_save">Save task</button>
           <button class="btn btn-ghost" onclick="cancelTaskForm()" data-i18n="cancel">Cancel</button>
@@ -605,11 +622,17 @@ body[data-theme="dark"] .toast { background: #232329; }
   <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Note</h1><span class="modhead-sp"></span></div>
   <main>
     <div class="card">
-      <label for="noteTitle" data-i18n="note_title_lb">Title</label>
-      <input type="text" id="noteTitle" data-i18n-ph="note_title_ph" placeholder="e.g. Supplier number">
-      <label for="noteBody" data-i18n="note_body_lb">Note</label>
-      <textarea id="noteBody" rows="5" class="field-lg" data-i18n-ph="note_body_ph" placeholder="Write it here…"></textarea>
-      <button class="btn btn-primary" onclick="addNote()" data-i18n="note_add">+ Add note</button>
+      <button class="btn btn-primary" id="noteAddBtn" onclick="toggleNoteForm()" data-i18n="note_add">+ Add note</button>
+      <div id="noteForm" style="display:none">
+        <label for="noteTitle" data-i18n="note_title_lb">Title</label>
+        <input type="text" id="noteTitle" data-i18n-ph="note_title_ph" placeholder="e.g. Supplier number">
+        <label for="noteBody" data-i18n="note_body_lb">Note</label>
+        <textarea id="noteBody" rows="5" class="field-lg" data-i18n-ph="note_body_ph" placeholder="Write it here…"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="addNote()" data-i18n="note_save">Save note</button>
+          <button class="btn btn-ghost" onclick="cancelNoteForm()" data-i18n="cancel">Cancel</button>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="btn-row">
@@ -637,9 +660,17 @@ body[data-theme="dark"] .toast { background: #232329; }
     </div>
     <div class="card">
       <label for="hoursDate" data-i18n="hours_date_lb">Date</label>
-      <input type="date" id="hoursDate">
-      <label for="hoursHours" data-i18n="hours_hours_lb">Hours</label>
-      <input type="number" id="hoursHours" inputmode="decimal" min="0" step="0.01">
+      <input type="text" id="hoursDate" readonly onclick="openDatePicker('hoursDate')" data-i18n-ph="date_ph" placeholder="Select date" style="cursor:pointer">
+      <label for="hoursClockIn" data-i18n="hours_clock_in_lb">Clock in</label>
+      <input type="time" id="hoursClockIn">
+      <label for="hoursClockOut" data-i18n="hours_clock_out_lb">Clock out</label>
+      <input type="time" id="hoursClockOut">
+      <div id="hoursMealRow">
+        <label for="hoursMealStart" data-i18n="hours_meal_start">Meal start</label>
+        <input type="time" id="hoursMealStart">
+        <label for="hoursMealEnd" data-i18n="hours_meal_end">Meal end</label>
+        <input type="time" id="hoursMealEnd">
+      </div>
       <label for="hoursLabel" data-i18n="hours_label_lb">Label</label>
       <input type="text" id="hoursLabel" data-i18n-ph="hours_label_ph" placeholder="e.g. Morning shift">
       <button class="btn btn-primary" onclick="addManualHours()" data-i18n="hours_add">+ Log hours</button>
@@ -702,11 +733,17 @@ body[data-theme="dark"] .toast { background: #232329; }
   <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Handoff</h1><span class="modhead-sp"></span></div>
   <main>
     <div class="card">
-      <label for="handoffTitle" data-i18n="handoff_title_lb">Title</label>
-      <input type="text" id="handoffTitle" data-i18n-ph="handoff_title_ph" placeholder="e.g. End of shift notes">
-      <label for="handoffMsg" data-i18n="handoff_msg_lb">Message</label>
-      <textarea id="handoffMsg" rows="5" class="field-lg" data-i18n-ph="handoff_msg_ph" placeholder="Write the handoff…"></textarea>
-      <button class="btn btn-primary" onclick="addHandoff()" data-i18n="handoff_add">+ Add handoff</button>
+      <button class="btn btn-primary" id="handoffAddBtn" onclick="toggleHandoffForm()" data-i18n="handoff_add">+ Add handoff</button>
+      <div id="handoffForm" style="display:none">
+        <label for="handoffTitle" data-i18n="handoff_title_lb">Title</label>
+        <input type="text" id="handoffTitle" data-i18n-ph="handoff_title_ph" placeholder="e.g. End of shift notes">
+        <label for="handoffMsg" data-i18n="handoff_msg_lb">Message</label>
+        <textarea id="handoffMsg" rows="5" class="field-lg" data-i18n-ph="handoff_msg_ph" placeholder="Write the handoff…"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="addHandoff()" data-i18n="handoff_save">Save handoff</button>
+          <button class="btn btn-ghost" onclick="cancelHandoffForm()" data-i18n="cancel">Cancel</button>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="btn-row">
@@ -749,6 +786,22 @@ body[data-theme="dark"] .toast { background: #232329; }
   </main>
 </div>
 
+
+<!-- v61: shared custom date picker -->
+<div id="datePickerOverlay" onclick="if(event.target===this) closeDatePicker()">
+  <div id="datePickerBox">
+    <div class="dp-head">
+      <button class="iconbtn" onclick="datePickerNav(-1)">‹</button>
+      <span id="datePickerTitle"></span>
+      <button class="iconbtn" onclick="datePickerNav(1)">›</button>
+    </div>
+    <div class="dp-grid" id="datePickerGrid"></div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn btn-ghost" onclick="datePickerToday()" data-i18n="date_today">Today</button>
+      <button class="btn btn-ghost" onclick="closeDatePicker()" data-i18n="cancel">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- SCANNER OVERLAY -->
 <div id="scanOverlay">
@@ -1084,6 +1137,7 @@ task_no_export: "Nothing to export yet.",
 task_imported_1: "1 task imported.",
 task_imported_n: "{n} tasks imported.",
 note_add: "+ Add note",
+note_save: "Save note",
 note_title_lb: "Title",
 note_title_ph: "e.g. Supplier number",
 note_body_lb: "Note",
@@ -1098,12 +1152,18 @@ note_imported_1: "1 note imported.",
 note_imported_n: "{n} notes imported.",
 note_tap_edit: "Tap a note to edit it.",
 hours_wage_lb: "Hourly wage ($)",
+hours_wage_show: "Hourly wage",
 hours_paid_break: "Paid meal break",
 hours_date_lb: "Date",
+hours_clock_in_lb: "Clock in",
+hours_clock_out_lb: "Clock out",
+hours_meal_start: "Meal start",
+hours_meal_end: "Meal end",
 hours_hours_lb: "Hours",
 hours_label_lb: "Label",
 hours_label_ph: "e.g. Morning shift",
 hours_add: "+ Log hours",
+hours_need_times: "Enter clock-in and clock-out times first.",
 hours_total_hours: "Total paid hours",
 hours_est_pay: "Estimated pay",
 hours_break_start: "Break start",
@@ -1118,6 +1178,8 @@ hours_import: "⬇ Import hours",
 hours_no_export: "Nothing to export yet.",
 hours_imported_1: "1 hours entry imported.",
 hours_imported_n: "{n} hours entries imported.",
+date_today: "Today",
+date_ph: "Select date",
 stock_connect: "Connect with Quick Shop catalog",
 stock_add_catalog: "Add from Quick Shop",
 stock_catalog_search_ph: "Search catalog…",
@@ -1140,6 +1202,7 @@ stock_linked: "Linked",
 stock_save: "Save",
 stock_cancel_edit: "Cancel edit",
 handoff_add: "+ Add handoff",
+handoff_save: "Save handoff",
 handoff_title_lb: "Title",
 handoff_title_ph: "e.g. End of shift notes",
 handoff_msg_lb: "Message",
@@ -1393,6 +1456,7 @@ task_no_export: "Nada que exportar aún.",
 task_imported_1: "1 tarea importada.",
 task_imported_n: "{n} tareas importadas.",
 note_add: "+ Añadir nota",
+note_save: "Guardar nota",
 note_title_lb: "Título",
 note_title_ph: "ej. Número del proveedor",
 note_body_lb: "Nota",
@@ -1407,12 +1471,18 @@ note_imported_1: "1 nota importada.",
 note_imported_n: "{n} notas importadas.",
 note_tap_edit: "Toca una nota para editarla.",
 hours_wage_lb: "Salario por hora ($)",
+hours_wage_show: "Salario por hora",
 hours_paid_break: "Descanso de comida pagado",
 hours_date_lb: "Fecha",
+hours_clock_in_lb: "Entrada",
+hours_clock_out_lb: "Salida",
+hours_meal_start: "Inicio del descanso",
+hours_meal_end: "Fin del descanso",
 hours_hours_lb: "Horas",
 hours_label_lb: "Etiqueta",
 hours_label_ph: "ej. Turno de mañana",
 hours_add: "+ Registrar horas",
+hours_need_times: "Ingresa primero la hora de entrada y de salida.",
 hours_total_hours: "Total de horas pagadas",
 hours_est_pay: "Pago estimado",
 hours_break_start: "Inicio del descanso",
@@ -1427,6 +1497,8 @@ hours_import: "⬇ Importar horas",
 hours_no_export: "Nada que exportar aún.",
 hours_imported_1: "1 registro de horas importado.",
 hours_imported_n: "{n} registros de horas importados.",
+date_today: "Hoy",
+date_ph: "Seleccionar fecha",
 stock_connect: "Conectar con el catálogo de Quick Shop",
 stock_add_catalog: "Añadir desde Quick Shop",
 stock_catalog_search_ph: "Buscar en el catálogo…",
@@ -1449,6 +1521,7 @@ stock_linked: "Vinculado",
 stock_save: "Guardar",
 stock_cancel_edit: "Cancelar edición",
 handoff_add: "+ Añadir entrega",
+handoff_save: "Guardar entrega",
 handoff_title_lb: "Título",
 handoff_title_ph: "ej. Notas de fin de turno",
 handoff_msg_lb: "Mensaje",
@@ -1885,6 +1958,68 @@ function importInfo(input) {
   };
   r.readAsText(f);
 }
+/* ================= v61: shared custom date picker ================= */
+var datePickerTarget = null, datePickerView = null;
+function parseIsoDate(s) {
+  var p = String(s || "").split("-");
+  if (p.length !== 3) return null;
+  var d = new Date(+p[0], +p[1] - 1, +p[2]);
+  return isNaN(d.getTime()) ? null : d;
+}
+function openDatePicker(inputId) {
+  datePickerTarget = inputId;
+  var cur = parseIsoDate(document.getElementById(inputId).value) || new Date();
+  datePickerView = { y: cur.getFullYear(), m: cur.getMonth() };
+  renderDatePicker();
+  var ov = document.getElementById("datePickerOverlay"); if (ov) ov.classList.add("open");
+}
+function closeDatePicker() {
+  var ov = document.getElementById("datePickerOverlay"); if (ov) ov.classList.remove("open");
+  datePickerTarget = null;
+}
+function datePickerNav(d) {
+  if (!datePickerView) return;
+  var m = datePickerView.m + d;
+  datePickerView = { y: datePickerView.y + Math.floor(m / 12), m: ((m % 12) + 12) % 12 };
+  renderDatePicker();
+}
+function datePickerToday() {
+  var t = new Date();
+  datePickerView = { y: t.getFullYear(), m: t.getMonth() };
+  renderDatePicker();
+}
+function datePickerPick(iso) {
+  var el = datePickerTarget ? document.getElementById(datePickerTarget) : null;
+  if (el) el.value = iso;
+  closeDatePicker();
+}
+function renderDatePicker() {
+  var grid = document.getElementById("datePickerGrid"); if (!grid || !datePickerView) return;
+  var title = document.getElementById("datePickerTitle");
+  var y = datePickerView.y, m = datePickerView.m;
+  if (title) title.textContent = new Date(y, m, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  var curVal = datePickerTarget ? document.getElementById(datePickerTarget).value : "";
+  var todayIso = fmtIsoDate(new Date());
+  var html = "";
+  for (var i = 0; i < 7; i++) {
+    var wd = new Date(2021, 7, 1 + i); /* Aug 1 2021 was a Sunday */
+    html += '<span class="dp-wd">' + wd.toLocaleDateString(undefined, { weekday: "short" }) + '</span>';
+  }
+  var first = new Date(y, m, 1).getDay();
+  var days = new Date(y, m + 1, 0).getDate();
+  var prevDays = new Date(y, m, 0).getDate();
+  for (var c = 0; c < first; c++) html += '<span class="dp-day dim">' + (prevDays - first + 1 + c) + '</span>';
+  for (var d = 1; d <= days; d++) {
+    var iso = y + "-" + ("0" + (m + 1)).slice(-2) + "-" + ("0" + d).slice(-2);
+    var cls = "dp-day" + (iso === todayIso ? " today" : "") + (iso === curVal ? " sel" : "");
+    html += '<button type="button" class="' + cls + '" onclick="datePickerPick(\'' + iso + '\')">' + d + '</button>';
+  }
+  var total = first + days, trail = (7 - (total % 7)) % 7;
+  for (var t2 = 1; t2 <= trail; t2++) html += '<span class="dp-day dim">' + t2 + '</span>';
+  grid.innerHTML = html;
+}
+function fmtIsoDate(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+
 /* ================= v60: Quick Tasks ================= */
 var taskFilter = "all";
 function renderTasks() {
@@ -1996,6 +2131,15 @@ function renderNotes() {
     return '<div class="item" onclick="toggleNoteExpand(\'' + n.id + '\')">' + head + bodyHtml + '</div>';
   }).join("");
 }
+function toggleNoteForm(open) {
+  var form = document.getElementById("noteForm"); if (!form) return;
+  var btn = document.getElementById("noteAddBtn");
+  var show = (typeof open === "boolean") ? open : (form.style.display === "none");
+  form.style.display = show ? "" : "none";
+  if (btn) btn.style.display = show ? "none" : "";
+  if (!show) ["noteTitle", "noteBody"].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ""; });
+}
+function cancelNoteForm() { toggleNoteForm(false); }
 function addNote() {
   var title = document.getElementById("noteTitle").value.trim();
   var body = document.getElementById("noteBody").value.trim();
@@ -2003,7 +2147,7 @@ function addNote() {
   if (!state.notes) state.notes = defaultNotes();
   state.notes.items.unshift({ id: uid("nt"), title: title, body: body, createdAt: Date.now() });
   saveState();
-  document.getElementById("noteTitle").value = ""; document.getElementById("noteBody").value = "";
+  toggleNoteForm(false);
   renderNotes();
 }
 function toggleNoteExpand(id) {
@@ -2063,7 +2207,7 @@ function importNotes(input) {
   r.readAsText(f);
 }
 
-/* ================= v60: Quick Hours ================= */
+/* ================= v61: Quick Hours ================= */
 function timeToMin(s) { var p = String(s || "").split(":"); return (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0); }
 function fmtDateStr(ds) {
   var p = String(ds || "").split("-");
@@ -2071,15 +2215,24 @@ function fmtDateStr(ds) {
   return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString();
 }
 function todayStr() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+function fmtClock(s) { var p = String(s || "").split(":"); if (p.length < 2) return ""; return ("0" + (parseInt(p[0], 10) || 0)).slice(-2) + ":" + ("0" + (parseInt(p[1], 10) || 0)).slice(-2); }
+function hoursEntryShiftMin(e) {
+  if (e.clockIn && e.clockOut) {
+    var s = timeToMin(e.clockIn), en = timeToMin(e.clockOut);
+    if (en < s) en += 1440; /* overnight: ends next day */
+    return en - s;
+  }
+  if (typeof e.hours === "number") return Math.max(0, e.hours * 60); /* v60 legacy duration entry */
+  return 0;
+}
 function hoursEntryBreak(e) {
   if (state.hours && state.hours.paidMealBreak) return 0;
-  if (!e.breakStart || !e.breakEnd) return 0;
-  var brk = (timeToMin(e.breakEnd) - timeToMin(e.breakStart)) / 60;
-  return brk > 0 ? brk : 0;
+  if (!e.mealStart || !e.mealEnd) return 0;
+  var brk = (timeToMin(e.mealEnd) - timeToMin(e.mealStart)) / 60;
+  return brk > 0 ? brk : 0; /* meal end at/before start = no deduction */
 }
 function hoursEntryPaid(e) {
-  var hrs = Math.max(0, Math.round((parseFloat(e.hours) || 0) * 100) / 100);
-  return Math.max(0, Math.round((hrs - hoursEntryBreak(e)) * 100) / 100);
+  return Math.max(0, Math.round((hoursEntryShiftMin(e) / 60 - hoursEntryBreak(e)) * 100) / 100);
 }
 function hoursEntryPay(e) {
   var wage = (state.hours && parseFloat(state.hours.wage)) || 0;
@@ -2089,30 +2242,42 @@ function renderHours() {
   var box = document.getElementById("hoursList"); if (!box) return;
   if (!state.hours) state.hours = defaultHours();
   var h = state.hours;
-  /* v60: shifts removed — convert legacy v59 shift entries to manual entries, drop any unclosed punch */
+  /* v61: migrate older entries — v60 break fields -> meal fields; v59 shifts (startAt/endAt) -> clock times */
   var migrated = false;
   if (h.openPunch) { delete h.openPunch; migrated = true; }
   h.entries.forEach(function(e){
+    if (e.breakStart !== undefined || e.breakEnd !== undefined) {
+      if (e.mealStart === undefined) e.mealStart = e.breakStart || "";
+      if (e.mealEnd === undefined) e.mealEnd = e.breakEnd || "";
+      delete e.breakStart; delete e.breakEnd;
+      migrated = true;
+    }
     if (e.kind !== "manual") {
-      var dur = e.endAt ? (e.endAt - e.startAt) / 3600000 : 0;
-      e.hours = Math.max(0, Math.round(dur * 100) / 100);
+      if (e.startAt && e.endAt) {
+        var sd = new Date(e.startAt), ed = new Date(e.endAt);
+        e.clockIn = fmtClock(sd.getHours() + ":" + sd.getMinutes());
+        e.clockOut = fmtClock(ed.getHours() + ":" + ed.getMinutes());
+        delete e.startAt; delete e.endAt;
+      }
       e.kind = "manual";
-      delete e.startAt; delete e.endAt;
       migrated = true;
     }
   });
   if (migrated) saveState();
   var wageEl = document.getElementById("hoursWage");
-  if (wageEl && document.activeElement !== wageEl) wageEl.value = h.wage || "";
+  if (wageEl && document.activeElement !== wageEl) wageEl.value = (h.wage || 0) ? Number(h.wage).toFixed(2) : "";
   var pbEl = document.getElementById("hoursPaidBreak");
   if (pbEl) pbEl.checked = !!h.paidMealBreak;
   var dateEl = document.getElementById("hoursDate");
   if (dateEl && !dateEl.value) dateEl.value = todayStr();
+  var mr = document.getElementById("hoursMealRow");
+  if (mr) mr.style.display = h.paidMealBreak ? "none" : "";
   var totalPaid = 0, totalPay = 0;
   h.entries.forEach(function(e){ totalPaid += hoursEntryPaid(e); totalPay += hoursEntryPay(e); });
   totalPaid = Math.round(totalPaid * 100) / 100; totalPay = Math.round(totalPay * 100) / 100;
   var totEl = document.getElementById("hoursTotals");
-  if (totEl) totEl.innerHTML = '<div style="color:var(--dim)">' + t("hours_total_hours") + ': <b style="color:var(--fg)">' + totalPaid + '</b></div>' +
+  if (totEl) totEl.innerHTML = '<div style="color:var(--dim)">' + t("hours_wage_show") + ': <b style="color:var(--fg)">' + fmt(h.wage || 0) + '</b></div>' +
+    '<div style="color:var(--dim)">' + t("hours_total_hours") + ': <b style="color:var(--fg)">' + totalPaid + '</b></div>' +
     '<div><span data-i18n="hours_est_pay">' + t("hours_est_pay") + '</span>: <span class="pay-big">' + fmt(totalPay) + '</span></div>';
   var entries = h.entries.slice().sort(function(a, b){
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
@@ -2122,29 +2287,37 @@ function renderHours() {
   box.innerHTML = entries.map(function(e){
     var paid = hoursEntryPaid(e), pay = hoursEntryPay(e), brk = hoursEntryBreak(e);
     var meta = fmtDateStr(e.date);
-    var line = esc(String(e.hours)) + " " + t("hours_hours_lb") + (e.label ? " · " + esc(e.label) : "");
-    var brkHtml = "";
+    var timeStr = (e.clockIn && e.clockOut) ? (fmtClock(e.clockIn) + " → " + fmtClock(e.clockOut))
+      : ((typeof e.hours === "number") ? (esc(String(e.hours)) + " " + t("hours_hours_lb")) : "");
+    var line = timeStr + (e.label ? " · " + esc(e.label) : "");
+    var mealHtml = "";
     if (!h.paidMealBreak) {
-      brkHtml = '<div class="row" style="gap:8px;margin-top:8px"><label style="flex:1"><span data-i18n="hours_break_start">' + t("hours_break_start") + '</span>' +
-        '<input type="time" value="' + esc(e.breakStart || "") + '" onchange="hoursBreakChanged(\'' + e.id + '\',\'breakStart\',this.value)" style="margin-bottom:0"></label>' +
-        '<label style="flex:1"><span data-i18n="hours_break_end">' + t("hours_break_end") + '</span>' +
-        '<input type="time" value="' + esc(e.breakEnd || "") + '" onchange="hoursBreakChanged(\'' + e.id + '\',\'breakEnd\',this.value)" style="margin-bottom:0"></label></div>';
+      mealHtml = '<div class="row" style="gap:8px;margin-top:8px"><label style="flex:1"><span data-i18n="hours_meal_start">' + t("hours_meal_start") + '</span>' +
+        '<input type="time" value="' + esc(e.mealStart || "") + '" onchange="hoursMealChanged(\'' + e.id + '\',\'mealStart\',this.value)" style="margin-bottom:0"></label>' +
+        '<label style="flex:1"><span data-i18n="hours_meal_end">' + t("hours_meal_end") + '</span>' +
+        '<input type="time" value="' + esc(e.mealEnd || "") + '" onchange="hoursMealChanged(\'' + e.id + '\',\'mealEnd\',this.value)" style="margin-bottom:0"></label></div>';
     }
     var dedHtml = brk > 0 ? '<div class="sub">' + t("hours_break_ded") + ': ' + brk + 'h</div>' : "";
     return '<div class="item"><div class="row"><span class="name">' + esc(meta) + '</span><button class="btn btn-ghost" style="padding:6px 8px;margin-left:8px" onclick="delHoursEntry(\'' + e.id + '\')">✕</button></div>' +
-      '<div class="sub">' + line + '</div>' + brkHtml + dedHtml +
+      '<div class="sub">' + line + '</div>' + mealHtml + dedHtml +
       '<div class="sub">' + t("hours_paid_hours") + ': ' + paid + 'h · ' + t("hours_est_pay") + ': ' + fmt(pay) + '</div></div>';
   }).join("");
 }
 function addManualHours() {
   var date = document.getElementById("hoursDate").value || todayStr();
-  var hrs = parseFloat(document.getElementById("hoursHours").value);
+  var ci = document.getElementById("hoursClockIn").value;
+  var co = document.getElementById("hoursClockOut").value;
   var label = document.getElementById("hoursLabel").value.trim();
-  if (isNaN(hrs) || hrs <= 0) { toast(t("hours_need")); return; }
+  if (!ci || !co) { toast(t("hours_need_times")); return; }
   if (!state.hours) state.hours = defaultHours();
-  state.hours.entries.unshift({ id: uid("he"), kind: "manual", date: date, hours: Math.round(hrs * 100) / 100, label: label, breakStart: "", breakEnd: "", createdAt: Date.now() });
+  var mealStart = "", mealEnd = "";
+  if (!state.hours.paidMealBreak) {
+    mealStart = document.getElementById("hoursMealStart").value || "";
+    mealEnd = document.getElementById("hoursMealEnd").value || "";
+  }
+  state.hours.entries.unshift({ id: uid("he"), kind: "manual", date: date, clockIn: ci, clockOut: co, mealStart: mealStart, mealEnd: mealEnd, label: label, createdAt: Date.now() });
   saveState();
-  document.getElementById("hoursHours").value = ""; document.getElementById("hoursLabel").value = "";
+  ["hoursClockIn", "hoursClockOut", "hoursMealStart", "hoursMealEnd", "hoursLabel"].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ""; });
   renderHours();
 }
 function hoursWageChanged() {
@@ -2158,7 +2331,7 @@ function togglePaidMealBreak() {
   state.hours.paidMealBreak = !!document.getElementById("hoursPaidBreak").checked;
   saveState(); renderHours();
 }
-function hoursBreakChanged(id, field, val) {
+function hoursMealChanged(id, field, val) {
   var e = ((state.hours && state.hours.entries) || []).find(function(x){ return x.id === id; });
   if (!e) return;
   e[field] = val; saveState(); renderHours();
@@ -2189,14 +2362,25 @@ function importHours(input) {
       var ids = {}; state.hours.entries.forEach(function(x){ ids[x.id] = 1; });
       var added = 0;
       items.forEach(function(x){
-        if (!x || typeof x !== "object") return;
-        var hrs = parseFloat(x.hours);
-        if (isNaN(hrs) && x.startAt && x.endAt) hrs = (x.endAt - x.startAt) / 3600000;
-        if (!x.date || isNaN(hrs) || hrs < 0) return;
+        if (!x || typeof x !== "object" || !x.date) return;
         if (x.id && ids[x.id]) return;
         var nid = x.id || uid("he");
         ids[nid] = 1;
-        state.hours.entries.push({ id: nid, kind: "manual", date: String(x.date), hours: Math.round(hrs * 100) / 100, label: String(x.label || ""), breakStart: String(x.breakStart || ""), breakEnd: String(x.breakEnd || ""), createdAt: x.createdAt || Date.now() });
+        var entry = { id: nid, kind: "manual", date: String(x.date), label: String(x.label || ""),
+          mealStart: String(x.mealStart || x.breakStart || ""), mealEnd: String(x.mealEnd || x.breakEnd || ""),
+          createdAt: x.createdAt || Date.now() };
+        if (x.clockIn && x.clockOut) {
+          entry.clockIn = String(x.clockIn); entry.clockOut = String(x.clockOut);
+        } else if (x.startAt && x.endAt) { /* v59 shift */
+          var sd = new Date(x.startAt), ed = new Date(x.endAt);
+          entry.clockIn = fmtClock(sd.getHours() + ":" + sd.getMinutes());
+          entry.clockOut = fmtClock(ed.getHours() + ":" + ed.getMinutes());
+        } else {
+          var hrs = parseFloat(x.hours); /* v60 duration entry */
+          if (isNaN(hrs) || hrs < 0) return;
+          entry.hours = Math.round(hrs * 100) / 100;
+        }
+        state.hours.entries.push(entry);
         added++;
       });
       saveState(); renderHours();
@@ -2385,6 +2569,15 @@ function renderHandoff() {
       '<div class="sub">' + esc(when) + '</div></div>';
   }).join("");
 }
+function toggleHandoffForm(open) {
+  var form = document.getElementById("handoffForm"); if (!form) return;
+  var btn = document.getElementById("handoffAddBtn");
+  var show = (typeof open === "boolean") ? open : (form.style.display === "none");
+  form.style.display = show ? "" : "none";
+  if (btn) btn.style.display = show ? "none" : "";
+  if (!show) ["handoffTitle", "handoffMsg"].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ""; });
+}
+function cancelHandoffForm() { toggleHandoffForm(false); }
 function addHandoff() {
   var title = document.getElementById("handoffTitle").value.trim();
   var message = document.getElementById("handoffMsg").value.trim();
@@ -2392,7 +2585,7 @@ function addHandoff() {
   if (!state.handoffs) state.handoffs = defaultHandoffs();
   state.handoffs.entries.unshift({ id: uid("ho"), title: title, message: message, resolved: false, createdAt: Date.now() });
   saveState();
-  document.getElementById("handoffTitle").value = ""; document.getElementById("handoffMsg").value = "";
+  toggleHandoffForm(false);
   renderHandoff();
 }
 function toggleHandoffResolved(id) {
@@ -2698,8 +2891,10 @@ function resetJobUI() {
   taskFilter = "all"; editingNoteId = null; expandedNoteId = null;
   editingStockId = null; stockPickerOpen = false;
   discountApplied = false;
-  toggleTaskForm(false); toggleStockForm(false);
-  ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursHours", "hoursLabel",
+  toggleTaskForm(false); toggleNoteForm(false); toggleHandoffForm(false); toggleStockForm(false);
+  closeDatePicker();
+  ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursClockIn", "hoursClockOut",
+   "hoursMealStart", "hoursMealEnd", "hoursLabel",
    "stockName", "stockQty", "stockThreshold", "stockCatalogSearch", "handoffTitle", "handoffMsg"].forEach(function(id){
     var el = document.getElementById(id); if (el) el.value = "";
   });
