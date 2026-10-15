@@ -1,6 +1,6 @@
 /* QuickWork service worker: caches the app shell so it installs
    as a PWA and keeps working offline after the first load. */
-var CACHE = "suite-shop-v68";
+var CACHE = "suite-shop-v69";
 var ASSETS = [
   "./",
   "./index.html",
