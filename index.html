@@ -41,6 +41,9 @@
   input[type=time]::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
   .app-check { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; flex: none; margin: 0; border: 2px solid #c9d2e3; border-radius: 7px; background: #fff; cursor: pointer; }
   .app-check:checked { background-color: #4F46E5; border-color: #4F46E5; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; background-size: 14px; }
+  /* v64: inline deduction editor (moves to sit directly under the tapped chip/row) */
+  #dedEditor { margin-top: 10px; background: #f7f9fc; border: 1px solid #e3e8f1; border-radius: 10px; padding: 12px; flex-basis: 100%; width: 100%; }
+  body[data-theme="dark"] #dedEditor { background: #26262b; border-color: #333338; }
   /* v61: custom date picker (shared by Tasks + Hours) */
   #datePickerOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.45); z-index: 60; align-items: center; justify-content: center; padding: 16px; }
   #datePickerOverlay.open { display: flex; }
@@ -701,8 +704,10 @@ body[data-theme="dark"] .toast { background: #232329; }
     <div class="card">
       <div class="row" style="margin-bottom:8px"><b data-i18n="hours_ded_title">Deductions</b></div>
       <div id="hoursDedList"></div>
+      <div style="margin:10px 0 6px"><button class="btn btn-ghost" id="dedAddBtn" onclick="openDedEditor('custom', null, this)" data-i18n="hours_ded_add_btn" style="margin-bottom:0">+ Add deduction</button></div>
       <div style="margin:10px 0 6px"><span class="sub" data-i18n="hours_ded_preset_lb">Quick add</span></div>
       <div id="hoursDedPresets" class="row" style="flex-wrap:wrap;gap:8px"></div>
+      <div id="dedEditor" style="display:none">
       <label for="dedName" data-i18n="hours_ded_name_lb">Name</label>
       <input type="text" id="dedName" data-i18n-ph="hours_ded_name_ph" placeholder="e.g. Federal tax">
       <label data-i18n="hours_ded_type_lb">Type</label>
@@ -714,7 +719,8 @@ body[data-theme="dark"] .toast { background: #232329; }
       <input type="number" id="dedValue" inputmode="decimal" min="0" step="0.01" placeholder="0">
       <div class="btn-row">
         <button class="btn btn-primary" id="dedSaveBtn" onclick="saveDeduction()">Add deduction</button>
-        <button class="btn btn-ghost" id="dedCancelBtn" style="display:none" onclick="cancelEditDeduction()" data-i18n="cancel">Cancel</button>
+        <button class="btn btn-ghost" id="dedCancelBtn" onclick="cancelEditDeduction()" data-i18n="cancel">Cancel</button>
+      </div>
       </div>
     </div>
     </div>
@@ -1237,6 +1243,7 @@ hours_ded_fixed: "Fixed amount",
 hours_ded_value_pct: "Value (%)",
 hours_ded_value_amt: "Value ($)",
 hours_ded_add: "Add deduction",
+hours_ded_add_btn: "+ Add deduction",
 hours_ded_save: "Save deduction",
 hours_ded_edit: "Edit",
 hours_ded_del: "Delete",
@@ -1591,6 +1598,7 @@ hours_ded_fixed: "Cantidad fija",
 hours_ded_value_pct: "Valor (%)",
 hours_ded_value_amt: "Valor ($)",
 hours_ded_add: "Añadir deducción",
+hours_ded_add_btn: "+ Añadir deducción",
 hours_ded_save: "Guardar deducción",
 hours_ded_edit: "Editar",
 hours_ded_del: "Eliminar",
@@ -2613,17 +2621,72 @@ function renderEstimator() {
     if (!h.deductions.length) list.innerHTML = '<div class="empty">' + t("hours_ded_empty") + '</div>';
     else list.innerHTML = h.deductions.map(function(d){
       var desc = d.type === "percent" ? d.value + "%" : fmt(d.value);
-      return '<div class="item"><div class="row"><span class="name">' + esc(d.name) + '</span>' +
-        '<span class="sub">' + desc + '</span></div>' +
-        '<div class="btn-row" style="margin-top:6px"><button class="btn btn-ghost" onclick="editDeduction(\'' + d.id + '\')">' + t("hours_ded_edit") + '</button>' +
+      return '<div class="item" data-ded-id="' + d.id + '"><div class="row"><span class="name">' + esc(d.name) + ' · ' + desc + '</span></div>' +
+        '<div class="btn-row" style="margin-top:6px"><button class="btn btn-ghost" onclick="editDeduction(\'' + d.id + '\', this)">' + t("hours_ded_edit") + '</button>' +
         '<button class="btn btn-ghost" onclick="delDeduction(\'' + d.id + '\')">' + t("hours_ded_del") + '</button></div></div>';
     }).join("");
   }
   var pre = document.getElementById("hoursDedPresets");
   if (pre) pre.innerHTML = HOURS_DED_PRESETS.map(function(p){
-    return '<button class="btn btn-ghost" style="padding:6px 10px;font-size:14px" onclick="addPresetDeduction(\'' + p.key + '\')">+ ' + t(p.key) + '</button>';
+    return '<button class="btn btn-ghost" style="padding:6px 10px;font-size:14px" data-preset="' + p.key + '" onclick="openDedEditor(\'preset\', \'' + p.key + '\', this)">+ ' + t(p.key) + '</button>';
   }).join("");
+  placeDedEditor();
   renderDedForm();
+}
+/* v64: inline deduction editor — one editor node, moved to sit directly under the tapped chip/row/button */
+var dedEditorOpen = false;
+var dedEditorAnchor = null; /* { kind: "preset"|"row"|"custom", ref: preset key | deduction id | null } */
+var dedEditorNode = null; /* persistent ref: innerHTML re-renders detach the node, the ref lets us re-attach it */
+function getDedEditor() {
+  if (!dedEditorNode) dedEditorNode = document.getElementById("dedEditor");
+  return dedEditorNode;
+}
+function parkDedEditor() {
+  var ed = getDedEditor(); if (!ed) return;
+  var home = document.getElementById("hoursDedPresets");
+  if (home && home.parentNode) home.parentNode.insertBefore(ed, home.nextSibling);
+  ed.style.display = "none";
+}
+function dedEditorAnchorEl() {
+  if (!dedEditorAnchor) return null;
+  if (dedEditorAnchor.kind === "preset") return document.querySelector('#hoursDedPresets [data-preset="' + dedEditorAnchor.ref + '"]');
+  if (dedEditorAnchor.kind === "row") return document.querySelector('#hoursDedList [data-ded-id="' + dedEditorAnchor.ref + '"]');
+  return document.getElementById("dedAddBtn");
+}
+function placeDedEditor(el) {
+  var ed = getDedEditor(); if (!ed) return;
+  if (!dedEditorOpen) { parkDedEditor(); return; }
+  var anchor = el || dedEditorAnchorEl();
+  if (!anchor || !anchor.parentNode) { cancelEditDeduction(); return; }
+  anchor.parentNode.insertBefore(ed, anchor.nextSibling);
+  ed.style.display = "";
+}
+function openDedEditor(kind, ref, el) {
+  var name = "", type = "percent", val = "";
+  if (kind === "preset") {
+    var p = null;
+    for (var i = 0; i < HOURS_DED_PRESETS.length; i++) { if (HOURS_DED_PRESETS[i].key === ref) { p = HOURS_DED_PRESETS[i]; break; } }
+    if (!p) return;
+    name = t(p.key); type = p.type; val = p.value;
+    editingDedId = null;
+  } else if (kind === "row") {
+    var d = ((state.hours && state.hours.deductions) || []).find(function(x){ return x.id === ref; });
+    if (!d) return;
+    editingDedId = d.id; name = d.name; type = d.type; val = d.value;
+  } else {
+    editingDedId = null;
+  }
+  dedFormType = type === "fixed" ? "fixed" : "percent";
+  var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
+  if (nameEl) nameEl.value = name;
+  if (valEl) valEl.value = val;
+  dedEditorOpen = true;
+  dedEditorAnchor = { kind: kind, ref: ref };
+  renderDedForm();
+  /* anchor: the whole row for edits (editor sits under the row), else the tapped element */
+  var anchorEl = el;
+  if (kind === "row" && el && el.closest) anchorEl = el.closest(".item") || el;
+  placeDedEditor(anchorEl);
 }
 function renderDedForm() {
   var pb = document.getElementById("dedTypePercentBtn"), fb = document.getElementById("dedTypeFixedBtn");
@@ -2634,18 +2697,9 @@ function renderDedForm() {
   var sb = document.getElementById("dedSaveBtn");
   if (sb) sb.textContent = t(editingDedId ? "hours_ded_save" : "hours_ded_add");
   var cb = document.getElementById("dedCancelBtn");
-  if (cb) cb.style.display = editingDedId ? "" : "none";
+  if (cb) cb.style.display = ""; /* editor only exists while open, so Cancel is always shown */
 }
 function setDedFormType(ty) { dedFormType = (ty === "fixed") ? "fixed" : "percent"; renderDedForm(); }
-function addPresetDeduction(key) {
-  var p = null;
-  for (var i = 0; i < HOURS_DED_PRESETS.length; i++) { if (HOURS_DED_PRESETS[i].key === key) { p = HOURS_DED_PRESETS[i]; break; } }
-  if (!p) return;
-  if (!state.hours) state.hours = defaultHours();
-  if (!Array.isArray(state.hours.deductions)) state.hours.deductions = [];
-  state.hours.deductions.push({ id: uid("hd"), name: t(key), type: p.type, value: p.value });
-  saveState(); renderHours();
-}
 function saveDeduction() {
   var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
   var name = nameEl ? nameEl.value.trim() : "";
@@ -2665,18 +2719,11 @@ function saveDeduction() {
   cancelEditDeduction();
   renderHours();
 }
-function editDeduction(id) {
-  var d = ((state.hours && state.hours.deductions) || []).find(function(x){ return x.id === id; });
-  if (!d) return;
-  editingDedId = id;
-  dedFormType = d.type === "fixed" ? "fixed" : "percent";
-  var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
-  if (nameEl) nameEl.value = d.name;
-  if (valEl) valEl.value = d.value;
-  renderDedForm();
-}
+function editDeduction(id, btn) { openDedEditor("row", id, btn); }
 function cancelEditDeduction() {
   editingDedId = null; dedFormType = "percent";
+  dedEditorOpen = false; dedEditorAnchor = null;
+  parkDedEditor();
   var nameEl = document.getElementById("dedName"), valEl = document.getElementById("dedValue");
   if (nameEl) nameEl.value = "";
   if (valEl) valEl.value = "";
@@ -3195,6 +3242,8 @@ function resetJobUI() {
   discountApplied = false;
   /* v63 hours: reset tab to Log, clear estimator + deduction-form drafts; stored entries/deductions/wage stay */
   hoursTab = "log"; editingDedId = null; dedFormType = "percent";
+  dedEditorOpen = false; dedEditorAnchor = null;
+  var dedEd = document.getElementById("dedEditor"); if (dedEd) dedEd.style.display = "none";
   toggleTaskForm(false); toggleNoteForm(false); toggleHandoffForm(false); toggleStockForm(false); toggleHoursForm(false);
   closeDatePicker();
   ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursDate", "hoursClockIn", "hoursClockOut",
