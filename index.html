@@ -48,7 +48,10 @@
   #datePickerOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.45); z-index: 60; align-items: center; justify-content: center; padding: 16px; }
   #datePickerOverlay.open { display: flex; }
   /* v71: overlay scroll lock — background cannot scroll while any overlay is open */
-  html.modal-open, html.modal-open body { overflow: hidden; height: 100%; }
+  /* v72: lock preserves scroll position — body is pinned with top:-scrollY instead of
+     clamping the document height (height:100% forced scrollTop to 0 = jump to top) */
+  html.modal-open, html.modal-open body { overflow: hidden; }
+  html.modal-open body { position: fixed; width: 100%; }
   #datePickerBox { background: #fff; border-radius: 12px; padding: 14px; width: 100%; max-width: 340px; box-shadow: 0 8px 28px rgba(0,0,0,.25); overscroll-behavior: contain; touch-action: pan-y; }
   .dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .dp-head span { font-weight: 700; font-size: 16px; }
@@ -1960,7 +1963,20 @@ function toast(msg) {
 }
 /* ---------- overlay scroll lock (v71): one Set of open overlays; lock = set non-empty ---------- */
 var overlayLocks = new Set();
-function syncOverlayLock() { document.documentElement.classList.toggle("modal-open", overlayLocks.size > 0); }
+var savedScrollY = 0;
+function syncOverlayLock() {
+  var html = document.documentElement;
+  var locked = overlayLocks.size > 0;
+  if (locked && !html.classList.contains("modal-open")) {
+    savedScrollY = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    document.body.style.top = (-savedScrollY) + "px";
+    html.classList.add("modal-open");
+  } else if (!locked && html.classList.contains("modal-open")) {
+    html.classList.remove("modal-open");
+    document.body.style.top = "";
+    window.scrollTo(0, savedScrollY);
+  }
+}
 function lockOverlay(id) { if (id) overlayLocks.add(id); syncOverlayLock(); }
 function unlockOverlay(id) { if (id) overlayLocks.delete(id); syncOverlayLock(); }
 var confirmResolve = null;
@@ -1987,7 +2003,7 @@ function appPrompt(msg, def, numeric) {
     pi.value = def || "";
     document.getElementById("promptOverlay").classList.add("open"); lockOverlay("prompt");
     promptResolve = resolve;
-    setTimeout(function(){ var i = document.getElementById("promptInput"); if (i) i.focus(); }, 300);
+    setTimeout(function(){ var i = document.getElementById("promptInput"); if (i) { try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } } }, 300);
   });
 }
 function promptChoice(val) {
@@ -2143,7 +2159,7 @@ function openInfoModal(id) {
   document.getElementById("infoBody").value = it ? (it.body || "") : "";
   document.getElementById("infoDeleteBtn").style.display = it ? "" : "none";
   document.getElementById("infoModal").classList.add("open"); lockOverlay("infoModal");
-  setTimeout(function(){ document.getElementById("infoTitle").focus(); }, 300);
+  setTimeout(function(){ try { document.getElementById("infoTitle").focus({ preventScroll: true }); } catch (e) { document.getElementById("infoTitle").focus(); } }, 300);
 }
 function closeInfoModal() { document.getElementById("infoModal").classList.remove("open"); unlockOverlay("infoModal"); editingInfoId = null; }
 function saveInfo() {
@@ -3903,7 +3919,7 @@ function catEditForm(ref) {
     priceEl.value = "";
   }
   form.style.display = "";
-  setTimeout(function(){ nameEl.focus(); }, 100);
+  setTimeout(function(){ try { nameEl.focus({ preventScroll: true }); } catch (e) { nameEl.focus(); } }, 100);
 }
 function catNewForm() { catEditForm(null); }
 function catCloseForm() {
@@ -4011,7 +4027,7 @@ function openModal(code, isNew, afterSave) {
   var prev = document.getElementById("imgPreview");
   if (modalImg) prev.src = modalImg; else prev.removeAttribute("src");
   document.getElementById("modal").classList.add("open"); lockOverlay("modal");
-  setTimeout(function(){ document.getElementById(isNew && !p ? "fName" : "fPrice").focus(); }, 300);
+  setTimeout(function(){ var el = document.getElementById(isNew && !p ? "fName" : "fPrice"); try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }, 300);
 }
 function closeModal() { catDropClose(); document.getElementById("modal").classList.remove("open"); unlockOverlay("modal"); modalAfterSave = null; }
 
@@ -4033,7 +4049,7 @@ function syncCatDropLock() { var w = document.getElementById("catField"); if (w 
 function catDropOpen() { catDropRender(); var w = document.getElementById("catField"); if (w && catDropList.length) w.classList.add("open"); syncCatDropLock(); }
 function catDropClose() { var w = document.getElementById("catField"); if (w) w.classList.remove("open"); syncCatDropLock(); }
 function catDropFilter() { catDropRender(); var w = document.getElementById("catField"); if (!w) return; if (catDropList.length) w.classList.add("open"); else w.classList.remove("open"); syncCatDropLock(); }
-function catDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("catField"); if (w && w.classList.contains("open")) { catDropClose(); return; } var inp = document.getElementById("fCategory"); if (inp) inp.focus(); catDropOpen(); }
+function catDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("catField"); if (w && w.classList.contains("open")) { catDropClose(); return; } var inp = document.getElementById("fCategory"); if (inp) { try { inp.focus({ preventScroll: true }); } catch (err) { inp.focus(); } } catDropOpen(); }
 function catDropPick(i) { var c = catDropList[i]; if (c == null) return; var inp = document.getElementById("fCategory"); if (inp) inp.value = c; catDropClose(); }
 document.addEventListener("click", function(e){ var t = e.target; if (t && t.closest && t.closest("#catField")) return; catDropClose(); });
 function saveModal() {
@@ -4293,7 +4309,7 @@ function openPriceModal(ctx) {
   document.getElementById("priceModalName").textContent = (p ? p.name : "") + " · catalog " + fmt(effectivePrice(p) || 0);
   document.getElementById("fNewPrice").value = cur;
   document.getElementById("priceModal").classList.add("open"); lockOverlay("priceModal");
-  setTimeout(function(){ document.getElementById("fNewPrice").focus(); }, 300);
+  setTimeout(function(){ var el = document.getElementById("fNewPrice"); try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }, 300);
 }
 function closePriceModal() { document.getElementById("priceModal").classList.remove("open"); unlockOverlay("priceModal"); priceCtx = null; }
 function priceSave(scope) {
