@@ -474,8 +474,10 @@ body[data-theme="dark"] .toast { background: #232329; }
   @media (display-mode: window-controls-overlay) {
     /* Purple strip across the very top; the system window controls float over
        its right side (Windows) / left side (Mac) — no buttons inside the strip. */
-    .titlebar-strip { display: flex; align-items: center; background: #4F46E5; color: #fff; height: env(titlebar-area-height, 33px); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; -webkit-app-region: drag; }
-    .titlebar-strip .titlebar-wordmark { padding-left: max(12px, env(titlebar-area-x, 0px)); font-size: 13px; font-weight: 700; letter-spacing: .02em; white-space: nowrap; -webkit-user-select: none; user-select: none; pointer-events: none; }
+    .titlebar-strip { display: flex; align-items: center; gap: 7px; background: #4F46E5; color: #fff; height: env(titlebar-area-height, 33px); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; -webkit-app-region: drag; padding-left: max(12px, env(titlebar-area-x, 0px)); }
+    /* v77: Bolt Q logo as a white silhouette on the purple strip. */
+    .titlebar-strip .titlebar-logo { width: 20px; height: 20px; flex: none; filter: brightness(0) invert(1); -webkit-user-select: none; user-select: none; pointer-events: none; -webkit-user-drag: none; }
+    .titlebar-strip .titlebar-wordmark { font-size: 13px; font-weight: 700; letter-spacing: .02em; white-space: nowrap; -webkit-user-select: none; user-select: none; pointer-events: none; }
     /* Keep all app content below the strip. */
     body { padding-top: env(titlebar-area-height, 33px); }
     header { top: env(titlebar-area-height, 33px); }
@@ -484,7 +486,7 @@ body[data-theme="dark"] .toast { background: #232329; }
 </style>
 </head>
 <body>
-<div id="titlebar" class="titlebar-strip"><span class="titlebar-wordmark">QuickWork</span></div>
+<div id="titlebar" class="titlebar-strip"><img src="logo-transparent.png" alt="" class="titlebar-logo" draggable="false"><span class="titlebar-wordmark">QuickWork</span></div>
 
 <div id="view-profiles" style="display:none">
   <div class="homehead">
@@ -1884,9 +1886,15 @@ function curTheme() {
   if (p === "light" || p === "dark") return p;
   return devicePrefersDark() ? "dark" : "light";
 }
-/* System bars (Android nav/status) follow the resolved theme via theme-color. */
+/* System bars (Android nav/status) follow the resolved theme via theme-color.
+   v77: in window-controls-overlay mode the browser paints the window-controls
+   zone from theme-color, so it must be purple there — otherwise the
+   minimize/resize/close buttons sit on a white/black patch instead of purple. */
 function updateThemeColorMeta() {
   var color = (curTheme() === "dark") ? "#000000" : "#ffffff";
+  try {
+    if (window.matchMedia && window.matchMedia("(display-mode: window-controls-overlay)").matches) color = "#4F46E5";
+  } catch (e) {}
   var meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) {
     meta = document.createElement("meta");
@@ -1911,6 +1919,16 @@ function watchSystemTheme() {
     var mq = window.matchMedia("(prefers-color-scheme: dark)");
     if (mq.addEventListener) mq.addEventListener("change", onSystemThemeChange);
     else if (mq.addListener) mq.addListener(onSystemThemeChange);
+  } catch (e) {}
+}
+/* v77: if the display mode changes (e.g. installed app gains/loses the
+   overlay title bar), re-apply theme-color so the controls zone stays purple. */
+function watchDisplayMode() {
+  try {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    var mq = window.matchMedia("(display-mode: window-controls-overlay)");
+    if (mq.addEventListener) mq.addEventListener("change", updateThemeColorMeta);
+    else if (mq.addListener) mq.addListener(updateThemeColorMeta);
   } catch (e) {}
 }
 function renderThemeRow() {
@@ -5538,6 +5556,7 @@ loadShopSettingsUI();
 applyFontSize();
 applyTheme();
 watchSystemTheme();
+watchDisplayMode();
 renderThemeRow(); renderLangRow();
 applyI18n();
 document.getElementById("homeGearBtn").innerHTML = ICON_GEAR_BARE;
