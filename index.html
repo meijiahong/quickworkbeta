@@ -313,12 +313,28 @@
 .stock-threshold { font-size: 13px; color: #7a8499; white-space: nowrap; }
 .stock-pick-row .name { flex: 1; min-width: 0; }
 .stock-pick-qty { width: 64px; flex: none; text-align: center; padding: 8px 6px; margin: 0; }
+/* ---------- v74: picker rows — compact qty (beats the global input[type=number]{width:100%} rule), thumb slot, filter/sort dropdowns ---------- */
+.stock-pick-row { gap: 10px; }
+.stock-pick-row .stock-pick-qty { width: 60px; flex: none; text-align: center; padding: 8px 4px; margin: 0; }
+.stock-pick-name { flex: 1; min-width: 0; }
+.stock-pick-thumb { width: 40px; height: 40px; flex: none; border-radius: 8px; object-fit: cover; background: #eef1f6; display: block; }
+.pick-controls { display: flex; gap: 10px; margin: 10px 0 4px; }
+.pick-control { flex: 1; min-width: 0; }
+.pick-control .pick-label { display: block; font-size: 12px; font-weight: 600; color: #7a8499; margin: 0 0 4px 2px; }
+.pickdrop-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 11px 12px; font-size: 15px; font-family: inherit; color: #1c2333; background: #fff; border: 1.5px solid #c9d2e3; border-radius: 10px; cursor: pointer; text-align: left; }
+.pickdrop-trigger .pickdrop-val { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pickdrop-trigger .pickdrop-chev { flex: none; color: #4F46E5; display: flex; transition: transform .15s ease; }
+.catfield.open .pickdrop-chev { transform: rotate(180deg); }
 .handoff-resolved { opacity: .55; }
 .handoff-resolved .name { text-decoration: line-through; }
 .pay-big { font-size: 22px; font-weight: 800; color: #4F46E5; }
 body[data-theme="dark"] .item.stock-low { background: #3a1d1d; border-color: #5a2a2a; }
 body[data-theme="dark"] .item.stock-low .name { color: #ff9d94; }
 body[data-theme="dark"] .stock-threshold { color: #9aa3b5; }
+body[data-theme="dark"] .stock-pick-thumb { background: #26262b; }
+body[data-theme="dark"] .pick-control .pick-label { color: #9aa3b5; }
+body[data-theme="dark"] .pickdrop-trigger { background: #1C1C1E; border-color: #333338; color: #F5F5F7; }
+body[data-theme="dark"] .pickdrop-trigger .pickdrop-chev { color: #818CF8; }
 body[data-theme="dark"] .pay-big { color: #A5B4FC; }
 /* ---------- v18: indigo polish, modern buttons, smooth reorder ---------- */
 .btn { border-radius: 14px; transition: transform .12s ease, box-shadow .15s ease, background .15s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -811,6 +827,22 @@ body[data-theme="dark"] .toast { background: #232329; }
       <button class="btn btn-primary" onclick="toggleStockPicker()" data-i18n="stock_add_catalog">Add from Quick Shop</button>
       <div id="stockPicker" style="display:none;margin-top:10px">
         <input type="search" id="stockCatalogSearch" data-i18n-ph="stock_catalog_search_ph" placeholder="Search catalog…" oninput="renderStockPicker()">
+        <div class="pick-controls">
+          <div class="pick-control">
+            <span class="pick-label" data-i18n="stock_filter_category">Category</span>
+            <div class="catfield" id="stockCatFilterWrap">
+              <button type="button" class="pickdrop-trigger" onclick="stockFilterDropToggle(event)"><span class="pickdrop-val" id="stockCatFilterLabel"></span><span class="pickdrop-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block"><path d="M6 9l6 6 6-6"/></svg></span></button>
+              <div class="catdrop" id="stockCatFilterDrop"></div>
+            </div>
+          </div>
+          <div class="pick-control">
+            <span class="pick-label" data-i18n="stock_sort_lb">Sort</span>
+            <div class="catfield" id="stockSortWrap">
+              <button type="button" class="pickdrop-trigger" onclick="stockSortDropToggle(event)"><span class="pickdrop-val" id="stockSortLabel"></span><span class="pickdrop-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block"><path d="M6 9l6 6 6-6"/></svg></span></button>
+              <div class="catdrop" id="stockSortDrop"></div>
+            </div>
+          </div>
+        </div>
         <div id="stockCatalogList"></div>
       </div>
     </div>
@@ -1352,6 +1384,13 @@ stock_add_selected: "Add selected",
 stock_added: "Added",
 stock_none_selected: "Select at least one product first.",
 stock_save: "Save",
+stock_filter_category: "Category",
+stock_filter_all: "All categories",
+stock_filter_uncat: "Uncategorized",
+stock_sort_lb: "Sort",
+stock_sort_category: "Category",
+stock_sort_name: "Name A–Z",
+stock_sort_price: "Price low to high",
 stock_cancel_edit: "Cancel edit",
 handoff_add: "+ Add handoff",
 handoff_save: "Save handoff",
@@ -1720,6 +1759,13 @@ stock_add_selected: "Añadir seleccionados",
 stock_added: "Añadido",
 stock_none_selected: "Selecciona al menos un producto primero.",
 stock_save: "Guardar",
+stock_filter_category: "Categoría",
+stock_filter_all: "Todas las categorías",
+stock_filter_uncat: "Sin categoría",
+stock_sort_lb: "Ordenar",
+stock_sort_category: "Categoría",
+stock_sort_name: "Nombre A–Z",
+stock_sort_price: "Precio de menor a mayor",
 stock_cancel_edit: "Cancelar edición",
 handoff_add: "+ Añadir entrega",
 handoff_save: "Guardar entrega",
@@ -2927,13 +2973,52 @@ function renderStock() {
   }).join("");
 }
 var stockPickerSel = {};
+var stockPickFilter = "", stockPickSort = "category";
+var stockFilterOpts = [], stockSortOpts = [];
+function stockFilterDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("stockCatFilterWrap"); if (!w) return; var wasOpen = w.classList.contains("open"); closeStockPickDrops(); if (!wasOpen) w.classList.add("open"); }
+function stockSortDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("stockSortWrap"); if (!w) return; var wasOpen = w.classList.contains("open"); closeStockPickDrops(); if (!wasOpen) w.classList.add("open"); }
+function closeStockPickDrops() { ["stockCatFilterWrap", "stockSortWrap"].forEach(function(id){ var w = document.getElementById(id); if (w) w.classList.remove("open"); }); }
+function setStockPickFilterByIdx(i) { var o = stockFilterOpts[i]; if (!o) return; stockPickFilter = o.v; closeStockPickDrops(); renderStockPicker(); }
+function setStockPickSortByIdx(i) { var o = stockSortOpts[i]; if (!o) return; stockPickSort = o.v; closeStockPickDrops(); renderStockPicker(); }
+document.addEventListener("click", function(e){ var t = e.target; if (t && t.closest && (t.closest("#stockCatFilterWrap") || t.closest("#stockSortWrap"))) return; closeStockPickDrops(); });
 function renderStockPicker() {
   var listEl = document.getElementById("stockCatalogList"); if (!listEl) return;
   var q = (document.getElementById("stockCatalogSearch").value || "").toLowerCase();
-  var codes = Object.keys(state.products || {}).sort(function(a, b){ return String((state.products[a] || {}).name || "").localeCompare(String((state.products[b] || {}).name || "")); });
-  var filtered = codes.filter(function(c){
+  var filterLabel = document.getElementById("stockCatFilterLabel");
+  if (filterLabel) filterLabel.textContent = stockPickFilter === "__none" ? t("stock_filter_uncat") : (stockPickFilter || t("stock_filter_all"));
+  var sortLabel = document.getElementById("stockSortLabel");
+  if (sortLabel) sortLabel.textContent = stockPickSort === "name" ? t("stock_sort_name") : stockPickSort === "price" ? t("stock_sort_price") : t("stock_sort_category");
+  stockFilterOpts = [{ v: "", label: t("stock_filter_all") }].concat(allCategories().map(function(c){ return { v: c, label: c }; })).concat([{ v: "__none", label: t("stock_filter_uncat") }]);
+  var fDrop = document.getElementById("stockCatFilterDrop");
+  if (fDrop) fDrop.innerHTML = stockFilterOpts.map(function(o, i){
+    return '<button type="button" class="catdrop-opt" onclick="setStockPickFilterByIdx(' + i + ')"><span>' + esc(o.label) + '</span>' + (stockPickFilter === o.v ? '<span class="tick">✓</span>' : "") + '</button>';
+  }).join("");
+  stockSortOpts = [{ v: "category", label: t("stock_sort_category") }, { v: "name", label: t("stock_sort_name") }, { v: "price", label: t("stock_sort_price") }];
+  var sDrop = document.getElementById("stockSortDrop");
+  if (sDrop) sDrop.innerHTML = stockSortOpts.map(function(o, i){
+    return '<button type="button" class="catdrop-opt" onclick="setStockPickSortByIdx(' + i + ')"><span>' + esc(o.label) + '</span>' + (stockPickSort === o.v ? '<span class="tick">✓</span>' : "") + '</button>';
+  }).join("");
+  var filtered = Object.keys(state.products || {}).filter(function(c){
     var p = state.products[c]; if (!p) return false;
-    return !q || String(p.name || "").toLowerCase().indexOf(q) !== -1 || String(c).toLowerCase().indexOf(q) !== -1;
+    if (q && String(p.name || "").toLowerCase().indexOf(q) === -1 && String(c).toLowerCase().indexOf(q) === -1) return false;
+    if (stockPickFilter === "__none") { if (catKey(p.category)) return false; }
+    else if (stockPickFilter) { if (catKey(p.category) !== catKey(stockPickFilter)) return false; }
+    return true;
+  });
+  filtered.sort(function(a, b){
+    var pa = state.products[a], pb = state.products[b];
+    if (stockPickSort === "name") return String(pa.name || "").localeCompare(String(pb.name || ""));
+    if (stockPickSort === "price") {
+      var ea = effectivePrice(pa), eb = effectivePrice(pb);
+      if (ea == null && eb == null) return String(pa.name || "").localeCompare(String(pb.name || ""));
+      if (ea == null) return 1; if (eb == null) return -1;
+      if (ea !== eb) return ea - eb;
+      return String(pa.name || "").localeCompare(String(pb.name || ""));
+    }
+    var ca = catKey(pa.category), cb = catKey(pb.category);
+    if (!ca && cb) return 1; if (ca && !cb) return -1;
+    if (ca !== cb) return ca.localeCompare(cb);
+    return String(pa.name || "").localeCompare(String(pb.name || ""));
   });
   if (!filtered.length) { listEl.innerHTML = '<div class="empty">' + t("stock_catalog_empty") + '</div>'; return; }
   var linkedIds = {};
@@ -2946,7 +3031,8 @@ function renderStockPicker() {
     var qty = checked ? stockPickerSel[c] : 1;
     var qtyInput = already ? "" : '<input type="number" class="stock-pick-qty" min="1" step="1" inputmode="numeric" value="' + qty + '" oninput="setStockPickQty(\'' + c + '\', this.value)">';
     var addedHint = already ? ' <span class="pill">' + t("stock_added") + '</span>' : "";
-    return '<div class="item stock-pick-row"><input type="checkbox" class="app-check"' + (already ? " disabled" : "") + (checked ? " checked" : "") + ' onchange="toggleStockPick(\'' + c + '\', this.checked)"><span class="name">' + esc(p.name || c) + '</span>' + addedHint + qtyInput + '</div>';
+    var thumb = p.img ? '<img class="stock-pick-thumb" src="' + esc(p.img) + '" alt="">' : '<div class="stock-pick-thumb"></div>';
+    return '<div class="item stock-pick-row"><input type="checkbox" class="app-check"' + (already ? " disabled" : "") + (checked ? " checked" : "") + ' onchange="toggleStockPick(\'' + c + '\', this.checked)">' + thumb + '<span class="name stock-pick-name">' + esc(p.name || c) + '</span>' + addedHint + qtyInput + '</div>';
   }).join("") +
   '<button class="btn btn-primary" style="margin-top:10px" onclick="addStockSelected()"' + (hasSel ? "" : " disabled") + '>' + t("stock_add_selected") + '</button>';
 }
@@ -2972,6 +3058,7 @@ function addStockSelected() {
   });
   stockPickerSel = {};
   stockPickerOpen = false;
+  closeStockPickDrops();
   saveState(); renderStock();
 }
 function toggleStockForm(open) {
@@ -3045,7 +3132,7 @@ function toggleStockConnect() {
   state.stock.connectCatalog = on;
   saveState(); renderStock();
 }
-function toggleStockPicker() { stockPickerOpen = !stockPickerOpen; renderStock(); }
+function toggleStockPicker() { stockPickerOpen = !stockPickerOpen; if (!stockPickerOpen) closeStockPickDrops(); renderStock(); }
 function exportStock() {
   var items = (state.stock && state.stock.items) || [];
   if (!items.length) { toast(t("stock_no_export")); return; }
@@ -3430,6 +3517,8 @@ function resetJobUI() {
   /* v60 new apps: clear in-progress UI state only; stored per-job data stays untouched */
   taskFilter = "all"; editingNoteId = null; expandedNoteId = null;
   editingStockId = null; stockPickerOpen = false; stockPickerSel = {};
+  stockPickFilter = ""; stockPickSort = "category"; closeStockPickDrops();
+  var scs = document.getElementById("stockCatalogSearch"); if (scs) scs.value = "";
   discountApplied = false;
   /* v63 hours: reset tab to Log, clear estimator + deduction-form drafts; stored entries/deductions/wage stay */
   hoursTab = "log"; editingDedId = null; dedFormType = "percent";
