@@ -47,7 +47,9 @@
   /* v61: custom date picker (shared by Tasks + Hours) */
   #datePickerOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.45); z-index: 60; align-items: center; justify-content: center; padding: 16px; }
   #datePickerOverlay.open { display: flex; }
-  #datePickerBox { background: #fff; border-radius: 12px; padding: 14px; width: 100%; max-width: 340px; box-shadow: 0 8px 28px rgba(0,0,0,.25); }
+  /* v71: overlay scroll lock — background cannot scroll while any overlay is open */
+  html.modal-open, html.modal-open body { overflow: hidden; height: 100%; }
+  #datePickerBox { background: #fff; border-radius: 12px; padding: 14px; width: 100%; max-width: 340px; box-shadow: 0 8px 28px rgba(0,0,0,.25); overscroll-behavior: contain; touch-action: pan-y; }
   .dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .dp-head span { font-weight: 700; font-size: 16px; }
   .dp-head .iconbtn { margin: 0; width: 38px; padding: 8px 0; font-size: 18px; }
@@ -76,7 +78,7 @@
   .results .item { cursor: pointer; background: #f7f9fc; border-radius: 10px; padding: 10px; margin-bottom: 6px; border: 1px solid #e3e8f1; }
   .iconbtn { border: none; background: #eef1f6; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-weight: 600; color: #4F46E5; }
   /* scanner overlay */
-  #scanOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.96); z-index: 50; flex-direction: column; padding: 16px; }
+  #scanOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.96); z-index: 50; flex-direction: column; padding: 16px; overscroll-behavior: contain; }
   #scanOverlay.open { display: flex; }
   #scanOverlay h2 { color: #fff; text-align: center; font-size: 18px; margin: 6px 0 12px; }
   #reader { width: 100%; max-width: 480px; margin: 0 auto; background: #000; border-radius: 12px; overflow: hidden; position: relative; }
@@ -96,7 +98,7 @@
   /* modal */
   #modal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
   #modal.open { display: flex; }
-  #modalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; }
+  #modalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #modalBox h2 { margin: 0 0 12px; font-size: 19px; }
   /* category field: text input + custom in-app dropdown (replaces native datalist) */
   .catfield { position: relative; }
@@ -104,7 +106,7 @@
   .catchev { position: absolute; right: 8px; top: 0; width: 32px; height: 48px; border: 0; background: transparent; color: #4F46E5; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
   .catchev svg { transition: transform .15s ease; }
   .catfield.open .catchev svg { transform: rotate(180deg); }
-  .catdrop { display: none; position: absolute; left: 0; right: 0; top: calc(100% - 6px); z-index: 5; background: #fff; border: 1.5px solid #c9d2e3; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.15); max-height: 180px; overflow-y: auto; padding: 4px 0; }
+  .catdrop { display: none; position: absolute; left: 0; right: 0; top: calc(100% - 6px); z-index: 5; background: #fff; border: 1.5px solid #c9d2e3; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.15); max-height: 180px; overflow-y: auto; padding: 4px 0; overscroll-behavior: contain; touch-action: pan-y; }
   .catfield.open .catdrop { display: block; }
   .catdrop-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 13px; border: 0; background: transparent; font-size: 16px; font-family: inherit; color: #1c2333; cursor: pointer; text-align: left; }
   .catdrop-opt:hover, .catdrop-opt:active { background: #EEF0FF; }
@@ -124,11 +126,11 @@
   body[data-theme="dark"] .catpick-opt { color: #F5F5F7; border-bottom-color: #2E2E35; }
   #confirmOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: center; justify-content: center; padding: 20px; }
   #confirmOverlay.open { display: flex; }
-  #confirmBox { background: #fff; width: 100%; max-width: 380px; border-radius: 18px; padding: 22px 20px; text-align: center; }
+  #confirmBox { background: #fff; width: 100%; max-width: 380px; border-radius: 18px; padding: 22px 20px; text-align: center; overscroll-behavior: contain; }
   #confirmBox p { margin: 0 0 18px; font-size: 16px; font-weight: 600; color: #1c2440; }
   #promptOverlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: center; justify-content: center; padding: 20px; }
   #promptOverlay.open { display: flex; }
-  #promptBox { background: #fff; width: 100%; max-width: 380px; border-radius: 18px; padding: 22px 20px; text-align: center; }
+  #promptBox { background: #fff; width: 100%; max-width: 380px; border-radius: 18px; padding: 22px 20px; text-align: center; overscroll-behavior: contain; }
   #promptBox p { margin: 0 0 14px; font-size: 16px; font-weight: 600; color: #1c2440; }
   #promptBox input { width: 100%; font-size: 22px; padding: 12px; border: 2px solid #dfe5ef; border-radius: 12px; margin: 0 0 16px; text-align: center; box-sizing: border-box; }
   .selbox { width: 22px; height: 22px; flex: none; accent-color: #4F46E5; }
@@ -221,7 +223,7 @@
   .modhead-sp { width: 42px; flex: none; }
   #contactModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
   #contactModal.open { display: flex; }
-  #contactModalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+  #contactModalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #contactModalBox h2 { margin: 0 0 8px; font-size: 19px; }
   #reader video { touch-action: none; }
   .modsub { margin: 2px 0 0; font-size: 12px; color: #7a8499; }
@@ -245,11 +247,11 @@
   .profilemain .moddesc { display: block; }
   #importTargetModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: flex-end; justify-content: center; }
   #importTargetModal.open { display: flex; }
-  #importTargetBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+  #importTargetBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #importTargetBox h2 { margin: 0 0 8px; font-size: 19px; }
   #exportPickerModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: flex-end; justify-content: center; }
   #exportPickerModal.open { display: flex; }
-  #exportPickerBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+  #exportPickerBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #exportPickerBox h2 { margin: 0 0 8px; font-size: 19px; }
   .exportpickrow { display: flex; align-items: center; gap: 12px; padding: 13px 4px; font-size: 15px; font-weight: 600; border-bottom: 1px solid #EEF0FF; cursor: pointer; }
   .exportpickrow:last-child { border-bottom: none; }
@@ -274,15 +276,15 @@
   #imgPreview:not([src]) { display: none; }
   #sheet { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
   #sheet.open { display: flex; }
-  #sheetBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 22px 18px 30px; text-align: center; }
+  #sheetBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 22px 18px 30px; text-align: center; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #sheetBox .pname { font-size: 20px; font-weight: 800; margin: 10px 0 2px; }
   #sheetBox .pprice { font-size: 36px; font-weight: 800; margin: 8px 0 16px; }
   #priceModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 70; align-items: flex-end; justify-content: center; }
   #priceModal.open { display: flex; }
-  #priceModalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 30px; }
+  #priceModalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 30px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #summaryOverlay { display: none; position: fixed; inset: 0; background: #f2f4f8; z-index: 55; flex-direction: column; }
   #summaryOverlay.open { display: flex; }
-  #summaryBody { flex: 1; overflow-y: auto; padding: 14px; width: 100%; max-width: 640px; margin: 0 auto; }
+  #summaryBody { flex: 1; overflow-y: auto; padding: 14px; width: 100%; max-width: 640px; margin: 0 auto; overscroll-behavior: contain; touch-action: pan-y; }
   .sumline { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #edf0f5; }
   .sumline .info { flex: 1; min-width: 0; }
   .sumline .name { font-weight: 600; font-size: 15px; }
@@ -290,7 +292,7 @@
 
 #templateUseModal, #templateEditModal, #templateLibModal, #infoModal, #historyModal, #catManageModal, #catPickModal { display: none; position: fixed; inset: 0; background: rgba(10,14,25,.6); z-index: 60; align-items: flex-end; justify-content: center; }
 #templateUseModal.open, #templateEditModal.open, #templateLibModal.open, #infoModal.open, #historyModal.open, #catManageModal.open, #catPickModal.open { display: flex; }
-#templateUseBox, #templateEditBox, #templateLibBox, #infoModalBox, #historyBox, #catManageBox, #catPickBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
+#templateUseBox, #templateEditBox, #templateLibBox, #infoModalBox, #historyBox, #catManageBox, #catPickBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
 #templateUseBox h2, #templateEditBox h2, #templateLibBox h2, #infoModalBox h2, #historyBox h2, #catManageBox h2, #catPickBox h2 { margin: 0 0 8px; font-size: 19px; }
 #templateEditBox textarea, #infoModalBox textarea { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; font-family: inherit; }
 /* ---------- v60: new apps ---------- */
@@ -1956,16 +1958,21 @@ function toast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ t.style.display = "none"; }, 2800);
 }
+/* ---------- overlay scroll lock (v71): one Set of open overlays; lock = set non-empty ---------- */
+var overlayLocks = new Set();
+function syncOverlayLock() { document.documentElement.classList.toggle("modal-open", overlayLocks.size > 0); }
+function lockOverlay(id) { if (id) overlayLocks.add(id); syncOverlayLock(); }
+function unlockOverlay(id) { if (id) overlayLocks.delete(id); syncOverlayLock(); }
 var confirmResolve = null;
 function appConfirm(msg) {
   return new Promise(function(resolve) {
     document.getElementById("confirmMsg").textContent = msg;
-    document.getElementById("confirmOverlay").classList.add("open");
+    document.getElementById("confirmOverlay").classList.add("open"); lockOverlay("confirm");
     confirmResolve = resolve;
   });
 }
 function confirmChoice(val) {
-  document.getElementById("confirmOverlay").classList.remove("open");
+  document.getElementById("confirmOverlay").classList.remove("open"); unlockOverlay("confirm");
   var r = confirmResolve; confirmResolve = null;
   if (r) r(val);
 }
@@ -1978,14 +1985,14 @@ function appPrompt(msg, def, numeric) {
     if (numeric) { pi.type = "number"; pi.inputMode = "decimal"; pi.min = "0"; pi.step = "0.01"; pi.placeholder = "0.00"; }
     else { pi.type = "text"; pi.inputMode = ""; pi.removeAttribute("min"); pi.removeAttribute("step"); pi.placeholder = ""; }
     pi.value = def || "";
-    document.getElementById("promptOverlay").classList.add("open");
+    document.getElementById("promptOverlay").classList.add("open"); lockOverlay("prompt");
     promptResolve = resolve;
     setTimeout(function(){ var i = document.getElementById("promptInput"); if (i) i.focus(); }, 300);
   });
 }
 function promptChoice(val) {
   var v = val ? document.getElementById("promptInput").value : null;
-  document.getElementById("promptOverlay").classList.remove("open");
+  document.getElementById("promptOverlay").classList.remove("open"); unlockOverlay("prompt");
   var r = promptResolve; promptResolve = null;
   if (r) r(v);
 }
@@ -2135,10 +2142,10 @@ function openInfoModal(id) {
   document.getElementById("infoTitle").value = it ? (it.title || "") : "";
   document.getElementById("infoBody").value = it ? (it.body || "") : "";
   document.getElementById("infoDeleteBtn").style.display = it ? "" : "none";
-  document.getElementById("infoModal").classList.add("open");
+  document.getElementById("infoModal").classList.add("open"); lockOverlay("infoModal");
   setTimeout(function(){ document.getElementById("infoTitle").focus(); }, 300);
 }
-function closeInfoModal() { document.getElementById("infoModal").classList.remove("open"); editingInfoId = null; }
+function closeInfoModal() { document.getElementById("infoModal").classList.remove("open"); unlockOverlay("infoModal"); editingInfoId = null; }
 function saveInfo() {
   var title = document.getElementById("infoTitle").value.trim();
   var body = document.getElementById("infoBody").value.trim();
@@ -2205,10 +2212,10 @@ function openDatePicker(inputId) {
   var cur = parseIsoDate(document.getElementById(inputId).value) || new Date();
   datePickerView = { y: cur.getFullYear(), m: cur.getMonth() };
   renderDatePicker();
-  var ov = document.getElementById("datePickerOverlay"); if (ov) ov.classList.add("open");
+  var ov = document.getElementById("datePickerOverlay"); if (ov) ov.classList.add("open"); lockOverlay("datePicker");
 }
 function closeDatePicker() {
-  var ov = document.getElementById("datePickerOverlay"); if (ov) ov.classList.remove("open");
+  var ov = document.getElementById("datePickerOverlay"); if (ov) ov.classList.remove("open"); unlockOverlay("datePicker");
   datePickerTarget = null;
 }
 function datePickerNav(d) {
@@ -3480,7 +3487,7 @@ function startScan(mode) {
   scanMode = mode;
   document.getElementById("scanTitle").textContent = mode === "checkout" ? t("scan_item_add") : t("scan_title");
   document.getElementById("scanHint").textContent = t("scan_point");
-  document.getElementById("scanOverlay").classList.add("open");
+  document.getElementById("scanOverlay").classList.add("open"); lockOverlay("scan");
   if (typeof Html5Qrcode === "undefined") {
     document.getElementById("scanHint").textContent = t("scan_loading");
     return;
@@ -3524,7 +3531,7 @@ function stopCameraOnly() {
   return Promise.resolve();
 }
 function stopScan() {
-  document.getElementById("scanOverlay").classList.remove("open");
+  document.getElementById("scanOverlay").classList.remove("open"); unlockOverlay("scan");
   stopCameraOnly();
   scanMode = null;
   var fb = document.getElementById("focusBtn"); if (fb) fb.style.display = "none";
@@ -3868,14 +3875,14 @@ function renderCatManage() {
 }
 function openCatManage(ref) {
   renderCatManage();
-  document.getElementById("catManageModal").classList.add("open");
+  document.getElementById("catManageModal").classList.add("open"); lockOverlay("catManage");
   var name = null;
   if (typeof ref === "string") name = ref;
   else if (ref && ref.getAttribute) name = ref.getAttribute("data-cat") || null;
   if (name) catEditForm(name); else catCloseForm();
 }
 function closeCatManage() {
-  document.getElementById("catManageModal").classList.remove("open");
+  document.getElementById("catManageModal").classList.remove("open"); unlockOverlay("catManage");
   catCloseForm();
 }
 function catEditForm(ref) {
@@ -3954,9 +3961,9 @@ function bulkSetCategory() {
   var n = Object.keys(selected).length;
   if (!n) { toast(t("shop_select_first")); return; }
   renderCatPick();
-  document.getElementById("catPickModal").classList.add("open");
+  document.getElementById("catPickModal").classList.add("open"); lockOverlay("catPick");
 }
-function closeCatPick() { document.getElementById("catPickModal").classList.remove("open"); }
+function closeCatPick() { document.getElementById("catPickModal").classList.remove("open"); unlockOverlay("catPick"); }
 function renderCatPick() {
   var list = document.getElementById("catPickList");
   if (!list) return;
@@ -4003,10 +4010,10 @@ function openModal(code, isNew, afterSave) {
   modalImg = (p && p.img) ? p.img : null;
   var prev = document.getElementById("imgPreview");
   if (modalImg) prev.src = modalImg; else prev.removeAttribute("src");
-  document.getElementById("modal").classList.add("open");
+  document.getElementById("modal").classList.add("open"); lockOverlay("modal");
   setTimeout(function(){ document.getElementById(isNew && !p ? "fName" : "fPrice").focus(); }, 300);
 }
-function closeModal() { catDropClose(); document.getElementById("modal").classList.remove("open"); modalAfterSave = null; }
+function closeModal() { catDropClose(); document.getElementById("modal").classList.remove("open"); unlockOverlay("modal"); modalAfterSave = null; }
 
 /* ---------- category dropdown (custom in-app list, replaces native datalist) ---------- */
 var catDropList = [];
@@ -4022,9 +4029,10 @@ function catDropRender() {
     return '<button type="button" class="catdrop-opt" onclick="catDropPick(' + i + ')"><span>' + esc(c) + '</span>' + tick + '</button>';
   }).join("");
 }
-function catDropOpen() { catDropRender(); var w = document.getElementById("catField"); if (w && catDropList.length) w.classList.add("open"); }
-function catDropClose() { var w = document.getElementById("catField"); if (w) w.classList.remove("open"); }
-function catDropFilter() { catDropRender(); var w = document.getElementById("catField"); if (!w) return; if (catDropList.length) w.classList.add("open"); else w.classList.remove("open"); }
+function syncCatDropLock() { var w = document.getElementById("catField"); if (w && w.classList.contains("open")) lockOverlay("catDrop"); else unlockOverlay("catDrop"); }
+function catDropOpen() { catDropRender(); var w = document.getElementById("catField"); if (w && catDropList.length) w.classList.add("open"); syncCatDropLock(); }
+function catDropClose() { var w = document.getElementById("catField"); if (w) w.classList.remove("open"); syncCatDropLock(); }
+function catDropFilter() { catDropRender(); var w = document.getElementById("catField"); if (!w) return; if (catDropList.length) w.classList.add("open"); else w.classList.remove("open"); syncCatDropLock(); }
 function catDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("catField"); if (w && w.classList.contains("open")) { catDropClose(); return; } var inp = document.getElementById("fCategory"); if (inp) inp.focus(); catDropOpen(); }
 function catDropPick(i) { var c = catDropList[i]; if (c == null) return; var inp = document.getElementById("fCategory"); if (inp) inp.value = c; catDropClose(); }
 document.addEventListener("click", function(e){ var t = e.target; if (t && t.closest && t.closest("#catField")) return; catDropClose(); });
@@ -4121,9 +4129,9 @@ function importData(input) {
 function showImportTarget(label, allowMerge) {
   document.getElementById("importTargetDesc").textContent = tf("import_desc", { label: t(label), job: (state.name || t("job_word")) });
   document.getElementById("importOptMerge").style.display = allowMerge ? "" : "none";
-  document.getElementById("importTargetModal").classList.add("open");
+  document.getElementById("importTargetModal").classList.add("open"); lockOverlay("importTarget");
 }
-function closeImportTarget() { document.getElementById("importTargetModal").classList.remove("open"); pendingImport = null; }
+function closeImportTarget() { document.getElementById("importTargetModal").classList.remove("open"); unlockOverlay("importTarget"); pendingImport = null; }
 /* ---------- export picker ---------- */
 var exportPicker = null;
 function showExportPicker(groups, onConfirm) {
@@ -4132,7 +4140,7 @@ function showExportPicker(groups, onConfirm) {
     return '<label class="exportpickrow"><input type="checkbox" data-i="' + i + '" checked onchange="exportPickerToggle()"><span>' + esc(t(g.key)) + '</span></label>';
   }).join("");
   document.getElementById("exportPickerGo").disabled = false;
-  document.getElementById("exportPickerModal").classList.add("open");
+  document.getElementById("exportPickerModal").classList.add("open"); lockOverlay("exportPicker");
 }
 function exportPickerToggle() {
   var any = false;
@@ -4148,7 +4156,7 @@ function exportPickerGo() {
   closeExportPicker();
   fn(sel);
 }
-function closeExportPicker() { document.getElementById("exportPickerModal").classList.remove("open"); exportPicker = null; }
+function closeExportPicker() { document.getElementById("exportPickerModal").classList.remove("open"); unlockOverlay("exportPicker"); exportPicker = null; }
 function importChoice(mode) {
   var pi = pendingImport;
   if (!pi) { closeImportTarget(); return; }
@@ -4257,7 +4265,7 @@ function showSheet(code) {
   document.getElementById("sheetCode").innerHTML = p.manual ? '' : '<kbd class="code">' + esc(code) + '</kbd>';
   document.getElementById("sheetQty").textContent = "1";
   updateSheetPrice();
-  document.getElementById("sheet").classList.add("open");
+  document.getElementById("sheet").classList.add("open"); lockOverlay("sheet");
 }
 function updateSheetPrice() {
   var p = state.products[sheetCode];
@@ -4273,7 +4281,7 @@ function sheetAdd() {
   if ((!p || effectivePrice(p) == null) && sheetOverride == null) { toast(t("need_price_first")); sheetAdjust(); return; }
   addToOrder(sheetCode, sheetOverride, sheetQty); closeSheet();
 }
-function closeSheet() { document.getElementById("sheet").classList.remove("open"); sheetCode = null; sheetOverride = null; sheetQty = 1; }
+function closeSheet() { document.getElementById("sheet").classList.remove("open"); unlockOverlay("sheet"); sheetCode = null; sheetOverride = null; sheetQty = 1; }
 function sheetAdjust() { openPriceModal({ kind: "sheet", code: sheetCode }); }
 function lineAdjust(i) { openPriceModal({ kind: "line", code: order[i].code, lineIdx: i }); }
 
@@ -4284,10 +4292,10 @@ function openPriceModal(ctx) {
   var cur = ctx.kind === "line" ? order[ctx.lineIdx].price : (sheetOverride != null ? sheetOverride : effectivePrice(p));
   document.getElementById("priceModalName").textContent = (p ? p.name : "") + " · catalog " + fmt(effectivePrice(p) || 0);
   document.getElementById("fNewPrice").value = cur;
-  document.getElementById("priceModal").classList.add("open");
+  document.getElementById("priceModal").classList.add("open"); lockOverlay("priceModal");
   setTimeout(function(){ document.getElementById("fNewPrice").focus(); }, 300);
 }
-function closePriceModal() { document.getElementById("priceModal").classList.remove("open"); priceCtx = null; }
+function closePriceModal() { document.getElementById("priceModal").classList.remove("open"); unlockOverlay("priceModal"); priceCtx = null; }
 function priceSave(scope) {
   if (!priceCtx) return;
   var v = parseFloat(document.getElementById("fNewPrice").value);
@@ -4320,7 +4328,7 @@ function showSummary() {
   if (!order.length) { toast(t("sum_no_items")); return; }
   payMethod = "card";
   renderSummary();
-  document.getElementById("summaryOverlay").classList.add("open");
+  document.getElementById("summaryOverlay").classList.add("open"); lockOverlay("summary");
 }
 function calcTotals() {
   var sub = 0, count = 0;
@@ -4409,7 +4417,7 @@ function updateChange(val) {
     box.innerHTML = html;
   }
 }
-function closeSummary() { document.getElementById("summaryOverlay").classList.remove("open"); }
+function closeSummary() { document.getElementById("summaryOverlay").classList.remove("open"); unlockOverlay("summary"); }
 function newOrderAfterSummary() {
   if ((state.shopSettings || {}).saveHistory && order.length) {
     var t = calcTotals();
@@ -4479,8 +4487,8 @@ function deleteSelectedHistory() {
     saveState(); renderHistory();
   });
 }
-function openHistory() { renderHistory(); document.getElementById("historyModal").classList.add("open"); }
-function closeHistory() { selectedHistory = {}; document.getElementById("historyModal").classList.remove("open"); }
+function openHistory() { renderHistory(); document.getElementById("historyModal").classList.add("open"); lockOverlay("history"); }
+function closeHistory() { selectedHistory = {}; document.getElementById("historyModal").classList.remove("open"); unlockOverlay("history"); }
 function clearHistory() {
   appConfirm(t("hist_clear_confirm")).then(function(ok){
     if (!ok) return;
@@ -4911,9 +4919,9 @@ function addExampleTemplate(btn) {
 }
 function openTemplateLibrary() {
   renderTemplateLibrary();
-  document.getElementById("templateLibModal").classList.add("open");
+  document.getElementById("templateLibModal").classList.add("open"); lockOverlay("templateLib");
 }
-function closeTemplateLibrary() { document.getElementById("templateLibModal").classList.remove("open"); }
+function closeTemplateLibrary() { document.getElementById("templateLibModal").classList.remove("open"); unlockOverlay("templateLib"); }
 function renderTemplateLibrary() {
   var box = document.getElementById("templateLibList"); if (!box) return;
   var list = state.contacts.templates || [];
@@ -4937,9 +4945,9 @@ function openTemplateUse(id) {
     '<div class="hint" style="margin:4px 0 8px">' + esc(tp.text) + '</div>';
   document.getElementById("tuSearch").value = "";
   renderTuContacts("");
-  document.getElementById("templateUseModal").classList.add("open");
+  document.getElementById("templateUseModal").classList.add("open"); lockOverlay("templateUse");
 }
-function closeTemplateUse() { document.getElementById("templateUseModal").classList.remove("open"); activeTplId = null; }
+function closeTemplateUse() { document.getElementById("templateUseModal").classList.remove("open"); unlockOverlay("templateUse"); activeTplId = null; }
 function renderTuContacts(q) {
   q = (q || "").toLowerCase();
   var list = state.contacts.people.filter(function(p){
@@ -4971,9 +4979,9 @@ function openTemplateEdit(id) {
   document.getElementById("teName").value = tp ? tp.name : "";
   document.getElementById("teText").value = tp ? tp.text : "";
   document.getElementById("teDelete").style.display = tp ? "" : "none";
-  document.getElementById("templateEditModal").classList.add("open");
+  document.getElementById("templateEditModal").classList.add("open"); lockOverlay("templateEdit");
 }
-function closeTemplateEdit() { document.getElementById("templateEditModal").classList.remove("open"); editingTplId = null; }
+function closeTemplateEdit() { document.getElementById("templateEditModal").classList.remove("open"); unlockOverlay("templateEdit"); editingTplId = null; }
 function saveTemplate() {
   var name = document.getElementById("teName").value.trim();
   var text = document.getElementById("teText").value.trim();
@@ -5046,7 +5054,7 @@ function openContactModal(id) {
   contactDeptPick = p ? p.dept : (state.contacts.lastDept || state.contacts.departments[0] || "");
   document.getElementById("cDept").value = "";
   renderContactDeptChips();
-  document.getElementById("contactModal").classList.add("open");
+  document.getElementById("contactModal").classList.add("open"); lockOverlay("contact");
 }
 function renderContactDeptChips() {
   document.getElementById("cDeptChips").innerHTML = state.contacts.departments.map(function(d){
@@ -5058,7 +5066,7 @@ function pickContactDept(btn) {
   document.getElementById("cDept").value = "";
   renderContactDeptChips();
 }
-function closeContactModal() { document.getElementById("contactModal").classList.remove("open"); }
+function closeContactModal() { document.getElementById("contactModal").classList.remove("open"); unlockOverlay("contact"); }
 function saveContact() {
   var name = document.getElementById("cName").value.trim();
   var phone = document.getElementById("cPhone").value.trim();
