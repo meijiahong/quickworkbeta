@@ -30,7 +30,8 @@
   .btn-danger { background: #fde8e8; color: #b3261e; }
   .btn-row { display: flex; gap: 8px; }
   .btn-row .btn { margin-bottom: 0; }
-  input[type=text], input[type=number], input[type=search] { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; }
+  input[type=text], input[type=number], input[type=search], input[type=date], input[type=time] { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; }
+  input[type=date], input[type=time] { font-family: inherit; }
   input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   label { font-size: 13px; font-weight: 600; color: #5a6577; display: block; margin: 8px 0 4px; }
@@ -235,6 +236,16 @@
 #templateUseBox, #templateEditBox, #templateLibBox, #infoModalBox, #historyBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 28px; max-height: 92vh; overflow-y: auto; }
 #templateUseBox h2, #templateEditBox h2, #templateLibBox h2, #infoModalBox h2, #historyBox h2 { margin: 0 0 8px; font-size: 19px; }
 #templateEditBox textarea, #infoModalBox textarea { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; font-family: inherit; }
+/* ---------- v59: new apps ---------- */
+.task-done .name { text-decoration: line-through; opacity: .55; }
+.item.stock-low { background: #FFF1F0; border-color: #F5C6C2; }
+.item.stock-low .name { color: #b3261e; }
+.handoff-resolved { opacity: .55; }
+.handoff-resolved .name { text-decoration: line-through; }
+.pay-big { font-size: 22px; font-weight: 800; color: #4F46E5; }
+body[data-theme="dark"] .item.stock-low { background: #3a1d1d; border-color: #5a2a2a; }
+body[data-theme="dark"] .item.stock-low .name { color: #ff9d94; }
+body[data-theme="dark"] .pay-big { color: #A5B4FC; }
 /* ---------- v18: indigo polish, modern buttons, smooth reorder ---------- */
 .btn { border-radius: 14px; transition: transform .12s ease, box-shadow .15s ease, background .15s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn:active { transform: scale(.98); }
@@ -276,7 +287,7 @@ body[data-theme="dark"] .tile-placeholder { background: rgba(129,140,248,.10); b
 /* ---------- dark theme (v17) ---------- */
 body[data-theme="dark"] { background: #000000; color: #F5F5F7; }
 body[data-theme="dark"] .card { background: #1C1C1E; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
-body[data-theme="dark"] input[type=text], body[data-theme="dark"] input[type=number], body[data-theme="dark"] input[type=search],
+body[data-theme="dark"] input[type=text], body[data-theme="dark"] input[type=number], body[data-theme="dark"] input[type=search], body[data-theme="dark"] input[type=date], body[data-theme="dark"] input[type=time],
 body[data-theme="dark"] select, body[data-theme="dark"] textarea { background: #101014; border-color: #333338; color: #F5F5F7; }
 body[data-theme="dark"] input::placeholder, body[data-theme="dark"] textarea::placeholder { color: #8E8E93; }
 body[data-theme="dark"] label { color: #A1A1AA; }
@@ -428,6 +439,12 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div class="btn-row" style="margin-top:8px">
         <button class="btn btn-ghost" onclick="openHistory()" data-i18n="prod_view_history">View purchase history</button>
       </div>
+      <label class="switch-row"><span><span data-i18n="sset_discount">Employee discount</span></span><span class="switch"><input type="checkbox" id="setDiscountOn" onchange="saveShopSettings()"><span class="track"></span><span class="knob"></span></span></label>
+      <div class="setrow">
+        <label for="setDiscountPct" data-i18n="sset_discount_pct">Discount %</label>
+        <input type="number" id="setDiscountPct" inputmode="decimal" min="0" max="100" step="0.01" onchange="saveShopSettings()">
+        <span>%</span>
+      </div>
       <p class="hint" style="margin:10px 0 0">Tax applies to subtotal + fees. When "Apply tax to Card" is off, card totals stay pre-tax.</p>
     </div>
     <div class="card">
@@ -532,6 +549,123 @@ body[data-theme="dark"] .toast { background: #232329; }
       <p class="hint" style="margin:10px 0 0" data-i18n="info_hint">Save anything the team should know about this job — notes, codes, procedures. It stays on this phone until you export it.</p>
     </div>
     <div id="infoList"></div>
+  </main>
+</div>
+
+<div id="view-tasks" style="display:none">
+  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Tasks</h1><span class="modhead-sp"></span></div>
+  <main>
+    <div class="card">
+      <label for="taskTitle" data-i18n="task_title_lb">Task</label>
+      <input type="text" id="taskTitle" data-i18n-ph="task_title_ph" placeholder="e.g. Restock cups">
+      <label for="taskNote" data-i18n="task_note_lb">Note</label>
+      <input type="text" id="taskNote" data-i18n-ph="task_note_ph" placeholder="Add a note…">
+      <label for="taskDue" data-i18n="task_due_lb">Due date</label>
+      <input type="date" id="taskDue">
+      <button class="btn btn-primary" onclick="addTask()" data-i18n="task_add">+ Add task</button>
+    </div>
+    <div class="card">
+      <nav style="margin:0 0 10px;position:static">
+        <button id="taskTabAll" class="active" onclick="setTaskFilter('all')" data-i18n="task_all">All</button>
+        <button id="taskTabOpen" onclick="setTaskFilter('open')" data-i18n="task_open">Open</button>
+        <button id="taskTabDone" onclick="setTaskFilter('done')" data-i18n="task_done">Done</button>
+      </nav>
+      <div id="taskList"></div>
+      <div class="btn-row" id="taskClearRow" style="display:none;margin-top:8px">
+        <button class="btn btn-ghost" onclick="clearCompletedTasks()" data-i18n="task_clear_done">Clear completed</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="view-notes" style="display:none">
+  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Note</h1><span class="modhead-sp"></span></div>
+  <main>
+    <div class="card">
+      <label for="noteTitle" data-i18n="note_title_lb">Title</label>
+      <input type="text" id="noteTitle" data-i18n-ph="note_title_ph" placeholder="e.g. Supplier number">
+      <label for="noteBody" data-i18n="note_body_lb">Note</label>
+      <textarea id="noteBody" rows="3" data-i18n-ph="note_body_ph" placeholder="Write it here…"></textarea>
+      <button class="btn btn-primary" onclick="addNote()" data-i18n="note_add">+ Add note</button>
+    </div>
+    <div class="card">
+      <div id="noteList"></div>
+    </div>
+  </main>
+</div>
+
+<div id="view-hours" style="display:none">
+  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Hours</h1><span class="modhead-sp"></span></div>
+  <main>
+    <div class="card">
+      <div id="hoursPunchState" style="font-weight:600;margin-bottom:10px"></div>
+      <button class="btn btn-primary" id="hoursPunchBtn" onclick="togglePunch()" data-i18n="hours_punch_in">Punch in</button>
+      <div id="hoursTotals" style="margin-top:14px"></div>
+    </div>
+    <div class="card">
+      <label for="hoursWage" data-i18n="hours_wage_lb">Hourly wage ($)</label>
+      <input type="number" id="hoursWage" inputmode="decimal" min="0" step="0.01" onchange="hoursWageChanged()">
+      <label class="switch-row"><span><span data-i18n="hours_paid_break">Paid meal break</span></span><span class="switch"><input type="checkbox" id="hoursPaidBreak" onchange="togglePaidMealBreak()"><span class="track"></span><span class="knob"></span></span></label>
+    </div>
+    <div class="card">
+      <label for="hoursDate" data-i18n="hours_date_lb">Date</label>
+      <input type="date" id="hoursDate">
+      <label for="hoursHours" data-i18n="hours_hours_lb">Hours</label>
+      <input type="number" id="hoursHours" inputmode="decimal" min="0" step="0.01">
+      <label for="hoursLabel" data-i18n="hours_label_lb">Label</label>
+      <input type="text" id="hoursLabel" data-i18n-ph="hours_label_ph" placeholder="e.g. Morning shift">
+      <button class="btn btn-primary" onclick="addManualHours()" data-i18n="hours_add">+ Log hours</button>
+    </div>
+    <div class="card">
+      <div id="hoursList"></div>
+    </div>
+  </main>
+</div>
+
+<div id="view-stock" style="display:none">
+  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Stock</h1><span class="modhead-sp"></span></div>
+  <main>
+    <div class="card">
+      <label class="switch-row"><span><span data-i18n="stock_connect">Connect with Quick Shop catalog</span></span><span class="switch"><input type="checkbox" id="stockConnect" onchange="toggleStockConnect()"><span class="track"></span><span class="knob"></span></span></label>
+    </div>
+    <div class="card">
+      <label for="stockName" data-i18n="stock_name_lb">Item name</label>
+      <input type="text" id="stockName" data-i18n-ph="stock_name_ph" placeholder="e.g. Cups">
+      <label for="stockQty" data-i18n="stock_qty_lb">Quantity</label>
+      <input type="number" id="stockQty" inputmode="numeric" min="0" step="1">
+      <label for="stockThreshold" data-i18n="stock_threshold_lb">Low-stock threshold</label>
+      <input type="number" id="stockThreshold" inputmode="numeric" min="0" step="1">
+      <div class="btn-row">
+        <button class="btn btn-primary" id="stockSaveBtn" onclick="saveStockItem()" data-i18n="stock_add">+ Add item</button>
+        <button class="btn btn-ghost" id="stockCancelBtn" style="display:none" onclick="cancelEditStock()" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+    <div class="card" id="stockCatalogCard" style="display:none">
+      <button class="btn btn-primary" onclick="toggleStockPicker()" data-i18n="stock_add_catalog">Add from Quick Shop</button>
+      <div id="stockPicker" style="display:none;margin-top:10px">
+        <input type="search" id="stockCatalogSearch" data-i18n-ph="stock_catalog_search_ph" placeholder="Search catalog…" oninput="renderStockPicker()">
+        <div id="stockCatalogList"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div id="stockList"></div>
+    </div>
+  </main>
+</div>
+
+<div id="view-handoff" style="display:none">
+  <div class="modhead"><button class="backbtn" onclick="goHome()">‹</button><h1>Quick Handoff</h1><span class="modhead-sp"></span></div>
+  <main>
+    <div class="card">
+      <label for="handoffTitle" data-i18n="handoff_title_lb">Title</label>
+      <input type="text" id="handoffTitle" data-i18n-ph="handoff_title_ph" placeholder="e.g. End of shift notes">
+      <label for="handoffMsg" data-i18n="handoff_msg_lb">Message</label>
+      <textarea id="handoffMsg" rows="3" data-i18n-ph="handoff_msg_ph" placeholder="Write the handoff…"></textarea>
+      <button class="btn btn-primary" onclick="addHandoff()" data-i18n="handoff_add">+ Add handoff</button>
+    </div>
+    <div class="card">
+      <div id="handoffList"></div>
+    </div>
   </main>
 </div>
 
@@ -872,7 +1006,89 @@ rec_not_file: "That file is not a recovery guide.",
 rec_min: "Min", rec_max: "Max",
 rec_back_list: "Back to list",
 default_footer: "Anything beyond these limits: check with your manager.",
-my_shop: "My Shop"
+my_shop: "My Shop",
+tile_tasks_d: "Tasks & to-dos",
+tile_notes_d: "Notes",
+tile_hours_d: "Hours & pay",
+tile_stock_d: "Stock levels",
+tile_handoff_d: "Shift handoff",
+task_add: "+ Add task",
+task_title_lb: "Task",
+task_title_ph: "e.g. Restock cups",
+task_note_lb: "Note",
+task_note_ph: "Add a note…",
+task_due_lb: "Due date",
+task_all: "All",
+task_open: "Open",
+task_done: "Done",
+task_clear_done: "Clear completed",
+task_empty: "No tasks yet.",
+task_del: "Delete this task?",
+task_no_title: "Add a task title first.",
+note_add: "+ Add note",
+note_title_lb: "Title",
+note_title_ph: "e.g. Supplier number",
+note_body_lb: "Note",
+note_body_ph: "Write it here…",
+note_empty: "No notes yet.",
+note_del: "Delete this note?",
+note_need: "Add a title or some text first.",
+note_tap_edit: "Tap a note to edit it.",
+hours_punch_in: "Punch in",
+hours_punch_out: "Punch out",
+hours_punched_in: "Punched in since {t}",
+hours_not_punched: "Not punched in",
+hours_wage_lb: "Hourly wage ($)",
+hours_paid_break: "Paid meal break",
+hours_date_lb: "Date",
+hours_hours_lb: "Hours",
+hours_label_lb: "Label",
+hours_label_ph: "e.g. Morning shift",
+hours_add: "+ Log hours",
+hours_total_hours: "Total paid hours",
+hours_est_pay: "Estimated pay",
+hours_break_start: "Break start",
+hours_break_end: "Break end",
+hours_break_ded: "Break deducted",
+hours_paid_hours: "Paid hours",
+hours_empty: "No entries yet.",
+hours_del: "Delete this entry?",
+hours_need: "Enter hours first.",
+hours_shift: "Shift",
+hours_manual: "Manual",
+hours_open_punch: "Open shift",
+stock_connect: "Connect with Quick Shop catalog",
+stock_add_catalog: "Add from Quick Shop",
+stock_catalog_search_ph: "Search catalog…",
+stock_add: "+ Add item",
+stock_name_lb: "Item name",
+stock_name_ph: "e.g. Cups",
+stock_qty_lb: "Quantity",
+stock_threshold_lb: "Low-stock threshold",
+stock_empty: "No stock items yet.",
+stock_del: "Delete this item?",
+stock_low: "Low stock",
+stock_need_name: "Add an item name first.",
+stock_catalog_empty: "No products in the catalog yet.",
+stock_linked: "Linked",
+stock_save: "Save",
+stock_cancel_edit: "Cancel edit",
+handoff_add: "+ Add handoff",
+handoff_title_lb: "Title",
+handoff_title_ph: "e.g. End of shift notes",
+handoff_msg_lb: "Message",
+handoff_msg_ph: "Write the handoff…",
+handoff_empty: "No handoffs yet.",
+handoff_del: "Delete this entry?",
+handoff_resolve: "Mark resolved",
+handoff_reopen: "Reopen",
+handoff_resolved: "Resolved",
+handoff_need: "Add a title or message first.",
+sset_discount: "Employee discount",
+sset_discount_pct: "Discount %",
+sum_discount: "Discount",
+sum_apply_discount: "Apply discount",
+sum_remove_discount: "Remove discount"
 },
 es: {
 // shared
@@ -1080,7 +1296,89 @@ rec_not_file: "Ese archivo no es una guía de recuperación.",
 rec_min: "Mín", rec_max: "Máx",
 rec_back_list: "Volver a la lista",
 default_footer: "Lo que exceda estos límites, consulta con tu gerente.",
-my_shop: "Mi tienda"
+my_shop: "Mi tienda",
+tile_tasks_d: "Tareas y pendientes",
+tile_notes_d: "Notas",
+tile_hours_d: "Horas y pago",
+tile_stock_d: "Niveles de inventario",
+tile_handoff_d: "Entrega de turno",
+task_add: "+ Añadir tarea",
+task_title_lb: "Tarea",
+task_title_ph: "ej. Reponer vasos",
+task_note_lb: "Nota",
+task_note_ph: "Añade una nota…",
+task_due_lb: "Fecha límite",
+task_all: "Todas",
+task_open: "Pendientes",
+task_done: "Hechas",
+task_clear_done: "Borrar completadas",
+task_empty: "Sin tareas aún.",
+task_del: "¿Eliminar esta tarea?",
+task_no_title: "Escribe el título de la tarea primero.",
+note_add: "+ Añadir nota",
+note_title_lb: "Título",
+note_title_ph: "ej. Número del proveedor",
+note_body_lb: "Nota",
+note_body_ph: "Escríbela aquí…",
+note_empty: "Sin notas aún.",
+note_del: "¿Eliminar esta nota?",
+note_need: "Añade un título o algo de texto primero.",
+note_tap_edit: "Toca una nota para editarla.",
+hours_punch_in: "Marcar entrada",
+hours_punch_out: "Marcar salida",
+hours_punched_in: "Entrada marcada desde las {t}",
+hours_not_punched: "Sin entrada marcada",
+hours_wage_lb: "Salario por hora ($)",
+hours_paid_break: "Descanso de comida pagado",
+hours_date_lb: "Fecha",
+hours_hours_lb: "Horas",
+hours_label_lb: "Etiqueta",
+hours_label_ph: "ej. Turno de mañana",
+hours_add: "+ Registrar horas",
+hours_total_hours: "Total de horas pagadas",
+hours_est_pay: "Pago estimado",
+hours_break_start: "Inicio del descanso",
+hours_break_end: "Fin del descanso",
+hours_break_ded: "Descanso descontado",
+hours_paid_hours: "Horas pagadas",
+hours_empty: "Sin registros aún.",
+hours_del: "¿Eliminar este registro?",
+hours_need: "Ingresa las horas primero.",
+hours_shift: "Turno",
+hours_manual: "Manual",
+hours_open_punch: "Turno abierto",
+stock_connect: "Conectar con el catálogo de Quick Shop",
+stock_add_catalog: "Añadir desde Quick Shop",
+stock_catalog_search_ph: "Buscar en el catálogo…",
+stock_add: "+ Añadir artículo",
+stock_name_lb: "Nombre del artículo",
+stock_name_ph: "ej. Vasos",
+stock_qty_lb: "Cantidad",
+stock_threshold_lb: "Límite de stock bajo",
+stock_empty: "Sin artículos en inventario aún.",
+stock_del: "¿Eliminar este artículo?",
+stock_low: "Stock bajo",
+stock_need_name: "Escribe el nombre del artículo primero.",
+stock_catalog_empty: "Aún no hay productos en el catálogo.",
+stock_linked: "Vinculado",
+stock_save: "Guardar",
+stock_cancel_edit: "Cancelar edición",
+handoff_add: "+ Añadir entrega",
+handoff_title_lb: "Título",
+handoff_title_ph: "ej. Notas de fin de turno",
+handoff_msg_lb: "Mensaje",
+handoff_msg_ph: "Escribe la entrega…",
+handoff_empty: "Sin entregas aún.",
+handoff_del: "¿Eliminar este registro?",
+handoff_resolve: "Marcar resuelto",
+handoff_reopen: "Reabrir",
+handoff_resolved: "Resuelto",
+handoff_need: "Añade un título o mensaje primero.",
+sset_discount: "Descuento de empleado",
+sset_discount_pct: "Descuento %",
+sum_discount: "Descuento",
+sum_apply_discount: "Aplicar descuento",
+sum_remove_discount: "Quitar descuento"
 }
 };
 
@@ -1129,6 +1427,7 @@ function renderLangRow() {
 function renderAll() {
   renderHome(); renderOrder(); renderShopName(); loadShopSettingsUI();
   renderContacts(); renderRecovery(); renderModuleToggles();
+  renderTasks(); renderNotes(); renderHours(); renderStock(); renderHandoff();
   renderSettingsProfile(); renderFontSizeRow(); renderThemeRow(); renderLangRow();
   if (document.getElementById("view-profiles").style.display !== "none") renderProfiles();
 }
@@ -1142,8 +1441,13 @@ var sheetCode = null, sheetOverride = null, priceCtx = null, modalImg = null;
 var sheetQty = 1;
 
 function defaultShopSettings() {
-  return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, saveHistory: false, fees: [], cashPicks: [1, 5, 10, 20, 50, 100] };
+  return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, saveHistory: false, fees: [], cashPicks: [1, 5, 10, 20, 50, 100], discountEnabled: false, discountPct: 0 };
 }
+function defaultTasks() { return { items: [] }; }
+function defaultNotes() { return { items: [] }; }
+function defaultHours() { return { wage: 0, paidMealBreak: false, entries: [], openPunch: null }; }
+function defaultStock() { return { connectCatalog: false, items: [] }; }
+function defaultHandoffs() { return { entries: [] }; }
 function defaultContacts() {
   return { departments: [], people: [] };
 }
@@ -1182,7 +1486,8 @@ function blankProfile(name) {
     recovery: { compTypes: [], situations: [], footerNote: t("default_footer") },
     contacts: { departments: [], people: [], templates: [], lastDept: "" },
     info: { items: [] },
-    modules: { shop: true, contacts: true, recovery: true, info: true }, moduleOrder: ["shop", "contacts", "recovery", "info"] };
+    tasks: defaultTasks(), notes: defaultNotes(), hours: defaultHours(), stock: defaultStock(), handoffs: defaultHandoffs(),
+    modules: { shop: true, contacts: true, recovery: true, info: true, tasks: true, notes: true, hours: true, stock: true, handoff: true }, moduleOrder: ["shop", "contacts", "recovery", "info", "tasks", "notes", "hours", "stock", "handoff"] };
 }
 function migrateProfile(p) {
   if (!p.shopName || p.shopName === "Suite Shop" || p.shopName === "My Shop") p.shopName = "";
@@ -1191,6 +1496,8 @@ function migrateProfile(p) {
     if (!Array.isArray(p.shopSettings.fees)) p.shopSettings.fees = [];
     if (!Array.isArray(p.shopSettings.cashPicks)) p.shopSettings.cashPicks = [1, 5, 10, 20, 50, 100];
     if (p.shopSettings.saveHistory === undefined) p.shopSettings.saveHistory = false;
+    if (p.shopSettings.discountEnabled === undefined) p.shopSettings.discountEnabled = false;
+    if (p.shopSettings.discountPct === undefined) p.shopSettings.discountPct = 0;
   }
   if (!Array.isArray(p.shopHistory)) p.shopHistory = [];
   if (p.recovery.footerNote === undefined) p.recovery.footerNote = t("default_footer");
@@ -1198,6 +1505,21 @@ function migrateProfile(p) {
   if (!Array.isArray(p.contacts.templates)) p.contacts.templates = [];
   stripHotelPresets(p);
   if (!p.info || !Array.isArray(p.info.items)) p.info = { items: [] };
+  if (!p.tasks || !Array.isArray(p.tasks.items)) p.tasks = defaultTasks();
+  if (!p.notes || !Array.isArray(p.notes.items)) p.notes = defaultNotes();
+  if (!p.hours || !Array.isArray(p.hours.entries)) p.hours = defaultHours();
+  else {
+    if (typeof p.hours.wage !== "number") p.hours.wage = 0;
+    if (typeof p.hours.paidMealBreak !== "boolean") p.hours.paidMealBreak = false;
+    if (!("openPunch" in p.hours)) p.hours.openPunch = null;
+  }
+  if (!p.stock || !Array.isArray(p.stock.items)) p.stock = defaultStock();
+  else if (typeof p.stock.connectCatalog !== "boolean") p.stock.connectCatalog = false;
+  if (!p.handoffs || !Array.isArray(p.handoffs.entries)) p.handoffs = defaultHandoffs();
+  if (!p.modules) p.modules = {};
+  ["tasks", "notes", "hours", "stock", "handoff"].forEach(function(id){ if (p.modules[id] === undefined) p.modules[id] = true; });
+  if (!Array.isArray(p.moduleOrder)) p.moduleOrder = [];
+  ["tasks", "notes", "hours", "stock", "handoff"].forEach(function(id){ if (p.moduleOrder.indexOf(id) < 0) p.moduleOrder.push(id); });
   return p;
 }
 function loadDB() {
@@ -1365,6 +1687,11 @@ var ICON_GEAR = '<svg viewBox="0 0 48 48">' + SVG_BG +
   '<line x1="32.8" y1="15.2" x2="29.3" y2="18.7"/>' +
   '<line x1="18.7" y1="29.3" x2="15.2" y2="32.8"/></g>' +
   '<circle cx="24" cy="24" r="6" stroke="#fff" stroke-width="3.6" fill="none"/></svg>';
+var ICON_TASKS = '<svg viewBox="0 0 48 48">' + SVG_BG + '<rect x="12" y="10" width="24" height="28" rx="5" fill="none" stroke="#fff" stroke-width="3.2"/><path d="M18 20l3 3 5-6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 29h12M18 33h8" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg>';
+var ICON_NOTES = '<svg viewBox="0 0 48 48">' + SVG_BG + '<path d="M14 9h13l7 7v23H14z" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/><path d="M27 9v7h7" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/><path d="M19 25h10M19 30h10" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg>';
+var ICON_HOURS = '<svg viewBox="0 0 48 48">' + SVG_BG + '<circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="3.2"/><path d="M24 17v7l5 3" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var ICON_STOCK = '<svg viewBox="0 0 48 48">' + SVG_BG + '<path d="M24 11l11 6v14l-11 6-11-6V17z" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/><path d="M24 11v13M13 17l11 6 11-6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/></svg>';
+var ICON_HANDOFF = '<svg viewBox="0 0 48 48">' + SVG_BG + '<path d="M12 18h20M28 12l6 6-6 6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 30H16M20 24l-6 6 6 6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var ICON_GEAR_BARE = '<svg viewBox="0 0 48 48">' +
   '<g stroke="currentColor" stroke-width="4.4" stroke-linecap="round">' +
   '<line x1="24" y1="10" x2="24" y2="16"/>' +
@@ -1382,7 +1709,12 @@ var MODULES = [
   { id: "shop", name: "Quick Shop", icon: ICON_SHOP, descKey: "tile_shop_d" },
   { id: "contacts", name: "Quick Contacts", icon: ICON_CONTACTS, descKey: "tile_contacts_d" },
   { id: "recovery", name: "Quick Recovery", icon: ICON_RECOVERY, descKey: "tile_recovery_d" },
-  { id: "info", name: "Quick Info", icon: ICON_INFO, descKey: "tile_info_d" }
+  { id: "info", name: "Quick Info", icon: ICON_INFO, descKey: "tile_info_d" },
+  { id: "tasks", name: "Quick Tasks", icon: ICON_TASKS, descKey: "tile_tasks_d" },
+  { id: "notes", name: "Quick Note", icon: ICON_NOTES, descKey: "tile_notes_d" },
+  { id: "hours", name: "Quick Hours", icon: ICON_HOURS, descKey: "tile_hours_d" },
+  { id: "stock", name: "Quick Stock", icon: ICON_STOCK, descKey: "tile_stock_d" },
+  { id: "handoff", name: "Quick Handoff", icon: ICON_HANDOFF, descKey: "tile_handoff_d" }
 ];
 /* ---------- Quick Info ---------- */
 var editingInfoId = null;
@@ -1463,12 +1795,394 @@ function importInfo(input) {
   };
   r.readAsText(f);
 }
+/* ================= v59: Quick Tasks ================= */
+var taskFilter = "all";
+function renderTasks() {
+  var box = document.getElementById("taskList"); if (!box) return;
+  var items = (state.tasks && state.tasks.items) || [];
+  var tabs = { all: "taskTabAll", open: "taskTabOpen", done: "taskTabDone" };
+  Object.keys(tabs).forEach(function(f){ var b = document.getElementById(tabs[f]); if (b) b.classList.toggle("active", taskFilter === f); });
+  var cr = document.getElementById("taskClearRow"); if (cr) cr.style.display = items.some(function(x){ return x.done; }) ? "" : "none";
+  var shown = items.filter(function(x){ return taskFilter === "all" || (taskFilter === "open" ? !x.done : x.done); });
+  if (!shown.length) { box.innerHTML = '<div class="empty">' + t("task_empty") + '</div>'; return; }
+  box.innerHTML = shown.map(function(x){
+    var sub = [];
+    if (x.note) sub.push(esc(x.note));
+    if (x.due) sub.push(esc(x.due));
+    var subHtml = sub.length ? '<div class="sub">' + sub.join(" · ") + '</div>' : "";
+    return '<div class="item' + (x.done ? " task-done" : "") + '"><div class="row"><input type="checkbox"' + (x.done ? " checked" : "") + ' onchange="toggleTaskDone(\'' + x.id + '\',this.checked)" style="width:auto;margin:0 8px 0 0"><span class="name">' + esc(x.title) + '</span><button class="btn btn-ghost" style="padding:6px 8px;margin-left:8px" onclick="delTask(\'' + x.id + '\')">✕</button></div>' + subHtml + '</div>';
+  }).join("");
+}
+function addTask() {
+  var title = document.getElementById("taskTitle").value.trim();
+  var note = document.getElementById("taskNote").value.trim();
+  var due = document.getElementById("taskDue").value;
+  if (!title) { toast(t("task_no_title")); return; }
+  if (!state.tasks) state.tasks = defaultTasks();
+  state.tasks.items.push({ id: uid("tk"), title: title, note: note, due: due || "", done: false, createdAt: Date.now() });
+  saveState();
+  document.getElementById("taskTitle").value = ""; document.getElementById("taskNote").value = ""; document.getElementById("taskDue").value = "";
+  renderTasks();
+}
+function toggleTaskDone(id, done) {
+  var x = ((state.tasks && state.tasks.items) || []).find(function(y){ return y.id === id; });
+  if (!x) return;
+  x.done = !!done; saveState(); renderTasks();
+}
+function delTask(id) {
+  appConfirm(t("task_del")).then(function(ok){
+    if (!ok) return;
+    state.tasks.items = state.tasks.items.filter(function(x){ return x.id !== id; });
+    saveState(); renderTasks();
+  });
+}
+function setTaskFilter(f) { taskFilter = f; renderTasks(); }
+function clearCompletedTasks() {
+  state.tasks.items = state.tasks.items.filter(function(x){ return !x.done; });
+  saveState(); renderTasks();
+}
+
+/* ================= v59: Quick Note ================= */
+var editingNoteId = null, expandedNoteId = null;
+function renderNotes() {
+  var box = document.getElementById("noteList"); if (!box) return;
+  var items = (((state.notes && state.notes.items) || []).slice()).sort(function(a, b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+  if (!items.length) { box.innerHTML = '<div class="empty">' + t("note_empty") + '</div>'; return; }
+  box.innerHTML = items.map(function(n){
+    var head = '<div class="name">' + esc(n.title || "") + '</div>';
+    if (editingNoteId === n.id) {
+      return '<div class="item"><input type="text" id="noteEditTitle" value="' + esc(n.title || "") + '"><textarea id="noteEditBody" rows="3">' + esc(n.body || "") + '</textarea><div class="btn-row"><button class="btn btn-primary" onclick="saveNote(\'' + n.id + '\')">' + t("save") + '</button><button class="btn btn-ghost" onclick="cancelEditNote()">' + t("cancel") + '</button></div></div>';
+    }
+    var bodyHtml = "";
+    if (expandedNoteId === n.id) {
+      bodyHtml = '<div class="sub" style="white-space:pre-wrap">' + esc(n.body || "") + '</div>' +
+        '<div class="btn-row" style="margin-top:8px"><button class="btn btn-primary" onclick="editNote(\'' + n.id + '\')">' + t("edit") + '</button>' +
+        '<button class="btn btn-ghost" onclick="delNote(\'' + n.id + '\')">✕</button></div>';
+    } else if (n.body) {
+      bodyHtml = '<div class="sub">' + esc(n.body.length > 60 ? n.body.slice(0, 60) + "…" : n.body) + '</div>';
+    }
+    return '<div class="item" onclick="toggleNoteExpand(\'' + n.id + '\')">' + head + bodyHtml + '</div>';
+  }).join("");
+}
+function addNote() {
+  var title = document.getElementById("noteTitle").value.trim();
+  var body = document.getElementById("noteBody").value.trim();
+  if (!title && !body) { toast(t("note_need")); return; }
+  if (!state.notes) state.notes = defaultNotes();
+  state.notes.items.unshift({ id: uid("nt"), title: title, body: body, createdAt: Date.now() });
+  saveState();
+  document.getElementById("noteTitle").value = ""; document.getElementById("noteBody").value = "";
+  renderNotes();
+}
+function toggleNoteExpand(id) {
+  if (editingNoteId === id) return;
+  expandedNoteId = (expandedNoteId === id) ? null : id;
+  renderNotes();
+}
+function editNote(id) { editingNoteId = id; renderNotes(); }
+function cancelEditNote() { editingNoteId = null; renderNotes(); }
+function saveNote(id) {
+  var n = ((state.notes && state.notes.items) || []).find(function(x){ return x.id === id; });
+  if (!n) return;
+  n.title = document.getElementById("noteEditTitle").value.trim();
+  n.body = document.getElementById("noteEditBody").value.trim();
+  editingNoteId = null; saveState(); renderNotes();
+}
+function delNote(id) {
+  appConfirm(t("note_del")).then(function(ok){
+    if (!ok) return;
+    state.notes.items = state.notes.items.filter(function(x){ return x.id !== id; });
+    if (expandedNoteId === id) expandedNoteId = null;
+    if (editingNoteId === id) editingNoteId = null;
+    saveState(); renderNotes();
+  });
+}
+
+/* ================= v59: Quick Hours ================= */
+function timeToMin(s) { var p = String(s || "").split(":"); return (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0); }
+function fmtClock(ms) { return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+function fmtDateStr(ds) {
+  var p = String(ds || "").split("-");
+  if (p.length !== 3) return esc(ds || "");
+  return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString();
+}
+function todayStr() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+function hoursEntryBreak(e) {
+  if (e.kind !== "shift" || (state.hours && state.hours.paidMealBreak)) return 0;
+  if (!e.breakStart || !e.breakEnd) return 0;
+  var brk = (timeToMin(e.breakEnd) - timeToMin(e.breakStart)) / 60;
+  return brk > 0 ? brk : 0;
+}
+function hoursEntryPaid(e) {
+  if (e.kind === "manual") return Math.max(0, Math.round((parseFloat(e.hours) || 0) * 100) / 100);
+  if (!e.endAt) return 0;
+  var dur = (e.endAt - e.startAt) / 3600000;
+  return Math.max(0, Math.round((dur - hoursEntryBreak(e)) * 100) / 100);
+}
+function hoursEntryPay(e) {
+  var wage = (state.hours && parseFloat(state.hours.wage)) || 0;
+  return Math.round(hoursEntryPaid(e) * wage * 100) / 100;
+}
+function renderHours() {
+  var box = document.getElementById("hoursList"); if (!box) return;
+  if (!state.hours) state.hours = defaultHours();
+  var h = state.hours;
+  var btn = document.getElementById("hoursPunchBtn");
+  var stEl = document.getElementById("hoursPunchState");
+  if (h.openPunch) {
+    if (btn) btn.textContent = t("hours_punch_out");
+    if (stEl) stEl.textContent = tf("hours_punched_in", { t: fmtClock(h.openPunch.startAt) });
+  } else {
+    if (btn) btn.textContent = t("hours_punch_in");
+    if (stEl) stEl.textContent = t("hours_not_punched");
+  }
+  var wageEl = document.getElementById("hoursWage");
+  if (wageEl && document.activeElement !== wageEl) wageEl.value = h.wage || "";
+  var pbEl = document.getElementById("hoursPaidBreak");
+  if (pbEl) pbEl.checked = !!h.paidMealBreak;
+  var dateEl = document.getElementById("hoursDate");
+  if (dateEl && !dateEl.value) dateEl.value = todayStr();
+  var totalPaid = 0, totalPay = 0;
+  h.entries.forEach(function(e){ totalPaid += hoursEntryPaid(e); totalPay += hoursEntryPay(e); });
+  totalPaid = Math.round(totalPaid * 100) / 100; totalPay = Math.round(totalPay * 100) / 100;
+  var totEl = document.getElementById("hoursTotals");
+  if (totEl) totEl.innerHTML = '<div style="color:var(--dim)">' + t("hours_total_hours") + ': <b style="color:var(--fg)">' + totalPaid + '</b></div>' +
+    '<div><span data-i18n="hours_est_pay">' + t("hours_est_pay") + '</span>: <span class="pay-big">' + fmt(totalPay) + '</span></div>';
+  var entries = h.entries.slice().sort(function(a, b){
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (b.createdAt || 0) - (a.createdAt || 0);
+  });
+  if (!entries.length) { box.innerHTML = '<div class="empty">' + t("hours_empty") + '</div>'; return; }
+  box.innerHTML = entries.map(function(e){
+    var paid = hoursEntryPaid(e), pay = hoursEntryPay(e), brk = hoursEntryBreak(e);
+    var meta = fmtDateStr(e.date) + " · " + (e.kind === "shift" ? t("hours_shift") : t("hours_manual"));
+    var line = "";
+    if (e.kind === "shift") line = fmtClock(e.startAt) + " – " + fmtClock(e.endAt);
+    else line = esc(String(e.hours)) + " " + t("hours_hours_lb") + (e.label ? " · " + esc(e.label) : "");
+    var brkHtml = "";
+    if (e.kind === "shift" && !h.paidMealBreak) {
+      brkHtml = '<div class="row" style="gap:8px;margin-top:8px"><label style="flex:1"><span data-i18n="hours_break_start">' + t("hours_break_start") + '</span>' +
+        '<input type="time" value="' + esc(e.breakStart || "") + '" onchange="hoursBreakChanged(\'' + e.id + '\',\'breakStart\',this.value)" style="margin-bottom:0"></label>' +
+        '<label style="flex:1"><span data-i18n="hours_break_end">' + t("hours_break_end") + '</span>' +
+        '<input type="time" value="' + esc(e.breakEnd || "") + '" onchange="hoursBreakChanged(\'' + e.id + '\',\'breakEnd\',this.value)" style="margin-bottom:0"></label></div>';
+    }
+    var dedHtml = brk > 0 ? '<div class="sub">' + t("hours_break_ded") + ': ' + brk + 'h</div>' : "";
+    return '<div class="item"><div class="row"><span class="name">' + esc(meta) + '</span><button class="btn btn-ghost" style="padding:6px 8px;margin-left:8px" onclick="delHoursEntry(\'' + e.id + '\')">✕</button></div>' +
+      '<div class="sub">' + line + '</div>' + brkHtml + dedHtml +
+      '<div class="sub">' + t("hours_paid_hours") + ': ' + paid + 'h · ' + t("hours_est_pay") + ': ' + fmt(pay) + '</div></div>';
+  }).join("");
+}
+function togglePunch() {
+  if (!state.hours) state.hours = defaultHours();
+  if (state.hours.openPunch) {
+    var op = state.hours.openPunch;
+    state.hours.entries.unshift({ id: uid("he"), kind: "shift", date: op.date, startAt: op.startAt, endAt: Date.now(), breakStart: "", breakEnd: "", label: "", createdAt: Date.now() });
+    state.hours.openPunch = null;
+  } else {
+    state.hours.openPunch = { startAt: Date.now(), date: todayStr() };
+  }
+  saveState(); renderHours();
+}
+function addManualHours() {
+  var date = document.getElementById("hoursDate").value || todayStr();
+  var hrs = parseFloat(document.getElementById("hoursHours").value);
+  var label = document.getElementById("hoursLabel").value.trim();
+  if (isNaN(hrs) || hrs <= 0) { toast(t("hours_need")); return; }
+  if (!state.hours) state.hours = defaultHours();
+  state.hours.entries.unshift({ id: uid("he"), kind: "manual", date: date, hours: Math.round(hrs * 100) / 100, label: label, createdAt: Date.now() });
+  saveState();
+  document.getElementById("hoursHours").value = ""; document.getElementById("hoursLabel").value = "";
+  renderHours();
+}
+function hoursWageChanged() {
+  var v = parseFloat(document.getElementById("hoursWage").value);
+  if (!state.hours) state.hours = defaultHours();
+  state.hours.wage = (isNaN(v) || v < 0) ? 0 : Math.round(v * 100) / 100;
+  saveState(); renderHours();
+}
+function togglePaidMealBreak() {
+  if (!state.hours) state.hours = defaultHours();
+  state.hours.paidMealBreak = !!document.getElementById("hoursPaidBreak").checked;
+  saveState(); renderHours();
+}
+function hoursBreakChanged(id, field, val) {
+  var e = ((state.hours && state.hours.entries) || []).find(function(x){ return x.id === id; });
+  if (!e) return;
+  e[field] = val; saveState(); renderHours();
+}
+function delHoursEntry(id) {
+  appConfirm(t("hours_del")).then(function(ok){
+    if (!ok) return;
+    state.hours.entries = state.hours.entries.filter(function(x){ return x.id !== id; });
+    saveState(); renderHours();
+  });
+}
+
+/* ================= v59: Quick Stock ================= */
+var stockPickerOpen = false, editingStockId = null;
+function stockDisplayName(it) {
+  if (it.productId && state.products && state.products[it.productId]) return state.products[it.productId].name;
+  return it.name;
+}
+function renderStock() {
+  var box = document.getElementById("stockList"); if (!box) return;
+  if (!state.stock) state.stock = defaultStock();
+  var s = state.stock;
+  var conn = document.getElementById("stockConnect"); if (conn) conn.checked = !!s.connectCatalog;
+  var catCard = document.getElementById("stockCatalogCard"); if (catCard) catCard.style.display = s.connectCatalog ? "" : "none";
+  var picker = document.getElementById("stockPicker"); if (picker) picker.style.display = (s.connectCatalog && stockPickerOpen) ? "" : "none";
+  if (s.connectCatalog && stockPickerOpen) renderStockPicker();
+  var items = s.items || [];
+  if (!items.length) { box.innerHTML = '<div class="empty">' + t("stock_empty") + '</div>'; return; }
+  box.innerHTML = items.map(function(it){
+    var low = it.qty <= it.threshold;
+    var linked = it.productId ? ' <span class="pill">' + t("stock_linked") + '</span>' : "";
+    var lowBadge = low ? ' <span class="pill" style="background:#FDE8E8;color:#b3261e">' + t("stock_low") + '</span>' : "";
+    return '<div class="item' + (low ? " stock-low" : "") + '"><div class="row"><span class="name">' + esc(stockDisplayName(it)) + '</span>' + linked + lowBadge +
+      '<button class="btn btn-ghost" style="padding:6px 8px;margin-left:auto" onclick="editStock(\'' + it.id + '\')">' + t("edit") + '</button>' +
+      '<button class="btn btn-ghost" style="padding:6px 8px" onclick="delStock(\'' + it.id + '\')">✕</button></div>' +
+      '<div class="row" style="gap:8px;margin-top:8px;align-items:center"><button class="btn btn-ghost" style="padding:6px 12px" onclick="stockQtyChange(\'' + it.id + '\',-1)">−</button>' +
+      '<span><b>' + it.qty + '</b> / ' + t("stock_threshold_lb") + ' ' + it.threshold + '</span>' +
+      '<button class="btn btn-ghost" style="padding:6px 12px" onclick="stockQtyChange(\'' + it.id + '\',1)">+</button></div></div>';
+  }).join("");
+}
+function renderStockPicker() {
+  var listEl = document.getElementById("stockCatalogList"); if (!listEl) return;
+  var q = (document.getElementById("stockCatalogSearch").value || "").toLowerCase();
+  var codes = Object.keys(state.products || {}).sort(function(a, b){ return String((state.products[a] || {}).name || "").localeCompare(String((state.products[b] || {}).name || "")); });
+  var filtered = codes.filter(function(c){
+    var p = state.products[c]; if (!p) return false;
+    return !q || String(p.name || "").toLowerCase().indexOf(q) !== -1 || String(c).toLowerCase().indexOf(q) !== -1;
+  });
+  if (!filtered.length) { listEl.innerHTML = '<div class="empty">' + t("stock_catalog_empty") + '</div>'; return; }
+  var linkedIds = {};
+  (state.stock.items || []).forEach(function(it){ if (it.productId) linkedIds[it.productId] = true; });
+  listEl.innerHTML = filtered.map(function(c){
+    var p = state.products[c];
+    var already = linkedIds[c];
+    return '<div class="item"><div class="row"><span class="name">' + esc(p.name || c) + '</span>' +
+      '<button class="btn btn-primary" style="padding:6px 12px;margin-left:auto" onclick="addStockFromCatalog(\'' + c + '\')" ' + (already ? "disabled" : "") + '>' + (already ? t("stock_linked") : t("stock_add")) + '</button></div></div>';
+  }).join("");
+}
+function saveStockItem() {
+  var name = document.getElementById("stockName").value.trim();
+  var qty = parseInt(document.getElementById("stockQty").value, 10); if (isNaN(qty)) qty = 0;
+  var thr = parseInt(document.getElementById("stockThreshold").value, 10); if (isNaN(thr)) thr = 0;
+  if (!state.stock) state.stock = defaultStock();
+  if (editingStockId) {
+    var it = state.stock.items.find(function(x){ return x.id === editingStockId; });
+    if (it) {
+      if (!it.productId) it.name = name;
+      it.qty = Math.max(0, qty); it.threshold = Math.max(0, thr);
+    }
+    editingStockId = null; saveState(); clearStockForm(); renderStock(); return;
+  }
+  if (!name) { toast(t("stock_need_name")); return; }
+  state.stock.items.push({ id: uid("st"), name: name, qty: Math.max(0, qty), threshold: Math.max(0, thr), productId: null });
+  saveState(); clearStockForm(); renderStock();
+}
+function clearStockForm() {
+  document.getElementById("stockName").value = "";
+  document.getElementById("stockQty").value = "";
+  document.getElementById("stockThreshold").value = "";
+  document.getElementById("stockName").disabled = false;
+  document.getElementById("stockSaveBtn").textContent = t("stock_add");
+  document.getElementById("stockCancelBtn").style.display = "none";
+}
+function editStock(id) {
+  var it = (state.stock.items || []).find(function(x){ return x.id === id; });
+  if (!it) return;
+  editingStockId = id;
+  var nameEl = document.getElementById("stockName");
+  nameEl.value = stockDisplayName(it);
+  nameEl.disabled = !!it.productId;
+  document.getElementById("stockQty").value = it.qty;
+  document.getElementById("stockThreshold").value = it.threshold;
+  document.getElementById("stockSaveBtn").textContent = t("stock_save");
+  document.getElementById("stockCancelBtn").style.display = "";
+  renderStock();
+}
+function cancelEditStock() { editingStockId = null; clearStockForm(); renderStock(); }
+function stockQtyChange(id, d) {
+  var it = (state.stock.items || []).find(function(x){ return x.id === id; });
+  if (!it) return;
+  it.qty = Math.max(0, (it.qty || 0) + d);
+  saveState(); renderStock();
+}
+function delStock(id) {
+  appConfirm(t("stock_del")).then(function(ok){
+    if (!ok) return;
+    state.stock.items = state.stock.items.filter(function(x){ return x.id !== id; });
+    if (editingStockId === id) { editingStockId = null; clearStockForm(); }
+    saveState(); renderStock();
+  });
+}
+function toggleStockConnect() {
+  var on = !!document.getElementById("stockConnect").checked;
+  if (!state.stock) state.stock = defaultStock();
+  if (!on) {
+    /* freezing linked entries: keep last-synced name, drop the link */
+    state.stock.items.forEach(function(it){
+      if (it.productId) { it.name = stockDisplayName(it); it.productId = null; }
+    });
+    stockPickerOpen = false;
+  }
+  state.stock.connectCatalog = on;
+  saveState(); renderStock();
+}
+function toggleStockPicker() { stockPickerOpen = !stockPickerOpen; renderStock(); }
+function addStockFromCatalog(code) {
+  var p = state.products[code]; if (!p) return;
+  if (!state.stock) state.stock = defaultStock();
+  if (state.stock.items.some(function(it){ return it.productId === code; })) return;
+  state.stock.items.push({ id: uid("st"), name: p.name || code, qty: 0, threshold: 0, productId: code });
+  saveState(); renderStock();
+}
+
+/* ================= v59: Quick Handoff ================= */
+function renderHandoff() {
+  var box = document.getElementById("handoffList"); if (!box) return;
+  var entries = (((state.handoffs && state.handoffs.entries) || []).slice()).sort(function(a, b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+  if (!entries.length) { box.innerHTML = '<div class="empty">' + t("handoff_empty") + '</div>'; return; }
+  box.innerHTML = entries.map(function(e){
+    var when = new Date(e.createdAt || Date.now()).toLocaleString();
+    var badge = e.resolved ? ' <span class="pill">' + t("handoff_resolved") + '</span>' : "";
+    return '<div class="item' + (e.resolved ? " handoff-resolved" : "") + '"><div class="row"><span class="name">' + esc(e.title || "") + '</span>' + badge +
+      '<button class="btn btn-ghost" style="padding:6px 8px;margin-left:auto" onclick="toggleHandoffResolved(\'' + e.id + '\')">' + (e.resolved ? t("handoff_reopen") : t("handoff_resolve")) + '</button>' +
+      '<button class="btn btn-ghost" style="padding:6px 8px" onclick="delHandoff(\'' + e.id + '\')">✕</button></div>' +
+      '<div class="sub" style="white-space:pre-wrap">' + esc(e.message || "") + '</div>' +
+      '<div class="sub">' + esc(when) + '</div></div>';
+  }).join("");
+}
+function addHandoff() {
+  var title = document.getElementById("handoffTitle").value.trim();
+  var message = document.getElementById("handoffMsg").value.trim();
+  if (!title && !message) { toast(t("handoff_need")); return; }
+  if (!state.handoffs) state.handoffs = defaultHandoffs();
+  state.handoffs.entries.unshift({ id: uid("ho"), title: title, message: message, resolved: false, createdAt: Date.now() });
+  saveState();
+  document.getElementById("handoffTitle").value = ""; document.getElementById("handoffMsg").value = "";
+  renderHandoff();
+}
+function toggleHandoffResolved(id) {
+  var e = ((state.handoffs && state.handoffs.entries) || []).find(function(x){ return x.id === id; });
+  if (!e) return;
+  e.resolved = !e.resolved; saveState(); renderHandoff();
+}
+function delHandoff(id) {
+  appConfirm(t("handoff_del")).then(function(ok){
+    if (!ok) return;
+    state.handoffs.entries = state.handoffs.entries.filter(function(x){ return x.id !== id; });
+    saveState(); renderHandoff();
+  });
+}
+
 /* ---------- Android back button / in-app history ---------- */
 var qwCurView = "home";
 var qwHistPushed = false;   /* a view entry sits above the base home entry */
 var qwSuppressPop = false;  /* true when we drive history ourselves (UI go-home) */
 function qwRenderView(v) {
-  ["home", "shop", "contacts", "recovery", "info", "settings", "profiles"].forEach(function(x){
+  ["home", "shop", "contacts", "recovery", "info", "tasks", "notes", "hours", "stock", "handoff", "settings", "profiles"].forEach(function(x){
     var el = document.getElementById("view-" + x);
     if (el) el.style.display = x === v ? "" : "none";
   });
@@ -1479,6 +2193,11 @@ function qwRenderView(v) {
   if (v === "contacts") renderContacts();
   if (v === "recovery") renderRecovery();
   if (v === "info") renderInfo();
+  if (v === "tasks") renderTasks();
+  if (v === "notes") renderNotes();
+  if (v === "hours") renderHours();
+  if (v === "stock") renderStock();
+  if (v === "handoff") renderHandoff();
   if (v === "settings") { renderModuleToggles(); renderSettingsProfile(); renderFontSizeRow(); renderThemeRow(); renderLangRow(); }
   if (v === "profiles") renderProfiles();
 }
@@ -1521,7 +2240,7 @@ function qwCloseTopOverlay() {
 window.addEventListener("popstate", function(e) {
   if (qwSuppressPop) { qwSuppressPop = false; return; }
   var st = e.state && e.state.qw;
-  if (st && st !== "home" && ["shop", "contacts", "recovery", "info", "settings", "profiles"].indexOf(st) !== -1) {
+  if (st && st !== "home" && ["shop", "contacts", "recovery", "info", "tasks", "notes", "hours", "stock", "handoff", "settings", "profiles"].indexOf(st) !== -1) {
     /* forward (or back) to a view entry */
     qwHistPushed = true;
     qwRenderView(st);
@@ -1711,7 +2430,19 @@ function resetJobUI() {
   sheetQty = 1; scanMode = null;
   var s = document.getElementById("search"); if (s) s.value = "";
   var pf = document.getElementById("prodFilter"); if (pf) pf.value = "";
+  /* v59 new apps: clear in-progress UI state only; stored per-job data stays untouched */
+  taskFilter = "all"; editingNoteId = null; expandedNoteId = null;
+  editingStockId = null; stockPickerOpen = false;
+  discountApplied = false;
+  ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursHours", "hoursLabel",
+   "stockName", "stockQty", "stockThreshold", "stockCatalogSearch", "handoffTitle", "handoffMsg"].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = "";
+  });
+  var sb = document.getElementById("stockSaveBtn"); if (sb) sb.textContent = t("stock_add");
+  var cb = document.getElementById("stockCancelBtn"); if (cb) cb.style.display = "none";
+  var sn = document.getElementById("stockName"); if (sn) sn.disabled = false;
   renderOrder(); renderSearch(); renderShopName(); loadShopSettingsUI(); renderProducts(); updateBulkBar();
+  renderTasks(); renderNotes(); renderHours(); renderStock(); renderHandoff();
 }
 function addProfile() {
   appPrompt(t("prompt_job_name"), "").then(function(val){
@@ -2006,7 +2737,7 @@ function chQty(idx, d) {
 function rmLine(idx) { order.splice(idx, 1); renderOrder(); }
 function clearOrder() {
   if (!order.length) return;
-  appConfirm(t("shop_confirm_clear")).then(function(ok){ if (ok) { order = []; renderOrder(); } });
+  appConfirm(t("shop_confirm_clear")).then(function(ok){ if (ok) { order = []; discountApplied = false; renderOrder(); } });
 }
 function renderSearch() {
   var q = document.getElementById("search").value.trim().toLowerCase();
@@ -2422,6 +3153,12 @@ function priceSave(scope) {
 
 /* ---------- order summary ---------- */
 var payMethod = "card";
+var discountApplied = false;
+function discountAvailable() {
+  var s = state.shopSettings || {};
+  return !!(s.discountEnabled && (parseFloat(s.discountPct) || 0) > 0);
+}
+function toggleDiscount() { discountApplied = !discountApplied; renderSummary(); }
 function showSummary() {
   if (!order.length) { toast(t("sum_no_items")); return; }
   payMethod = "card";
@@ -2439,10 +3176,12 @@ function calcTotals() {
     if (amt > 0) { feeTotal += amt; feeLines.push({ name: f.name || "Fee", amt: amt }); }
   });
   feeTotal = Math.round(feeTotal * 100) / 100;
+  var discPct = discountAvailable() ? (parseFloat(s.discountPct) || 0) : 0;
+  var discount = (discountApplied && discPct > 0) ? Math.round(sub * discPct) / 100 : 0;
   var taxApplies = !!(s.taxEnabled && ((payMethod === "cash" && s.taxCash) || (payMethod === "card" && s.taxCard)));
-  var tax = taxApplies ? Math.round((sub + feeTotal) * (parseFloat(s.taxRate) || 0)) / 100 : 0;
-  var total = Math.round((sub + feeTotal + tax) * 100) / 100;
-  return { sub: sub, count: count, feeLines: feeLines, tax: tax, taxApplies: taxApplies, total: total };
+  var tax = taxApplies ? Math.round((sub - discount + feeTotal) * (parseFloat(s.taxRate) || 0)) / 100 : 0;
+  var total = Math.round((sub - discount + feeTotal + tax) * 100) / 100;
+  return { sub: sub, count: count, feeLines: feeLines, tax: tax, taxApplies: taxApplies, total: total, discount: discount, discountPct: discPct };
 }
 function renderSummary() {
   var tot = calcTotals();
@@ -2460,10 +3199,16 @@ function renderSummary() {
   tot.feeLines.forEach(function(f){
     html += '<div class="sumline2"><span>' + esc(f.name) + '</span><span>' + fmt(f.amt) + '</span></div>';
   });
+  if (tot.discount > 0) {
+    html += '<div class="sumline2"><span>' + t("sum_discount") + ' (' + tot.discountPct + '%)</span><span>-' + fmt(tot.discount) + '</span></div>';
+  }
   if (tot.taxApplies) {
     html += '<div class="sumline2"><span>' + tf("sum_tax", { r: (parseFloat((state.shopSettings || {}).taxRate) || 0) }) + '</span><span>' + fmt(tot.tax) + '</span></div>';
   }
   html += '<div class="row grand"><span>' + t("sum_total") + '</span><span>' + fmt(tot.total) + '</span></div></div>';
+  if (discountAvailable()) {
+    html += '<div class="btn-row" style="margin-top:12px"><button class="btn ' + (discountApplied ? "btn-ghost" : "btn-primary") + '" onclick="toggleDiscount()">' + (discountApplied ? t("sum_remove_discount") : t("sum_apply_discount")) + '</button></div>';
+  }
   html += '<div class="btn-row" style="margin-top:12px">' +
     '<button class="paybtn' + (payMethod === "cash" ? " active" : "") + '" onclick="setPayMethod(\'cash\')"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;display:block"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>' + t("sum_cash") + '</button>' +
     '<button class="paybtn' + (payMethod === "card" ? " active" : "") + '" onclick="setPayMethod(\'card\')"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;display:block"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>' + t("sum_card") + '</button></div>';
@@ -2522,11 +3267,13 @@ function newOrderAfterSummary() {
       id: uid("h"), at: Date.now(),
       items: order.map(function(l){ return { name: l.name, price: l.price, qty: l.qty }; }),
       sub: t.sub, feeLines: t.feeLines || [], tax: t.tax, total: t.total,
+      discount: t.discount || 0, discountPct: (t.discount || 0) > 0 ? t.discountPct : 0,
       payMethod: payMethod, cashGiven: given, change: change
     });
     if (state.shopHistory.length > 200) state.shopHistory.length = 200;
     saveState();
   }
+  discountApplied = false;
   closeSummary(); order = []; renderOrder(); showTab("checkout");
 }
 function renderHistory() {
@@ -2541,6 +3288,9 @@ function renderHistory() {
     }).join("");
     var meta = new Date(h.at).toLocaleString() + " · " + (h.payMethod === "cash" ? t("sum_cash") : t("sum_card"));
     var extra = "";
+    if (h.discount) {
+      extra = '<div class="sumline2"><span>' + t("sum_discount") + (h.discountPct ? " (" + h.discountPct + "%)" : "") + '</span><span>-' + fmt(h.discount) + '</span></div>';
+    }
     if (h.payMethod === "cash" && h.cashGiven != null) {
       extra = '<div class="sumline2"><span>' + t("hist_cash_given") + '</span><span>' + fmt(h.cashGiven) + '</span></div>' +
         '<div class="sumline2"><span>' + t("hist_change") + '</span><span>' + fmt(h.change) + '</span></div>';
@@ -2659,6 +3409,9 @@ function saveShopSettings() {
   s.taxCash = document.getElementById("setTaxCash").checked;
   s.taxCard = document.getElementById("setTaxCard").checked;
   s.changeDenoms = document.getElementById("setDenoms").checked;
+  s.discountEnabled = document.getElementById("setDiscountOn").checked;
+  var dp = parseFloat(document.getElementById("setDiscountPct").value);
+  s.discountPct = (isNaN(dp) || dp < 0) ? 0 : Math.min(100, Math.round(dp * 100) / 100);
   saveState();
 }
 function loadShopSettingsUI() {
@@ -2669,6 +3422,8 @@ function loadShopSettingsUI() {
   document.getElementById("setTaxCard").checked = !!s.taxCard;
   document.getElementById("setDenoms").checked = s.changeDenoms !== false;
   document.getElementById("setSaveHistory").checked = !!s.saveHistory;
+  document.getElementById("setDiscountOn").checked = !!s.discountEnabled;
+  document.getElementById("setDiscountPct").value = s.discountPct || "";
   renderFees();
   renderCashPickSettings();
 }
