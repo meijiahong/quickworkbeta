@@ -659,6 +659,8 @@ body[data-theme="dark"] .toast { background: #232329; }
       <label class="switch-row"><span><span data-i18n="hours_paid_break">Paid meal break</span></span><span class="switch"><input type="checkbox" id="hoursPaidBreak" onchange="togglePaidMealBreak()"><span class="track"></span><span class="knob"></span></span></label>
     </div>
     <div class="card">
+      <button class="btn btn-primary" id="hoursAddBtn" onclick="toggleHoursForm()" data-i18n="hours_add_btn">+ Add hours</button>
+      <div id="hoursForm" style="display:none">
       <label for="hoursDate" data-i18n="hours_date_lb">Date</label>
       <input type="text" id="hoursDate" readonly onclick="openDatePicker('hoursDate')" data-i18n-ph="date_ph" placeholder="Select date" style="cursor:pointer">
       <label for="hoursClockIn" data-i18n="hours_clock_in_lb">Clock in</label>
@@ -673,7 +675,11 @@ body[data-theme="dark"] .toast { background: #232329; }
       </div>
       <label for="hoursLabel" data-i18n="hours_label_lb">Label</label>
       <input type="text" id="hoursLabel" data-i18n-ph="hours_label_ph" placeholder="e.g. Morning shift">
-      <button class="btn btn-primary" onclick="addManualHours()" data-i18n="hours_add">+ Log hours</button>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="addManualHours()" data-i18n="hours_save">Save hours</button>
+        <button class="btn btn-ghost" onclick="cancelHoursForm()" data-i18n="cancel">Cancel</button>
+      </div>
+      </div>
     </div>
     <div class="card">
       <div class="btn-row">
@@ -1163,6 +1169,8 @@ hours_hours_lb: "Hours",
 hours_label_lb: "Label",
 hours_label_ph: "e.g. Morning shift",
 hours_add: "+ Log hours",
+hours_add_btn: "+ Add hours",
+hours_save: "Save hours",
 hours_need_times: "Enter clock-in and clock-out times first.",
 hours_total_hours: "Total paid hours",
 hours_est_pay: "Estimated pay",
@@ -1482,6 +1490,8 @@ hours_hours_lb: "Horas",
 hours_label_lb: "Etiqueta",
 hours_label_ph: "ej. Turno de mañana",
 hours_add: "+ Registrar horas",
+hours_add_btn: "+ Añadir horas",
+hours_save: "Guardar horas",
 hours_need_times: "Ingresa primero la hora de entrada y de salida.",
 hours_total_hours: "Total de horas pagadas",
 hours_est_pay: "Pago estimado",
@@ -2303,6 +2313,15 @@ function renderHours() {
       '<div class="sub">' + t("hours_paid_hours") + ': ' + paid + 'h · ' + t("hours_est_pay") + ': ' + fmt(pay) + '</div></div>';
   }).join("");
 }
+function toggleHoursForm(open) {
+  var form = document.getElementById("hoursForm"); if (!form) return;
+  var btn = document.getElementById("hoursAddBtn");
+  var show = (typeof open === "boolean") ? open : (form.style.display === "none");
+  form.style.display = show ? "" : "none";
+  if (btn) btn.style.display = show ? "none" : "";
+  if (!show) ["hoursDate", "hoursClockIn", "hoursClockOut", "hoursMealStart", "hoursMealEnd", "hoursLabel"].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ""; });
+}
+function cancelHoursForm() { toggleHoursForm(false); }
 function addManualHours() {
   var date = document.getElementById("hoursDate").value || todayStr();
   var ci = document.getElementById("hoursClockIn").value;
@@ -2317,7 +2336,7 @@ function addManualHours() {
   }
   state.hours.entries.unshift({ id: uid("he"), kind: "manual", date: date, clockIn: ci, clockOut: co, mealStart: mealStart, mealEnd: mealEnd, label: label, createdAt: Date.now() });
   saveState();
-  ["hoursClockIn", "hoursClockOut", "hoursMealStart", "hoursMealEnd", "hoursLabel"].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ""; });
+  toggleHoursForm(false);
   renderHours();
 }
 function hoursWageChanged() {
@@ -2891,9 +2910,9 @@ function resetJobUI() {
   taskFilter = "all"; editingNoteId = null; expandedNoteId = null;
   editingStockId = null; stockPickerOpen = false;
   discountApplied = false;
-  toggleTaskForm(false); toggleNoteForm(false); toggleHandoffForm(false); toggleStockForm(false);
+  toggleTaskForm(false); toggleNoteForm(false); toggleHandoffForm(false); toggleStockForm(false); toggleHoursForm(false);
   closeDatePicker();
-  ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursClockIn", "hoursClockOut",
+  ["taskTitle", "taskNote", "taskDue", "noteTitle", "noteBody", "hoursDate", "hoursClockIn", "hoursClockOut",
    "hoursMealStart", "hoursMealEnd", "hoursLabel",
    "stockName", "stockQty", "stockThreshold", "stockCatalogSearch", "handoffTitle", "handoffMsg"].forEach(function(id){
     var el = document.getElementById(id); if (el) el.value = "";
