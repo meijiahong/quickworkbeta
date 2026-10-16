@@ -315,7 +315,7 @@ body[data-theme="dark"] .avail-hint { color: #A5B4FC; }
   #priceModalBox { background: #fff; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 20px 18px 30px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
   #summaryOverlay { display: none; position: fixed; inset: 0; background: #f2f4f8; z-index: 55; flex-direction: column; }
   #summaryOverlay.open { display: flex; }
-  #summaryBody { flex: 1; overflow-y: auto; padding: 14px; width: 100%; max-width: 640px; margin: 0 auto; overscroll-behavior: contain; touch-action: pan-y; }
+  #summaryBody { flex: 1; overflow-y: auto; padding: 20px 14px 14px; width: 100%; max-width: 640px; margin: 0 auto; overscroll-behavior: contain; touch-action: pan-y; }
   .sumline { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #edf0f5; }
   .sumline .info { flex: 1; min-width: 0; }
   .sumline .name { font-weight: 600; font-size: 15px; }
@@ -582,9 +582,9 @@ body[data-theme="dark"] .toast { background: #232329; }
       <div class="btn-row" style="margin-top:8px">
         <button class="btn btn-ghost" onclick="openHistory()" data-i18n="prod_view_history">View purchase history</button>
       </div>
-      <label class="switch-row"><span><span data-i18n="sset_discount">Employee discount</span></span><span class="switch"><input type="checkbox" id="setDiscountOn" onchange="saveShopSettings()"><span class="track"></span><span class="knob"></span></span></label>
+      <label class="switch-row"><span><span data-i18n="sset_discount">Custom discounts</span></span><span class="switch"><input type="checkbox" id="setDiscountOn" onchange="saveShopSettings()"><span class="track"></span><span class="knob"></span></span></label>
       <div class="setrow">
-        <label for="setDiscountPct" data-i18n="sset_discount_pct">Discount %</label>
+        <label for="setDiscountPct" data-i18n="sset_discount_pct">Discount</label>
         <input type="number" id="setDiscountPct" inputmode="decimal" min="0" max="100" step="0.01" onchange="saveShopSettings()">
         <span>%</span>
       </div>
@@ -1068,7 +1068,7 @@ body[data-theme="dark"] .toast { background: #232329; }
   <div style="padding:12px 14px 26px;width:100%;max-width:640px;margin:0 auto">
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="closeSummary()" data-i18n="back">← Back</button>
-      <button class="btn btn-primary" onclick="newOrderAfterSummary()" data-i18n="sum_new">New order</button>
+      <button class="btn btn-primary" onclick="newOrderAfterSummary()" data-i18n="sum_new">Complete</button>
     </div>
   </div>
 </div>
@@ -1224,7 +1224,7 @@ prod_photo_fail: "Could not read that photo.",
 price_add: "Add to order", sheet_qty: "Quantity", price_adjust: "Adjust price", price_new: "New price ($)",
 price_order_only: "Save for this order only", price_future: "Save for future orders",
 // summary
-sum_title: "Order summary", sum_new: "New order",
+sum_title: "Order summary", sum_new: "Complete",
 sum_subtotal: "Subtotal", sum_tax: "Tax ({r}%)", sum_total: "Total",
 sum_cash: "Cash", sum_card: "Card",
 sum_cash_given: "Cash given",
@@ -1459,8 +1459,8 @@ handoff_import: "⬇ Import handoffs",
 handoff_no_export: "Nothing to export yet.",
 handoff_imported_1: "1 handoff imported.",
 handoff_imported_n: "{n} handoffs imported.",
-sset_discount: "Employee discount",
-sset_discount_pct: "Discount %",
+sset_discount: "Custom discounts",
+sset_discount_pct: "Discount",
 sum_discount: "Discount",
 sum_apply_discount: "Apply discount",
 sum_remove_discount: "Remove discount"
@@ -1604,7 +1604,7 @@ prod_photo_fail: "No se pudo leer esa foto.",
 price_add: "Agregar a la orden", sheet_qty: "Cantidad", price_adjust: "Ajustar precio", price_new: "Nuevo precio ($)",
 price_order_only: "Solo para esta orden", price_future: "Para futuras órdenes",
 // summary
-sum_title: "Resumen de la orden", sum_new: "Nueva orden",
+sum_title: "Resumen de la orden", sum_new: "Completar",
 sum_subtotal: "Subtotal", sum_tax: "Impuesto ({r}%)", sum_total: "Total",
 sum_cash: "Efectivo", sum_card: "Tarjeta",
 sum_cash_given: "Efectivo recibido",
@@ -1839,8 +1839,8 @@ handoff_import: "⬇ Importar entregas",
 handoff_no_export: "Nada que exportar aún.",
 handoff_imported_1: "1 entrega importada.",
 handoff_imported_n: "{n} entregas importadas.",
-sset_discount: "Descuento de empleado",
-sset_discount_pct: "Descuento %",
+sset_discount: "Descuentos personalizados",
+sset_discount_pct: "Descuento",
 sum_discount: "Descuento",
 sum_apply_discount: "Aplicar descuento",
 sum_remove_discount: "Quitar descuento"
@@ -4547,6 +4547,7 @@ function showSummary() {
   if (!order.length) { toast(t("sum_no_items")); return; }
   payMethod = "card";
   renderSummary();
+  document.getElementById("summaryBody").scrollTop = 0;
   document.getElementById("summaryOverlay").classList.add("open"); lockOverlay("summary");
 }
 function calcTotals() {
