@@ -71,6 +71,8 @@
   .item .info { flex: 1; min-width: 0; }
   .item .name { font-weight: 600; font-size: 15px; }
   .item .sub { font-size: 12px; color: #7a8499; }
+  .item .prod-cat { display: block; font-size: 12px; color: #7a8499; }
+  .item .prod-code { display: block; font-size: 12px; color: #7a8499; font-family: monospace; }
   .qty { display: flex; align-items: center; gap: 8px; }
   .qty button { width: 38px; height: 38px; font-size: 20px; border-radius: 10px; border: 1.5px solid #c9d2e3; background: #fff; font-weight: 700; }
   .qty span { min-width: 26px; text-align: center; font-weight: 700; font-size: 16px; }
@@ -425,7 +427,7 @@ body[data-theme="dark"] input::placeholder, body[data-theme="dark"] textarea::pl
 body[data-theme="dark"] label { color: #A1A1AA; }
 body[data-theme="dark"] .tpl-lib-row { border-bottom-color: #26262B; }
 body[data-theme="dark"] .tpl-lib-row .name { color: #E4E4EA; }
-body[data-theme="dark"] .item .sub, body[data-theme="dark"] .hint, body[data-theme="dark"] .moddesc,
+body[data-theme="dark"] .item .sub, body[data-theme="dark"] .item .prod-cat, body[data-theme="dark"] .item .prod-code, body[data-theme="dark"] .hint, body[data-theme="dark"] .moddesc,
 body[data-theme="dark"] .homehead p, body[data-theme="dark"] .modsub, body[data-theme="dark"] .rec-card .rmeta,
 body[data-theme="dark"] .sumline .sub, body[data-theme="dark"] .rmeta { color: #A1A1AA; }
 body[data-theme="dark"] .btn-ghost { background: #232329; color: #C7D2FE; }
@@ -4104,7 +4106,8 @@ function renderProducts() {
       (selectMode ? '<input type="checkbox" class="app-check"' + (selected[c] ? ' checked' : '') + ' onclick="event.stopPropagation();toggleSelect(' + js + ')">' : '') +
       (p.img ? '<img class="thumb" src="' + p.img + '" alt="">' : '<div class="thumb"></div>') +
       '<div class="info"><div class="name">' + esc(p.name) + '</div>' +
-      '<div class="sub">' + (p.manual ? '' : '<kbd class="code">' + esc(c) + '</kbd>') + (p.category ? '<span class="catbadge">' + esc(p.category) + '</span>' : '') + '</div></div>' +
+      (p.category ? '<div class="prod-cat">' + esc(p.category) + '</div>' : '') +
+      (p.manual ? '' : '<div class="prod-code">' + esc(c) + '</div>') + '</div>' +
       '<div class="line-total">' + fmtP(eff) + (fromCat ? '<div class="catprice-hint">' + t("cat_price_hint") + '</div>' : '') + '</div>' +
       (selectMode ? '' : '<button class="iconbtn" onclick="openModal(' + js + ',false,null)">Edit</button>' +
       '<button class="iconbtn" onclick="deleteProduct(' + js + ')">✕</button>') + '</div>';
