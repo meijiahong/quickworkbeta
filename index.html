@@ -125,6 +125,11 @@
   /* categories: fallback-price hint + management rows */
   .catprice-hint { font-size: 11px; color: var(--dim); font-weight: 600; margin-top: 2px; }
   .catrow { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #edf0f5; }
+  /* v80: named discount list rows */
+  .discrow { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #edf0f5; }
+  .discrow:last-child { border-bottom: none; }
+  .discrow .dname { flex: 1; min-width: 0; font-weight: 600; font-size: 15px; }
+  .discrow .dpct { color: #7a8499; font-size: 13px; flex: none; }
   .catrow:last-child { border-bottom: none; }
   .catpick-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 13px; border: 0; border-bottom: 1px solid #edf0f5; background: transparent; font-size: 16px; font-family: inherit; color: #1c2333; cursor: pointer; text-align: left; }
   .catpick-opt:last-child { border-bottom: none; }
@@ -316,6 +321,8 @@ body[data-theme="dark"] .avail-hint { color: #A5B4FC; }
   #summaryOverlay { display: none; position: fixed; inset: 0; background: #f2f4f8; z-index: 55; flex-direction: column; }
   #summaryOverlay.open { display: flex; }
   #summaryBody { flex: 1; overflow-y: auto; padding: 20px 14px 14px; width: 100%; max-width: 640px; margin: 0 auto; overscroll-behavior: contain; touch-action: pan-y; }
+  /* v80: summary header stays in normal flow — a sticky header could overlap the scroll body and clip the first product. */
+  #summaryOverlay > header { position: relative; top: auto; }
   .sumline { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #edf0f5; }
   .sumline .info { flex: 1; min-width: 0; }
   .sumline .name { font-weight: 600; font-size: 15px; }
@@ -484,6 +491,8 @@ body[data-theme="dark"] .toast { background: #232329; }
     /* Keep all app content below the strip. */
     body { padding-top: env(titlebar-area-height, 33px); }
     header { top: env(titlebar-area-height, 33px); }
+    /* v80: start the summary overlay below the titlebar strip instead of sliding under it. */
+    #summaryOverlay { top: env(titlebar-area-height, 33px); }
     nav { top: calc(env(titlebar-area-height, 33px) + 8px); }
   }
 </style>
@@ -583,10 +592,24 @@ body[data-theme="dark"] .toast { background: #232329; }
         <button class="btn btn-ghost" onclick="openHistory()" data-i18n="prod_view_history">View purchase history</button>
       </div>
       <label class="switch-row"><span><span data-i18n="sset_discount">Custom discounts</span></span><span class="switch"><input type="checkbox" id="setDiscountOn" onchange="saveShopSettings()"><span class="track"></span><span class="knob"></span></span></label>
-      <div class="setrow">
-        <label for="setDiscountPct" data-i18n="sset_discount_pct">Discount</label>
-        <input type="number" id="setDiscountPct" inputmode="decimal" min="0" max="100" step="0.01" onchange="saveShopSettings()">
-        <span>%</span>
+      <div id="discountSection" style="display:none">
+        <div id="discountList"></div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="btn btn-ghost" onclick="toggleDiscountForm()" data-i18n="disc_add">Add discount</button>
+        </div>
+        <div id="discountForm" style="display:none;margin-top:8px">
+          <label for="discNameInput" data-i18n="disc_name_lb">Discount name</label>
+          <input type="text" id="discNameInput" autocomplete="off">
+          <div class="setrow">
+            <label for="discPctInput" data-i18n="disc_pct_lb">Percent</label>
+            <input type="number" id="discPctInput" inputmode="decimal" min="0" max="100" step="0.01">
+            <span>%</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveDiscountForm()" data-i18n="save">Save</button>
+            <button class="btn btn-ghost" onclick="toggleDiscountForm(false)" data-i18n="cancel">Cancel</button>
+          </div>
+        </div>
       </div>
       <p class="hint" style="margin:10px 0 0">Tax applies to subtotal + fees. When "Apply tax to Card" is off, card totals stay pre-tax.</p>
     </div>
@@ -1461,6 +1484,12 @@ handoff_imported_1: "1 handoff imported.",
 handoff_imported_n: "{n} handoffs imported.",
 sset_discount: "Custom discounts",
 sset_discount_pct: "Discount",
+disc_add: "Add discount",
+disc_name_lb: "Discount name",
+disc_pct_lb: "Percent",
+disc_empty: "No discounts yet.",
+disc_no: "No discount",
+disc_confirm_delete: "Delete this discount?",
 sum_discount: "Discount",
 sum_apply_discount: "Apply discount",
 sum_remove_discount: "Remove discount"
@@ -1841,6 +1870,12 @@ handoff_imported_1: "1 entrega importada.",
 handoff_imported_n: "{n} entregas importadas.",
 sset_discount: "Descuentos personalizados",
 sset_discount_pct: "Descuento",
+disc_add: "Agregar descuento",
+disc_name_lb: "Nombre del descuento",
+disc_pct_lb: "Porcentaje",
+disc_empty: "Aún no hay descuentos.",
+disc_no: "Sin descuento",
+disc_confirm_delete: "¿Eliminar este descuento?",
 sum_discount: "Descuento",
 sum_apply_discount: "Aplicar descuento",
 sum_remove_discount: "Quitar descuento"
@@ -1977,7 +2012,7 @@ var sheetCode = null, sheetOverride = null, priceCtx = null, modalImg = null;
 var sheetQty = 1;
 
 function defaultShopSettings() {
-  return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, saveHistory: false, fees: [], cashPicks: [1, 5, 10, 20, 50, 100], discountEnabled: false, discountPct: 0 };
+  return { taxEnabled: false, taxRate: 6, taxCash: true, taxCard: false, changeDenoms: true, saveHistory: false, fees: [], cashPicks: [1, 5, 10, 20, 50, 100], discountEnabled: false, discounts: [] };
 }
 function defaultTasks() { return { items: [] }; }
 function defaultNotes() { return { items: [] }; }
@@ -2033,7 +2068,17 @@ function migrateProfile(p) {
     if (!Array.isArray(p.shopSettings.cashPicks)) p.shopSettings.cashPicks = [1, 5, 10, 20, 50, 100];
     if (p.shopSettings.saveHistory === undefined) p.shopSettings.saveHistory = false;
     if (p.shopSettings.discountEnabled === undefined) p.shopSettings.discountEnabled = false;
-    if (p.shopSettings.discountPct === undefined) p.shopSettings.discountPct = 0;
+    /* v80: named discounts list — migrate the old single percent into one named entry, then retire the field. */
+    if (!Array.isArray(p.shopSettings.discounts)) p.shopSettings.discounts = [];
+    p.shopSettings.discounts = p.shopSettings.discounts.filter(function(d){ return d && typeof d === "object"; }).map(function(d){
+      var pc = parseFloat(d.percent); if (isNaN(pc) || pc < 0) pc = 0; pc = Math.min(100, Math.round(pc * 100) / 100);
+      return { id: d.id || ("disc_" + Math.floor(Math.random() * 1e9).toString(36)), name: (d.name || "").toString() || t("sset_discount_pct"), percent: pc };
+    });
+    if (!p.shopSettings.discounts.length && (parseFloat(p.shopSettings.discountPct) || 0) > 0) {
+      var mp = Math.min(100, Math.round((parseFloat(p.shopSettings.discountPct) || 0) * 100) / 100);
+      p.shopSettings.discounts.push({ id: "disc_migrated", name: t("sset_discount_pct"), percent: mp });
+    }
+    delete p.shopSettings.discountPct;
   }
   if (!Array.isArray(p.shopHistory)) p.shopHistory = [];
   /* v66 categories: entities with their own price (never products) */
@@ -3590,7 +3635,7 @@ function resetJobUI() {
   editingStockId = null; stockPickerOpen = false; stockPickerSel = {};
   stockPickFilter = ""; stockPickSort = "category"; closeStockPickDrops();
   var scs = document.getElementById("stockCatalogSearch"); if (scs) scs.value = "";
-  discountApplied = false;
+  appliedDiscountId = null; discountPickerId = null;
   /* v63 hours: reset tab to Log, clear estimator + deduction-form drafts; stored entries/deductions/wage stay */
   hoursTab = "log"; editingDedId = null; dedFormType = "percent";
   dedEditorOpen = false; dedEditorAnchor = null;
@@ -3906,7 +3951,7 @@ function chQty(idx, d) {
 function rmLine(idx) { order.splice(idx, 1); renderOrder(); }
 function clearOrder() {
   if (!order.length) return;
-  appConfirm(t("shop_confirm_clear")).then(function(ok){ if (ok) { order = []; discountApplied = false; renderOrder(); } });
+  appConfirm(t("shop_confirm_clear")).then(function(ok){ if (ok) { order = []; appliedDiscountId = null; discountPickerId = null; renderOrder(); } });
 }
 function renderSearch() {
   var q = document.getElementById("search").value.trim().toLowerCase();
@@ -4255,6 +4300,7 @@ function catDropFilter() { catDropRender(); var w = document.getElementById("cat
 function catDropToggle(e) { if (e) e.stopPropagation(); var w = document.getElementById("catField"); if (w && w.classList.contains("open")) { catDropClose(); return; } var inp = document.getElementById("fCategory"); if (inp) { try { inp.focus({ preventScroll: true }); } catch (err) { inp.focus(); } } catDropOpen(); }
 function catDropPick(i) { var c = catDropList[i]; if (c == null) return; var inp = document.getElementById("fCategory"); if (inp) inp.value = c; catDropClose(); }
 document.addEventListener("click", function(e){ var t = e.target; if (t && t.closest && t.closest("#catField")) return; catDropClose(); });
+document.addEventListener("click", function(e){ var t = e.target; if (t && t.closest && t.closest("#discountField")) return; discountDropClose(); });
 function saveModal() {
   var code = document.getElementById("fCode").value.trim();
   var name = document.getElementById("fName").value.trim();
@@ -4537,15 +4583,84 @@ function priceSave(scope) {
 
 /* ---------- order summary ---------- */
 var payMethod = "card";
-var discountApplied = false;
+/* v80: named discounts — one applied per order, picked from the discount list. */
+var appliedDiscountId = null; /* id of the discount actually applied to this order; null = none */
+var discountPickerId = null; /* current selection in the checkout discount dropdown; null = No discount */
+var editingDiscountId = null; /* discount being edited in the Settings form; null = adding */
+var discountFormOpen = false;
+function getDiscounts() { var s = state.shopSettings || {}; return Array.isArray(s.discounts) ? s.discounts : []; }
 function discountAvailable() {
   var s = state.shopSettings || {};
-  return !!(s.discountEnabled && (parseFloat(s.discountPct) || 0) > 0);
+  return !!(s.discountEnabled && getDiscounts().length);
 }
-function toggleDiscount() { discountApplied = !discountApplied; renderSummary(); }
+function discountLabel(d) { return (d.name || t("sset_discount_pct")) + " — " + (parseFloat(d.percent) || 0) + "%"; }
+function newDiscountId() { return "disc_" + Date.now().toString(36) + "_" + Math.floor(Math.random() * 1e6).toString(36); }
+function findDiscount(id) { var list = getDiscounts(); for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
+/* ---------- Custom discounts: Settings list + add/edit form ---------- */
+function renderDiscountSection() {
+  var sec = document.getElementById("discountSection"); if (!sec) return;
+  var on = !!(state.shopSettings || {}).discountEnabled;
+  sec.style.display = on ? "" : "none";
+  if (!on) toggleDiscountForm(false);
+  var box = document.getElementById("discountList"); if (!box) return;
+  var list = getDiscounts();
+  if (!list.length) { box.innerHTML = '<div class="hint">' + t("disc_empty") + '</div>'; return; }
+  box.innerHTML = list.map(function(d){
+    return '<div class="discrow"><div class="dname">' + esc(d.name || t("sset_discount_pct")) + '</div>' +
+      '<div class="dpct">' + (parseFloat(d.percent) || 0) + '%</div>' +
+      '<button class="iconbtn" onclick="editDiscount(\'' + d.id + '\')">' + t("edit") + '</button>' +
+      '<button class="iconbtn" onclick="deleteDiscount(\'' + d.id + '\')">✕</button></div>';
+  }).join("");
+}
+function toggleDiscountForm(force) {
+  discountFormOpen = (force === undefined) ? !discountFormOpen : !!force;
+  if (!discountFormOpen) editingDiscountId = null;
+  var f = document.getElementById("discountForm"); if (f) f.style.display = discountFormOpen ? "" : "none";
+  if (discountFormOpen) {
+    var d = editingDiscountId ? findDiscount(editingDiscountId) : null;
+    var ni = document.getElementById("discNameInput"); if (ni) ni.value = d ? (d.name || "") : "";
+    var pi = document.getElementById("discPctInput"); if (pi) pi.value = d ? (d.percent || 0) : "";
+    if (ni) { try { ni.focus({ preventScroll: true }); } catch (err) { ni.focus(); } }
+  }
+}
+function editDiscount(id) { editingDiscountId = id; toggleDiscountForm(true); }
+function saveDiscountForm() {
+  var name = ((document.getElementById("discNameInput") || {}).value || "").trim() || t("sset_discount_pct");
+  var p = parseFloat((document.getElementById("discPctInput") || {}).value);
+  if (isNaN(p) || p < 0) p = 0; p = Math.min(100, Math.round(p * 100) / 100);
+  if (editingDiscountId) {
+    var d = findDiscount(editingDiscountId);
+    if (d) { d.name = name; d.percent = p; }
+  } else {
+    getDiscounts().push({ id: newDiscountId(), name: name, percent: p });
+  }
+  saveState(); renderDiscountSection(); toggleDiscountForm(false);
+}
+function deleteDiscount(id) {
+  appConfirm(t("disc_confirm_delete")).then(function(ok){
+    if (!ok) return;
+    var s = state.shopSettings || {}; s.discounts = getDiscounts().filter(function(d){ return d.id !== id; });
+    if (appliedDiscountId === id) { appliedDiscountId = null; discountPickerId = null; }
+    if (editingDiscountId === id) editingDiscountId = null;
+    saveState(); renderDiscountSection();
+    var so = document.getElementById("summaryOverlay");
+    if (so && so.classList.contains("open")) renderSummary();
+  });
+}
+/* ---------- checkout discount picker (custom catDrop-style dropdown) ---------- */
+function discountDropClose() { var w = document.getElementById("discountField"); if (w) w.classList.remove("open"); }
+function discountDropToggle(e) {
+  if (e) e.stopPropagation();
+  var w = document.getElementById("discountField"); if (!w) return;
+  if (w.classList.contains("open")) discountDropClose(); else w.classList.add("open");
+}
+function setDiscountPick(id) { discountPickerId = id || null; renderSummary(); }
+function applyDiscountPick() { appliedDiscountId = discountPickerId; renderSummary(); }
+function removeDiscount() { appliedDiscountId = null; discountPickerId = null; renderSummary(); }
 function showSummary() {
   if (!order.length) { toast(t("sum_no_items")); return; }
   payMethod = "card";
+  discountPickerId = appliedDiscountId;
   renderSummary();
   document.getElementById("summaryBody").scrollTop = 0;
   document.getElementById("summaryOverlay").classList.add("open"); lockOverlay("summary");
@@ -4561,12 +4676,14 @@ function calcTotals() {
     if (amt > 0) { feeTotal += amt; feeLines.push({ name: f.name || "Fee", amt: amt }); }
   });
   feeTotal = Math.round(feeTotal * 100) / 100;
-  var discPct = discountAvailable() ? (parseFloat(s.discountPct) || 0) : 0;
-  var discount = (discountApplied && discPct > 0) ? Math.round(sub * discPct) / 100 : 0;
+  var applied = appliedDiscountId ? findDiscount(appliedDiscountId) : null;
+  var discPct = applied ? (parseFloat(applied.percent) || 0) : 0;
+  var discName = applied ? (applied.name || t("sset_discount_pct")) : null;
+  var discount = (applied && discPct > 0) ? Math.round(sub * discPct) / 100 : 0;
   var taxApplies = !!(s.taxEnabled && ((payMethod === "cash" && s.taxCash) || (payMethod === "card" && s.taxCard)));
   var tax = taxApplies ? Math.round((sub - discount + feeTotal) * (parseFloat(s.taxRate) || 0)) / 100 : 0;
   var total = Math.round((sub - discount + feeTotal + tax) * 100) / 100;
-  return { sub: sub, count: count, feeLines: feeLines, tax: tax, taxApplies: taxApplies, total: total, discount: discount, discountPct: discPct };
+  return { sub: sub, count: count, feeLines: feeLines, tax: tax, taxApplies: taxApplies, total: total, discount: discount, discountPct: discPct, discountName: discName };
 }
 function renderSummary() {
   var tot = calcTotals();
@@ -4585,14 +4702,25 @@ function renderSummary() {
     html += '<div class="sumline2"><span>' + esc(f.name) + '</span><span>' + fmt(f.amt) + '</span></div>';
   });
   if (tot.discount > 0) {
-    html += '<div class="sumline2"><span>' + t("sum_discount") + ' (' + tot.discountPct + '%)</span><span>-' + fmt(tot.discount) + '</span></div>';
+    html += '<div class="sumline2"><span>' + t("sum_discount") + ' (' + (tot.discountName ? esc(tot.discountName) + ' — ' : '') + tot.discountPct + '%)</span><span>-' + fmt(tot.discount) + '</span></div>';
   }
   if (tot.taxApplies) {
     html += '<div class="sumline2"><span>' + tf("sum_tax", { r: (parseFloat((state.shopSettings || {}).taxRate) || 0) }) + '</span><span>' + fmt(tot.tax) + '</span></div>';
   }
   html += '<div class="row grand"><span>' + t("sum_total") + '</span><span>' + fmt(tot.total) + '</span></div></div>';
   if (discountAvailable()) {
-    html += '<div class="btn-row" style="margin-top:12px"><button class="btn ' + (discountApplied ? "btn-ghost" : "btn-primary") + '" onclick="toggleDiscount()">' + (discountApplied ? t("sum_remove_discount") : t("sum_apply_discount")) + '</button></div>';
+    var pick = discountPickerId ? findDiscount(discountPickerId) : null;
+    var pickLabel = pick ? discountLabel(pick) : t("disc_no");
+    var opts = '<button type="button" class="catdrop-opt" onclick="setDiscountPick(null)"><span>' + t("disc_no") + '</span>' + (!discountPickerId ? '<span class="tick">✓</span>' : "") + '</button>';
+    opts += getDiscounts().map(function(d){
+      return '<button type="button" class="catdrop-opt" onclick="setDiscountPick(\'' + d.id + '\')"><span>' + esc(discountLabel(d)) + '</span>' + (discountPickerId === d.id ? '<span class="tick">✓</span>' : "") + '</button>';
+    }).join("");
+    html += '<div class="catfield" id="discountField" style="margin-top:12px">' +
+      '<input type="text" readonly value="' + esc(pickLabel) + '" onclick="discountDropToggle(event)" id="discountPickInput">' +
+      '<button type="button" class="catchev" onclick="discountDropToggle(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block"><path d="M6 9l6 6 6-6"/></svg></button>' +
+      '<div class="catdrop" id="discountDrop">' + opts + '</div></div>';
+    html += '<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" onclick="applyDiscountPick()">' + t("sum_apply_discount") + '</button>' +
+      (appliedDiscountId ? '<button class="btn btn-ghost" onclick="removeDiscount()">' + t("sum_remove_discount") + '</button>' : '') + '</div>';
   }
   html += '<div class="btn-row" style="margin-top:12px">' +
     '<button class="paybtn' + (payMethod === "cash" ? " active" : "") + '" onclick="setPayMethod(\'cash\')"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;display:block"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>' + t("sum_cash") + '</button>' +
@@ -4637,7 +4765,7 @@ function updateChange(val) {
     box.innerHTML = html;
   }
 }
-function closeSummary() { document.getElementById("summaryOverlay").classList.remove("open"); unlockOverlay("summary"); }
+function closeSummary() { discountDropClose(); document.getElementById("summaryOverlay").classList.remove("open"); unlockOverlay("summary"); }
 function decrementStockForOrder(lines) {
   if (!state.stock || !Array.isArray(state.stock.items)) return;
   var totals = {};
@@ -4669,13 +4797,13 @@ function newOrderAfterSummary() {
       id: uid("h"), at: Date.now(),
       items: order.map(function(l){ return { name: l.name, price: l.price, qty: l.qty }; }),
       sub: t.sub, feeLines: t.feeLines || [], tax: t.tax, total: t.total,
-      discount: t.discount || 0, discountPct: (t.discount || 0) > 0 ? t.discountPct : 0,
+      discount: t.discount || 0, discountPct: (t.discount || 0) > 0 ? t.discountPct : 0, discountName: t.discountName || null,
       payMethod: payMethod, cashGiven: given, change: change
     });
     if (state.shopHistory.length > 200) state.shopHistory.length = 200;
     saveState();
   }
-  discountApplied = false;
+  appliedDiscountId = null; discountPickerId = null;
   closeSummary(); order = []; renderOrder(); showTab("checkout");
 }
 function renderHistory() {
@@ -4691,7 +4819,10 @@ function renderHistory() {
     var meta = new Date(h.at).toLocaleString() + " · " + (h.payMethod === "cash" ? t("sum_cash") : t("sum_card"));
     var extra = "";
     if (h.discount) {
-      extra = '<div class="sumline2"><span>' + t("sum_discount") + (h.discountPct ? " (" + h.discountPct + "%)" : "") + '</span><span>-' + fmt(h.discount) + '</span></div>';
+      var discLabel = t("sum_discount");
+      if (h.discountName) discLabel += " (" + esc(h.discountName) + " — " + (h.discountPct || 0) + "%)";
+      else if (h.discountPct) discLabel += " (" + h.discountPct + "%)";
+      extra = '<div class="sumline2"><span>' + discLabel + '</span><span>-' + fmt(h.discount) + '</span></div>';
     }
     if (h.payMethod === "cash" && h.cashGiven != null) {
       extra = '<div class="sumline2"><span>' + t("hist_cash_given") + '</span><span>' + fmt(h.cashGiven) + '</span></div>' +
@@ -4812,8 +4943,7 @@ function saveShopSettings() {
   s.taxCard = document.getElementById("setTaxCard").checked;
   s.changeDenoms = document.getElementById("setDenoms").checked;
   s.discountEnabled = document.getElementById("setDiscountOn").checked;
-  var dp = parseFloat(document.getElementById("setDiscountPct").value);
-  s.discountPct = (isNaN(dp) || dp < 0) ? 0 : Math.min(100, Math.round(dp * 100) / 100);
+  renderDiscountSection();
   saveState();
 }
 function loadShopSettingsUI() {
@@ -4825,7 +4955,7 @@ function loadShopSettingsUI() {
   document.getElementById("setDenoms").checked = s.changeDenoms !== false;
   document.getElementById("setSaveHistory").checked = !!s.saveHistory;
   document.getElementById("setDiscountOn").checked = !!s.discountEnabled;
-  document.getElementById("setDiscountPct").value = s.discountPct || "";
+  renderDiscountSection();
   renderFees();
   renderCashPickSettings();
 }
