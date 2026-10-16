@@ -30,6 +30,9 @@
   .btn-danger { background: #fde8e8; color: #b3261e; }
   .btn-row { display: flex; gap: 8px; }
   .btn-row .btn { margin-bottom: 0; }
+  /* v78: Products tab Export/Import share one row equally under the full-width Manage categories button */
+  .prod-io-row { margin-top: 8px; }
+  .prod-io-row .btn { flex: 1; }
   input[type=text], input[type=number], input[type=search], input[type=time] { width: 100%; padding: 13px; font-size: 16px; border: 1.5px solid #c9d2e3; border-radius: 10px; margin-bottom: 10px; }
   input[type=time] { font-family: inherit; }
   input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -544,10 +547,10 @@ body[data-theme="dark"] .toast { background: #232329; }
     <div class="card">
       <button class="btn btn-dark" onclick="startScan('product')"><span class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;display:block"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8.5 7l1.2-2.5h4.6L15.5 7"/></svg></span><span data-i18n="prod_scan_addedit">Scan to add / edit product</span></button>
       <button class="btn btn-ghost" style="margin-top:8px" onclick="openModal('',true,null)"><span data-i18n="prod_add_manual">+ Add product manually</span></button>
-      <div class="btn-row">
+      <button class="btn btn-ghost" style="margin-top:8px" onclick="openCatManage()" data-i18n="cat_manage">Manage categories</button>
+      <div class="btn-row prod-io-row">
         <button class="btn btn-ghost" onclick="exportData()" data-i18n="prod_export">⬆ Export list</button>
         <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()" data-i18n="prod_import">⬇ Import list</button>
-        <button class="btn btn-ghost" onclick="openCatManage()" data-i18n="cat_manage">Manage categories</button>
       </div>
       <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)">
       <label for="shopName" data-i18n="prod_shop_name">Shop name</label>
